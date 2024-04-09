@@ -1,34 +1,65 @@
 // user.schema.ts
-import * as mongoose from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
 
-export const UserSchema = new mongoose.Schema({
-  uid: { type: String, required: true },
-  firstName: String,
-  lastName: String,
-  contact: String,
-  resume: String,
-  links: String,
+export type UserDocument = HydratedDocument<User>;
+
+@Schema()
+export class User {
+  @Prop()
+  uid: string;
+
+  @Prop()
+  firstName: string;
+
+  @Prop()
+  lastName: string;
+
+  @Prop()
+  contact: string;
+
+  @Prop()
+  resume: string;
+
+  @Prop()
+  links: string;
+
+  @Prop()
   classExperience: [
     {
-      title: String,
-      description: String,
-      startDate: Date,
-      endDate: Date,
-      location: String,
+      title: string;
+      description: string;
+      startDate: Date;
+      endDate: Date;
+      location: string;
     },
-  ],
+  ];
+
+  @Prop()
   classEducation: [
     {
-      title: String,
-      description: String,
-      startDate: Date,
-      endDate: Date,
-      location: String,
+      title: string;
+      description: string;
+      startDate: Date;
+      endDate: Date;
+      location: string;
     },
-  ],
-  skills: [String],
-  arrays_aid: [String],
-  equalOpportunity: Boolean,
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-});
+  ];
+
+  @Prop()
+  skills: string[];
+
+  @Prop()
+  arrays_aid: string[];
+
+  @Prop()
+  equalOpportunity: boolean;
+
+  @Prop()
+  createdAt: Date;
+
+  @Prop()
+  updatedAt: Date;
+}
+
+export const UserSchema = SchemaFactory.createForClass(User);
