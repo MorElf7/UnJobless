@@ -2,7 +2,7 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
-import { User } from './schemas/user.schema';
+import { User } from '../schemas/user.schema';
 
 @ApiTags('users')
 @Controller('users')

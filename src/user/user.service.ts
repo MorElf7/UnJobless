@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from './schemas/user.schema';
+import { User } from '../schemas/user.schema';
 
 @Injectable()
 export class UserService {
@@ -17,5 +17,9 @@ export class UserService {
     return this.userModel.find().exec();
   }
 
-  // Add the rest of the CRUD operations...
+  async findOne(uid: string): Promise<User> {
+    return this.userModel.findOne({
+      uid: uid,
+    });
+  }
 }
