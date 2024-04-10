@@ -1,17 +1,14 @@
-// user.controller.ts
-import { Controller, Get, Param } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { ApiTags } from '@nestjs/swagger';
+import { User, UserSchema } from './schemas/user.schema';
 
-@ApiTags('users')
-@Controller('users')
-export class UserController {
-  constructor(private readonly userService: UserService) {}
-
-  @Get(':uid')
-  findOne(@Param('uid') uid: string) {
-    return this.userService.findOne(uid);
-  }
-
-  // Add other endpoints like POST for create, PUT for update, DELETE for delete
-}
+@Module({
+  imports: [
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+  ],
+  controllers: [UserController],
+  providers: [UserService],
+})
+export class UserModule {}

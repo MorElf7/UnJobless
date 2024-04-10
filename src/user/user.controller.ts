@@ -11,14 +11,17 @@ export class UserController {
 
   @Post()
   @ApiOperation({ summary: 'Create user' })
-  @ApiResponse({ status: 201, description: 'The user has been successfully created.'})
+  @ApiResponse({
+    status: 201,
+    description: 'The user has been successfully created.',
+  })
   async create(@Body() createUserDto: any) {
     this.userService.create(createUserDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'List users' })
-  @ApiResponse({ status: 200, description: 'List of users', type: [User]})
+  @ApiResponse({ status: 200, description: 'List of users', type: [User] })
   async findAll(): Promise<User[]> {
     return this.userService.findAll();
   }
