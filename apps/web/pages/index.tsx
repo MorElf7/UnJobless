@@ -2,21 +2,21 @@ import React, { useState } from "react";
 import Link from 'next/link';
 import Navbar from "../components/Navbar";
 import Dashboard from "./dashboard";
-// import "../styles/index.scss"
+import styles from "../styles/index.module.scss";
 
 function HomePage() {
     const [collapse, setCollapse] = useState(false);
 
-    const handleCollapse = (collapse: boolean) => {
-        setCollapse(collapse);
+    const handleCollapse = () => {
+        setCollapse(collapse => !collapse); // Toggle the current state
     };
-
+    
     return (
-        <div className="layout-container">
-            <div className={`bar-${!collapse && 'open'}`}>
+        <div className={styles.layoutContainer}>
+            <div className={collapse ? styles.barClosed : styles.barOpen}>
                 <Navbar isCollapsed={collapse} handleCollapse={handleCollapse} />
             </div>
-            <div className="outlet">
+            <div className={styles.outlet}>
                 <Dashboard />
             </div>
         </div>
@@ -24,31 +24,3 @@ function HomePage() {
 }
 
 export default HomePage;
-
-// const HomePage = () => {
-//     return (
-//         <div>
-//             <h1>Home Page</h1>
-//             <Link href="/profile">
-//                 <p>Go to your profile!</p>
-//             </Link>
-//         </div>
-//     );
-// };
-
-// export default HomePage;
-
-// import { useEffect } from 'react';
-// import { useRouter } from 'next/router';
-
-// const Home = () => {
-//   const router = useRouter();
-
-//   useEffect(() => {
-//     router.replace('/profile');
-//   }, [router]);
-
-//   return null;
-// };
-
-// export default Home;
