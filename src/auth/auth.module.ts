@@ -1,21 +1,20 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { AuthGuard } from './auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Student, StudentSchema } from '../schemas/student.schema';
-import { Professor, ProfessorSchema } from '../schemas/professor.schema';
+import { User, UserSchema } from '../schemas/user.schema';
+import { Application, ApplicationSchema } from '../schemas/application.schema';
 
 @Module({
   imports: [
-    UsersModule,
-    MongooseModule.forFeature([{ name: Student.name, schema: StudentSchema }]),
+    // UsersModule,
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MongooseModule.forFeature([
-      { name: Professor.name, schema: ProfessorSchema },
+      { name: Application.name, schema: ApplicationSchema },
     ]),
     JwtModule.register({
       global: true,

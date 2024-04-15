@@ -25,6 +25,5 @@ export class UserController {
   async findAll(): Promise<User[]> {
     return this.userService.findAll();
   }
-
   // Add the rest of the CRUD operations...
 }
