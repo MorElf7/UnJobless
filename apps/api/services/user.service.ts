@@ -3,6 +3,7 @@ import { IUser } from "../interfaces/IUser";
 import { SaveUserRequest } from "../interfaces/IRequest";
 import { checkUser } from "../utils/checkUtility";
 import { User } from "../models/User";
+import { HydratedDocument } from "mongoose";
 
 export class UserService {
   static async getUserById(userId: string): Promise<DataResponse<IUser>> {
@@ -15,7 +16,7 @@ export class UserService {
   ): Promise<DataResponse<IUser>> {
     const { id, firstName, lastName, email, phone, education, experience } =
       payload;
-    let savedUser: User;
+    let savedUser: HydratedDocument<IUser>;
     if (id) {
       const user = await checkUser({ _id: id });
       user.firstName = firstName || user.firstName;

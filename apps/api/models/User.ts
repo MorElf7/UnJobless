@@ -75,6 +75,8 @@ const userCredentialsSchema = new Schema<IUserCreds>(
 userCredentialsSchema.virtual("isExpired").get(function () {
   return Date.now() >= this.expiredAt.valueOf();
 });
+
 const User = model("User", userSchema);
 const UserCredential = model("UserCredential", userCredentialsSchema);
+
 export { User, UserCredential };

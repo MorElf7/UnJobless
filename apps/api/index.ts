@@ -7,6 +7,7 @@ import { notFound } from "./middlewares/notFound";
 import { errorHandler } from "./middlewares/errorHandler";
 import routes from "./routes";
 
+// Connect database
 mongoose.connect(config.DB_URL);
 const db = mongoose.connection;
 db.on("error", () => console.log("connection error:"));
@@ -14,6 +15,7 @@ db.once("open", () => {
   console.log("Database connected");
 });
 
+// Set up express
 const app: Application = express();
 const port = config.PORT;
 app.enable("trust proxy");

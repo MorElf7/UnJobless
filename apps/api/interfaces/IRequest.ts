@@ -1,5 +1,6 @@
 import { IEducation, IExperience } from "./IUser";
 import { Types } from "mongoose";
+import { ApplicationStatus, JobLevel } from "./IApplication";
 
 export interface QueriesRequest {
   page: string;
@@ -19,14 +20,14 @@ export interface SaveUserRequest {
 
 export interface SaveApplicationRequest {
   id?: Types.ObjectId;
-  title: string;
-  company: string;
-  location: string;
-  level: string;
-  jobPostUrl: string;
-  description: string;
-  datePosted: Date;
-  status: string;
-  createdAt: Date;
-  userId: Types.ObjectId;
+  title?: string;
+  company?: string;
+  location?: string;
+  level?: JobLevel;
+  jobPostUrl?: string;
+  description?: string;
+  datePosted?: Date;
+  status?: ApplicationStatus;
+  createdAt?: Date;
+  userId?: Types.ObjectId;
 }
