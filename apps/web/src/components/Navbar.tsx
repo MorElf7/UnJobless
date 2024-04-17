@@ -25,31 +25,29 @@ const Navbar = () => {
       <div className="logo-details">
         {collapse && <img src="icon.png" alt="Unjobless icon" />}
         {!collapse && <img src="logo.png" alt="Unjobless logo" />}
+        <i className='bx bx-menu' id="btn" onClick={toggleSidebar}></i>
       </div>
       <ul className="nav-list">
-        <div>
-          {items.map((item, id) => (
-            <li className={`${activeItem === id && "active"}`} onClick={() => { setActiveItem(id) }}>
-              <Link className="link" to={refs[id]}>
-                <i className={`bx bx-${icons[id]}`}></i>
-                <span className="links_name">{item}</span>
-              </Link>
-              <span className="tooltip">{item}</span>
-            </li>
-          ))}
-        </div>
-        <div className = 'bottom'>
-          {!collapse && <i className='bx bx-arrow-to-left' id="btn" onClick={toggleSidebar}>Collapse</i>}
-          {collapse && <i className='bx bx-arrow-to-right' id="btn" onClick={toggleSidebar}></i>}
-          <li className="profile">
-            <div className="profile-details">
-              <img src="user.jpg" alt="profileImg" />
-              <span className="name">Real Name</span>
-            </div>
-            <i className='bx bx-log-out' id="log_out" ></i>
+        {items.map((item, id) => (
+          <li className={`${activeItem === id && "active"}`} onClick={() => { setActiveItem(id) }}>
+            <Link className="link" to={refs[id]}>
+              <i className={`bx bx-${icons[id]}`}></i>
+              <span className="links_name">{item}</span>
+            </Link>
+            <span className="tooltip">{item}</span>
           </li>
-        </div>
+        ))}
       </ul>
+      <div>
+        <li className="profile">
+          <div className="profile-details">
+            <img src="user.jpg" alt="profileImg" />
+            <span className="name">Real Name</span>
+          </div>
+          <i className='bx bx-log-out' id="log_out" ></i>
+        </li>
+      </div>
+
     </div>
   );
 };
