@@ -3,28 +3,28 @@ import { Link } from "react-router-dom";
 import "../styles/Navbar.scss";
 import "boxicons/css/boxicons.min.css";
 
-interface Props {
-  isCollapsed: boolean;
-  handleCollapse: (arg: boolean) => void
-}
+// interface Props {
+//   isCollapsed: boolean;
+//   handleCollapse: (arg: boolean) => void
+// }
 
-const Navbar = ({ isCollapsed, handleCollapse }: Props) => {
+const Navbar = () => {
   const items = ["Dashboard", "Jobs", "Applications", "Profile"];
   const icons = ["grid-alt", "briefcase", "paper-plane", "user"];
   const refs = ["/", "/jobs", "applications", "profile"];
-  const [collapse, setCollapse] = useState(isCollapsed);
+  const [collapse, setCollapse] = useState(false);
   const [activeItem, setActiveItem] = useState(0);
 
   const toggleSidebar = () => {
     setCollapse(!collapse);
-    handleCollapse(!collapse);
+    // handleCollapse(!collapse);
   }
 
   return (
     <div className={`navbar ${!collapse && 'open'}`}>
       <div className="logo-details">
-        <i className='bx bxs-cat icon'></i>
-        <div className="logo_name">UnjoBless</div>
+        {collapse && <img src="icon.png" alt="Unjobless icon" />}
+        {!collapse && <img src="logo.png" alt="Unjobless logo" />}
         <i className='bx bx-menu' id="btn" onClick={toggleSidebar}></i>
       </div>
       <ul className="nav-list">
@@ -42,7 +42,7 @@ const Navbar = ({ isCollapsed, handleCollapse }: Props) => {
         <div>
           <li className="profile">
             <div className="profile-details">
-              <img src="profile.jpg" alt="profileImg" />
+              <img src="user.jpg" alt="profileImg" />
               <span className="name">Real Name</span>
             </div>
             <i className='bx bx-log-out' id="log_out" ></i>

@@ -4,20 +4,20 @@ import Navbar from "../components/Navbar";
 import "../styles/MainLayout.scss"
 
 function MainLayout() {
-  const [collapse, setCollapse] = useState(false);
+  // const [collapse, setCollapse] = useState(false);
 
-  const handleCollapse = (collapse: boolean) => {
-    setCollapse(collapse);
-  };
+  // const handleCollapse = (collapse: boolean) => {
+  //   setCollapse(collapse);
+  // };
 
   return (
     <div className="layout-container">
-      <div className={`bar-${!collapse && 'open'}`}>
-        <Navbar isCollapsed={collapse} handleCollapse={handleCollapse} />
-      </div>
-      <div className="outlet">
-        <Outlet />
-      </div>
+      {/* <div className={"sidebar"}> */}
+      <Navbar />
+      {/* </div>
+      <div className="outlet"> */}
+      <Outlet />
+      {/* </div> */}
     </div>
   );
 }

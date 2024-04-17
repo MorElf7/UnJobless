@@ -18,7 +18,7 @@ $fonts: "Ubuntu", sans-serif;
     position: sticky;
     left: 0;
     top: 0;
-    height: 100%;
+    height: 100vh;
     width: 78px;
     background: $white;
     border-right: 1px solid $gray_2;
@@ -32,17 +32,9 @@ $fonts: "Ubuntu", sans-serif;
         align-items: center;
         position: relative;
 
-        .icon {
-            color: $green;
-            opacity: 0;
-            transition: all 0.5s ease;
-        }
-
-        .logo_name {
-            color: $green;
-            font-size: 24px;
-            font-weight: 600;
-            opacity: 0;
+        img {
+            height: 40px;
+            // opacity: 0;
             transition: all 0.5s ease;
         }
 
@@ -159,7 +151,8 @@ $fonts: "Ubuntu", sans-serif;
             height: 45px;
             width: 45px;
             object-fit: cover;
-            border-radius: 6px;
+            border-radius: 50%;
+            border: 2px $gray_2 solid;
             margin-right: 10px;
         }
     }
@@ -180,7 +173,7 @@ $fonts: "Ubuntu", sans-serif;
     }
 
     .profile {
-        position: fixed;
+        position: absolute;
         height: 60px;
         width: 78px;
         left: 0;
@@ -226,13 +219,9 @@ $fonts: "Ubuntu", sans-serif;
     width: 250px;
 
     .logo-details {
-        .icon {
-            opacity: 1;
-        }
-
-        .logo_name {
-            opacity: 1;
-        }
+        // img {
+        //     opacity: 1;
+        // }
 
         #btn {
             text-align: right;
