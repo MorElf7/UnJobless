@@ -25,7 +25,6 @@ const Navbar = () => {
       <div className="logo-details">
         {collapse && <img src="icon.png" alt="Unjobless icon" />}
         {!collapse && <img src="logo.png" alt="Unjobless logo" />}
-        <i className='bx bx-menu' id="btn" onClick={toggleSidebar}></i>
       </div>
       <ul className="nav-list">
         <div>
@@ -39,7 +38,9 @@ const Navbar = () => {
             </li>
           ))}
         </div>
-        <div>
+        <div className = 'bottom'>
+          {!collapse && <i className='bx bx-arrow-to-left' id="btn" onClick={toggleSidebar}>Collapse</i>}
+          {collapse && <i className='bx bx-arrow-to-right' id="btn" onClick={toggleSidebar}></i>}
           <li className="profile">
             <div className="profile-details">
               <img src="user.jpg" alt="profileImg" />

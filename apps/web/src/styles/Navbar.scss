@@ -37,19 +37,6 @@ $fonts: "Ubuntu", sans-serif;
             // opacity: 0;
             transition: all 0.5s ease;
         }
-
-        #btn {
-            position: absolute;
-            top: 50%;
-            right: 0;
-            transform: translateY(-50%);
-            font-size: 22px;
-            transition: all 0.4s ease;
-            font-size: 23px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.5s ease;
-        }
     }
 
     i {
@@ -63,7 +50,8 @@ $fonts: "Ubuntu", sans-serif;
 
     .nav-list {
         margin-top: 20px;
-        height: 100%;
+        height: 100vh;
+        overflow-y: auto;
     }
 
     li {
@@ -172,8 +160,9 @@ $fonts: "Ubuntu", sans-serif;
         }
     }
 
-    .profile {
+    .bottom {
         position: absolute;
+        display: inline-block;
         height: 60px;
         width: 78px;
         left: 0;
@@ -184,49 +173,65 @@ $fonts: "Ubuntu", sans-serif;
         background: $white;
         transition: all 0.5s ease;
         overflow: hidden;
-
-        .name {
-            font-size: 15px;
-            font-weight: 400;
-            color: $black;
-            white-space: nowrap;
-        }
-
-        .job {
-            font-size: 15px;
-            font-weight: 400;
-            color: $black;
-            white-space: nowrap;
-            font-size: 12px;
-        }
-
-        #log_out {
+        #btn {
             position: absolute;
             top: 50%;
             right: 0;
+            // bottom: 30px;
             transform: translateY(-50%);
-            background: $white;
-            width: 100%;
-            height: 60px;
-            line-height: 60px;
-            border-radius: 0px;
+            font-size: 22px;
+            transition: all 0.4s ease;
+            font-size: 23px;
+            text-align: center;
+            cursor: pointer;
             transition: all 0.5s ease;
+        }
+        .profile {
+            position: absolute;
+            height: 60px;
+            width: 78px;
+            left: 0;
+            bottom: -8px;
+            padding: 10px 14px;
+            border-top: 1px solid $gray_1;
+            border-right: 1px solid $gray_2;
+            background: $white;
+            transition: all 0.5s ease;
+            overflow: hidden;
+    
+            .name {
+                font-size: 15px;
+                font-weight: 400;
+                color: $black;
+                white-space: nowrap;
+            }
+    
+            .job {
+                font-size: 15px;
+                font-weight: 400;
+                color: $black;
+                white-space: nowrap;
+                font-size: 12px;
+            }
+    
+            #log_out {
+                position: absolute;
+                top: 50%;
+                right: 0;
+                transform: translateY(-50%);
+                background: $white;
+                width: 100%;
+                height: 60px;
+                line-height: 60px;
+                border-radius: 0px;
+                transition: all 0.5s ease;
+            }
         }
     }
 }
 
 .navbar.open {
     width: 250px;
-
-    .logo-details {
-        // img {
-        //     opacity: 1;
-        // }
-
-        #btn {
-            text-align: right;
-        }
-    }
 
     li {
         .tooltip {
@@ -241,14 +246,20 @@ $fonts: "Ubuntu", sans-serif;
         }
     }
 
-    .profile {
-        width: 250px;
-
-        #log_out {
-            width: 50px;
-            background: none;
+    .bottom{
+        #btn {
+            text-align: right;
+        }
+        .profile {
+            width: 250px;
+    
+            #log_out {
+                width: 50px;
+                background: none;
+            }
         }
     }
+    
 }
 
 @media (max-width: 420px) {
