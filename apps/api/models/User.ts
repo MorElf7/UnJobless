@@ -4,6 +4,12 @@ import {
   IEducation,
   IExperience,
   IUserCreds,
+  IEqualOp,
+  Gender,
+  SexOrient,
+  YesNoAns,
+  Race,
+  ILink,
 } from "../interfaces/IUser";
 import { Application } from "./Application";
 
@@ -23,14 +29,32 @@ const expSchema = new Schema<IExperience>({
   description: { type: String },
 });
 
+const equalOpSchema = new Schema<IEqualOp>({
+  gender: { type: String, default: Gender.NA },
+  sexOrient: { type: String, default: SexOrient.NA },
+  requiredSponsorshipUS: { type: String, default: YesNoAns.NA },
+  legalToWorkUS: { type: String, default: YesNoAns.NA },
+  race: { type: String, default: Race.NA },
+  transgender: { type: String, default: YesNoAns.NA },
+  disability: { type: String, default: YesNoAns.NA },
+  veteran: { type: String, default: YesNoAns.NA },
+});
+
+const linkSchema = new Schema<ILink>({
+  title: { type: String, required: true },
+  url: { type: String, required: true },
+});
+
 const userSchema = new Schema<IUser>(
   {
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     email: { type: String, unique: true, required: true },
     phone: { type: String, unique: true, required: true },
+    links: [{ type: linkSchema, default: {} }],
     education: [{ type: eduSchema, default: {} }],
     experience: [{ type: expSchema, default: {} }],
+    equalOp: { type: equalOpSchema, default: {} },
   },
   {
     timestamps: true,

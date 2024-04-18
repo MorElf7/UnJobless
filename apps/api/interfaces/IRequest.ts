@@ -1,4 +1,4 @@
-import { IEducation, IExperience } from "./IUser";
+import { IEducation, IEqualOp, IExperience, ILink } from "./IUser";
 import { Types } from "mongoose";
 import { ApplicationStatus, JobLevel } from "./IApplication";
 
@@ -16,6 +16,8 @@ export interface SaveUserRequest {
   phone?: string;
   education?: IEducation[];
   experience?: IExperience[];
+  equalOp?: IEqualOp;
+  links?: ILink[];
 }
 
 export interface SaveApplicationRequest {

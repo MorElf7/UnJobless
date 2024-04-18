@@ -14,8 +14,17 @@ export class UserService {
   static async saveUser(
     payload: SaveUserRequest,
   ): Promise<DataResponse<IUser>> {
-    const { id, firstName, lastName, email, phone, education, experience } =
-      payload;
+    const {
+      id,
+      firstName,
+      lastName,
+      email,
+      phone,
+      education,
+      experience,
+      links,
+      equalOp,
+    } = payload;
     let savedUser: HydratedDocument<IUser>;
     if (id) {
       const user = await checkUser({ _id: id });
@@ -25,6 +34,8 @@ export class UserService {
       user.phone = phone || user.phone;
       user.experience = experience || user.experience;
       user.education = education || user.education;
+      user.links = links || user.links;
+      user.equalOp = equalOp || user.equalOp;
 
       savedUser = await user.save();
     } else {
