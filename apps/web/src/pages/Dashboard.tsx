@@ -1,5 +1,6 @@
 import CategoryList from "../components/CategoryList";
 import JobList from "../components/JobList";
+import List from "../components/List";
 
 const Dashboard = () => {
   return (
@@ -12,7 +13,8 @@ const Dashboard = () => {
       <div className="section-title">
         <h2>Recently Applied</h2>
       </div>
-      <JobList />
+      {/* <JobList /> */}
+      <List />
     </div>
   );
 };
