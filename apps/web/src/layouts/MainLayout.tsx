@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import "../styles/MainLayout.scss"
 
 function MainLayout() {
   // const [collapse, setCollapse] = useState(false);
@@ -11,13 +10,11 @@ function MainLayout() {
   // };
 
   return (
-    <div className="layout-container">
-      {/* <div className={"sidebar"}> */}
+    <div className="flex min-h-screen bg-white">
       <Navbar />
-      {/* </div>
-      <div className="outlet"> */}
-      <Outlet />
-      {/* </div> */}
+      <div className="flex-1">
+        <Outlet />
+      </div>
     </div>
   );
 }
