@@ -30,7 +30,7 @@ export const DataTable = <T extends object>({ columns, data }: DataTableProps<T>
       pagination,
     },
     pageCount: Math.ceil(filteredData.length / pagination.pageSize),
-    manualPagination: false, // Adjust as needed for your data context
+    manualPagination: false, // Enable automatic pagination
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onPaginationChange: setPagination,
