@@ -18,8 +18,8 @@ export const DataTable = <T extends object>({ columns, data }: DataTableProps<T>
   const [filter, setFilter] = useState('');
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
 
-  const filteredData = useMemo(() => data.filter(item => 
-    Object.values(item).some(value => 
+  const filteredData = useMemo(() => data.filter(item =>
+    Object.values(item).some(value =>
       String(value).toLowerCase().includes(filter.toLowerCase())
     )), [data, filter]);
 
