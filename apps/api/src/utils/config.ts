@@ -1,7 +1,11 @@
 import dotenv from "dotenv";
 
-dotenv.config();
 const isDev = process.env.NODE_ENV === "development";
+if (isDev) {
+  dotenv.config({ path: "../../.env.development" });
+} else {
+  dotenv.config({ path: "../../.env" });
+}
 export default {
   PORT: process.env.PORT || 8000,
   DB_URL: process.env.DB_URL || "mongodb://localhost:27017/unjobless",

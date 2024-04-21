@@ -12,6 +12,7 @@ import { IUser } from "../interfaces/IUser";
 import { User, UserCredential } from "../models/User";
 import HttpException from "../utils/HttpException";
 import { checkUser } from "../utils/checkUtility";
+import { Body, Get, Inject, Post, Route, Tags } from "tsoa";
 
 const generateAccessToken = (user: any) => {
   return jwt.sign(user, config.accessTokenSecret, {
@@ -30,8 +31,11 @@ const generateRefreshToken = async (id: string) => {
   return refreshToken;
 };
 
+@Route("auth")
+@Tags("Auth Controller")
 export class AuthService {
-  static async login(payload: LoginRequest): Promise<LoginResponse> {
+  @Post("login")
+  static async login(@Body() payload: LoginRequest): Promise<LoginResponse> {
     const { email, password } = payload;
     const userInfo = await User.findOne({ email });
     if (!userInfo) {
@@ -58,8 +62,9 @@ export class AuthService {
     }
   }
 
-  static async signup(payload: SignUpRequest): Promise<LoginResponse> {
-    const { email, password, firstName, lastName, phone } = payload;
+  @Post("signup")
+  static async signup(@Body() payload: SignUpRequest): Promise<LoginResponse> {
+    const { email, password, firstName, lastName } = payload;
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       throw new HttpException(400, "User already exists");
@@ -67,7 +72,6 @@ export class AuthService {
     const passwordHash = await bcrypt.hash(password, config.saltRounds);
     const userInfo = await User.create({
       email,
-      phone,
       firstName,
       lastName,
     });
@@ -81,8 +85,9 @@ export class AuthService {
     };
   }
 
+  @Post("token")
   static async getAccessToken(
-    payload: GetAccessTokenRequest,
+    @Body() payload: GetAccessTokenRequest,
   ): Promise<LoginResponse> {
     const { token } = payload;
     const userCredential = await UserCredential.findOne({
@@ -100,8 +105,9 @@ export class AuthService {
     };
   }
 
+  @Get("user")
   static async getUserProfile(
-    currentUser: IUser,
+    @Inject() currentUser: IUser,
   ): Promise<DataResponse<IUser>> {
     const userProfile = await User.findById(currentUser.id);
     if (!userProfile) {

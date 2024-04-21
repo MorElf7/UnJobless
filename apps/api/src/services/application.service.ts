@@ -7,11 +7,15 @@ import { Application } from "../models/Application";
 import { IApplication } from "../interfaces/IApplication";
 import HttpException from "../utils/HttpException";
 import { checkUser, checkApplicationBelongsUser } from "../utils/checkUtility";
+import { Body, Get, Inject, Path, Post, Queries, Route, Tags } from "tsoa";
 
+@Route("application")
+@Tags("Application Controller")
 export class ApplicationService {
+  @Get("{appId}")
   static async getApplicationById(
-    currentUser: IUser,
-    appId: string | Types.ObjectId,
+    @Inject() currentUser: IUser,
+    @Path() appId: string | Types.ObjectId,
   ): Promise<DataResponse<IApplication>> {
     const application = await checkApplicationBelongsUser(
       appId,
@@ -20,9 +24,10 @@ export class ApplicationService {
     return { data: application.toJSON() };
   }
 
+  @Get()
   static async getApplications(
-    currentUser: IUser,
-    queries: QueriesRequest,
+    @Inject() currentUser: IUser,
+    @Queries() queries: QueriesRequest,
   ): Promise<PageResponse<IApplication>> {
     const page = parseInt(queries.page || "0"),
       pageSize = parseInt(queries.pageSize || "10");
@@ -49,9 +54,10 @@ export class ApplicationService {
     };
   }
 
+  @Post()
   static async saveApplication(
-    currentUser: IUser,
-    payload: SaveApplicationRequest,
+    @Inject() currentUser: IUser,
+    @Body() payload: SaveApplicationRequest,
   ): Promise<DataResponse<IApplication>> {
     const {
       id,

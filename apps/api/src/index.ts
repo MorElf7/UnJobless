@@ -1,4 +1,10 @@
-import express, { json, urlencoded, Application } from "express";
+import express, {
+  json,
+  urlencoded,
+  Application,
+  Request,
+  Response,
+} from "express";
 import mongoose from "mongoose";
 import config from "./utils/config";
 import cors from "cors";
@@ -6,6 +12,7 @@ import helmet from "helmet";
 import { notFound } from "./middlewares/notFound";
 import { errorHandler } from "./middlewares/errorHandler";
 import routes from "./routes";
+import swaggerUi from "swagger-ui-express";
 
 // Connect database
 mongoose.connect(config.DB_URL);
@@ -34,6 +41,12 @@ app.use(
   }),
 );
 app.use(config.api.prefix, routes());
+app.use("/swagger", swaggerUi.serve, async (_req: Request, res: Response) => {
+  return res.send(
+    swaggerUi.generateHTML(await import("../build/swagger.json")),
+  );
+});
+
 app.use(notFound);
 app.use(errorHandler);
 

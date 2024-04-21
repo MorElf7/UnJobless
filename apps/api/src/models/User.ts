@@ -50,7 +50,7 @@ const userSchema = new Schema<IUser>(
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     email: { type: String, unique: true, required: true },
-    phone: { type: String, unique: true, required: true },
+    phone: { type: String, unique: true },
     links: [{ type: linkSchema, default: {} }],
     education: [{ type: eduSchema, default: {} }],
     experience: [{ type: expSchema, default: {} }],

@@ -4,15 +4,22 @@ import { SaveUserRequest } from "../interfaces/IRequest";
 import { checkUser } from "../utils/checkUtility";
 import { User } from "../models/User";
 import { HydratedDocument } from "mongoose";
+import { Body, Get, Path, Post, Route, Tags } from "tsoa";
 
+@Route("user")
+@Tags("User Controller")
 export class UserService {
-  static async getUserById(userId: string): Promise<DataResponse<IUser>> {
+  @Get("{userId}")
+  static async getUserById(
+    @Path() userId: string,
+  ): Promise<DataResponse<IUser>> {
     const user = await checkUser({ _id: userId });
     return { data: user.toJSON() };
   }
 
+  @Post()
   static async saveUser(
-    payload: SaveUserRequest,
+    @Body() payload: SaveUserRequest,
   ): Promise<DataResponse<IUser>> {
     const {
       id,
