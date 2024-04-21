@@ -4,6 +4,7 @@
   "spec": {
     "outputDirectory": "build",
     "specVersion": 3,
+    "basePath": "api",
     "tags": [
       {
         "name": "User Controller",
