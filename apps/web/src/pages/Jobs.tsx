@@ -1,9 +1,9 @@
+import List from "../components/List";
+
 const Jobs = () => {
     return (
-        <div className="dashboard">
-            <div className="dashboardContainer">
-                <span color="smoke">Jobless NPC</span>
-            </div>
+        <div className="jobs p-10 pb-5">
+            <List />
         </div>
     );
 };
