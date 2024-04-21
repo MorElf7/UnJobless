@@ -65,13 +65,16 @@ export const DataTable = <T extends object>({ columns, data }: DataTableProps<T>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {table.getRowModel().rows.map(row => (
-              <tr key={row.id} className="cursor-pointer">
-                {row.getVisibleCells().map(cell => (
-                  <td key={cell.id} className="px-6 py-4 whitespace-nowrap">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
+              <>
+                <tr className="h-2"></tr>
+                <tr key={row.id} className="cursor-pointer">
+                  {row.getVisibleCells().map(cell => (
+                    <td key={cell.id} className="px-6 py-4 whitespace-nowrap">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+              </>
             ))}
           </tbody>
         </table>
