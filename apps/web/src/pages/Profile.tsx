@@ -43,7 +43,7 @@ export const Profile = () => {
                 {
                     editMode ? (
                         <>
-                            <button className="mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            <button className="mb-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                                 Upload Profile Picture
                                 <input type="file" className="hidden" onChange={handlePictureChange} />
                             </button>
@@ -52,7 +52,7 @@ export const Profile = () => {
                             <input name="schoolYear" value={profile.schoolYear} onChange={handleFieldChange} className="mb-4 w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none" placeholder="School Year" />
                             <input name="major" value={profile.major} onChange={handleFieldChange} className="mb-4 w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none" placeholder="Major" />
                             <textarea name="bio" value={profile.bio} onChange={handleFieldChange} rows={4} className="mb-4 w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none" placeholder="Bio"></textarea>
-                            <button onClick={handleSaveClick} className="mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Save</button>
+                            <button onClick={handleSaveClick} className="mb-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Save</button>
                         </>
                     ) : (
                         <>
@@ -61,7 +61,7 @@ export const Profile = () => {
                             <p className="mb-4">School Year: {profile.schoolYear}</p>
                             <p className="mb-4">Major: {profile.major}</p>
                             <p className="mb-4">Bio: {profile.bio}</p>
-                            <button onClick={handleEditClick} className="mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Edit</button>
+                            <button onClick={handleEditClick} className="mb-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Edit</button>
                         </>
                     )
                 }

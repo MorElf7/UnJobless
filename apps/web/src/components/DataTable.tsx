@@ -46,7 +46,7 @@ export const DataTable = <T extends object>({ columns, data }: DataTableProps<T>
             value={filter}
             onChange={e => setFilter(e.target.value)}
             placeholder={`${filteredData.length} records...`}
-            className="ml-2 px-2 py-1 border rounded-md focus:outline-maroon"
+            className="ml-2 px-2 py-1 border rounded-md focus:outline-green"
           />
         </div>
       </div>
