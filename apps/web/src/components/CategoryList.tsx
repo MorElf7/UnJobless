@@ -1,9 +1,8 @@
-import { BriefcaseBusiness, Bookmark, CircleAlert } from "lucide-react";
 import { BriefcaseIcon, BookmarkIcon, ExclamationCircleIcon } from '@heroicons/react/solid';
 
 function CategoryList() {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto gap-5 py-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mx-auto gap-5 py-5">
             <a href="#" className="card-item flex items-center bg-green-100 border-2 border-green-400 p-6 rounded-lg shadow-sm hover:bg-green-400 transition duration-400 ease-in-out">
                 <div className="content min-w-24">
                     <div className="text-3xl font-semibold text-gray-800 mb-2">300</div>
