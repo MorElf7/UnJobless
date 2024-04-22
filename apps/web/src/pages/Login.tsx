@@ -30,7 +30,7 @@ const Login = () => {
     return (
         <div className="flex items-center justify-center min-h-screen p-4"
             style={{
-                backgroundImage: `url(/images/PM.png)`,
+                backgroundImage: `url(/login_bg.svg)`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
