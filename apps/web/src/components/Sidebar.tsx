@@ -41,7 +41,7 @@ const Sidebar: React.FC = () => {
         </div>
         <SidebarContext.Provider value={{ expanded }}>
           <ul className="flex-1 px-3">
-            <SidebarItem icon={<Home size={20} strokeWidth={2.5} />} text="Dashboard" link="/" />
+            <SidebarItem icon={<Home size={20} strokeWidth={2.5} />} text="Dashboard" link="/dashboard" />
             <SidebarItem icon={<BriefcaseBusiness size={20} strokeWidth={2.5} />} text="Jobs" link="/jobs" />
             <SidebarItem icon={<Send size={20} strokeWidth={2.5} />} text="Applications" link="/applications" />
             <SidebarItem icon={<User size={20} strokeWidth={2.5} />} text="Profile" link="/profile" />
