@@ -4,12 +4,14 @@ import Dashboard from "../pages/Dashboard";
 import Jobs from "../pages/Jobs";
 import { Profile } from "../pages/Profile";
 import Applications from "../pages/Applications";
+import Login from "../pages/Login";
 
 function Router() {
     return (
         <Routes>
+            <Route path="/" element={<Login />} />
             <Route element={<MainLayout />}>
-                <Route path="/" element={<Dashboard />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/jobs" element={<Jobs />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/applications" element={<Applications />} />
