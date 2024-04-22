@@ -1,6 +1,5 @@
 import CategoryList from "../components/CategoryList";
-// import JobList from "../components/JobList";
-import List from "../components/List";
+import JobList from "../components/JobList";
 
 const Dashboard = () => {
   return (
@@ -12,10 +11,9 @@ const Dashboard = () => {
       </div>
       <CategoryList />
       <div className="section-title pt-4">
-        <span>Recently Applied</span>
+        <span className="text-gray-600 font-medium">Recently Applied</span>
       </div>
-      {/* <JobList /> */}
-      <List />
+      <JobList />
     </div>
   );
 };

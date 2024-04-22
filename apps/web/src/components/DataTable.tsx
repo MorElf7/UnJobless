@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import {
   useReactTable,
   ColumnDef,
@@ -7,6 +7,9 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import {
+  SearchIcon,
+  LocationMarkerIcon,
+  CurrencyDollarIcon,
   ChevronDoubleLeftIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -52,9 +55,9 @@ export const DataTable = <T extends object>({
 
   return (
     <div className="my-4">
-      <div className="flex justify-end items-center mb-4">
-        <div>
-          <span>Search:</span>
+      <div className="flex items-center mb-4">
+        <div className="flex items-center">
+          <SearchIcon className="w-6 h-6 text-gray-600" />
           <input
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
@@ -85,25 +88,47 @@ export const DataTable = <T extends object>({
           <tbody className="bg-white">
             {table.getRowModel().rows.map((row) => (
               <>
-                <tr className="h-2"></tr>
+                <tr className="h-3"></tr>
                 <tr key={row.id} className="group cursor-pointer">
                   {row.getVisibleCells().map((cell, i) => (
                     <td key={cell.id} className={`px-6 py-4 whitespace-nowrap first:rounded-l-lg last:rounded-r-lg first:border-l-2 last:border-r-2 border-2 border-r-0 border-l-0 border-gray-200 group-hover:border-green-500`}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      {
-                        i === 0 ? (
-                          <div className="flex gap-2">
-                            <span className="text-sm">Belleve, WA</span>
-                            <span className="text-sm">60,000 - 90,000</span>
+                      {i === 0 ? (
+                        <>
+                          <div className="flex items-center">
+                            {row.original && 'companyIcon' in row.original && 'company' in row.original &&
+                              <img src={row.original.companyIcon as string} alt={row.original.company as string} className="w-9 h-9 mr-2" />
+                            }
+                            <div className="ml-3">
+                              <div className="mb-1">
+                                <span>{row.original && 'position' in row.original && `${row.original.position}`}</span>
+                              </div>
+                              <div className="flex items-center">
+                                <LocationMarkerIcon className="h-3 w-3 text-gray-400 mr-1" />
+                                <span className="text-xs text-gray-700 mr-4">{row.original && 'location' in row.original && `${row.original.location}`}</span>
+                                <CurrencyDollarIcon className="h-3 w-3 text-gray-400 mr-1" />
+                                <span className="text-xs text-gray-700">{row.original && 'salary' in row.original && `${row.original.salary}`}</span>
+                              </div>
+                            </div>
                           </div>
-                        ) : null
-                      }
+                        </>
+                      ) : (
+                        i === 3 && 'url' in row.original ? (
+                          <a href={row.original.url as string} target="_blank" rel="noopener noreferrer">
+                            <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Apply</button>
+                          </a>
+                        ) : (
+                          // Render other cells here
+                          <>{flexRender(cell.column.columnDef.cell, cell.getContext())}</>
+                        )
+                      )}
                     </td>
                   ))}
                 </tr>
               </>
             ))}
           </tbody>
+
+
         </table>
       </div>
       <div className="flex justify-between mt-10 focus:outline-maroon">

@@ -1,25 +1,51 @@
-function JobList() {
-    const companies = ["Amazon", "Facebook", "Meta", "Microsoft", "UMass Amherst"];
-    const positions = ["Software Engineer", "Software Engineer", "Software Engineer", "Software Engineer", "Dish Washer"];
+import React from 'react';
+import { DataTable } from './DataTable';
 
-    return (
-        <div className="flex flex-col items-center justify-center my-4">
-            {companies.map((company, id) => (
-                <div className="flex items-center justify-between w-full max-w-4xl bg-white p-5 my-5 rounded-lg border-2 border-green-500">
-                    <div className="flex items-center">
-                        <div className="h-16 w-16 bg-white rounded-full overflow-hidden shadow-lg">
-                            <img src="#" alt="" className="w-full h-full object-cover" />
-                        </div>
-                        <div className="ml-5">
-                            <span className="block font-semibold text-lg">{company}</span>
-                            <p className="text-sm">{positions[id]}</p>
-                        </div>
-                    </div>
-                    <a href="#" className="px-4 py-2 rounded-full bg-green-500 text-white transition duration-300 ease-in-out hover:bg-green-600">Apply</a>
-                </div>
-            ))}
-        </div>
-    );
+interface Job {
+  id: number;
+  position: string;
+  company: string;
+  companyIcon?: string;
+  location: string;
+  salary: number;
+  appliedDate: string;
+  status: "Opening" | "Closed";
+  url: string;
 }
+
+const JobList: React.FC = () => {
+  const jobs: Job[] = Array.from({ length: 100 }).map((_, i) => ({
+    id: i,
+    position: `Position ${i}`,
+    company: `Company ${i}`,
+    companyIcon: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Amazon_icon.svg",
+    location: `City ${i}, State ${i}`,
+    salary: (i + 1) * 10000,
+    appliedDate: "May 15, 2024",
+    status: "Opening",
+    url: "https://umassdining.com/student-jobs",
+  }));
+
+  const columns = [
+    {
+      accessorKey: 'name',
+      header: 'Job',
+      render: (data: Job) => (
+        <>
+          <div>{data.position}</div>
+          <div>{data.company}</div>
+          <div>{data.companyIcon}</div>
+          <div>{data.location}</div>
+          <div>{data.salary}</div>
+        </>
+      )
+    },
+    { accessorKey: 'appliedDate', header: 'Date Applied' },
+    { accessorKey: 'status', header: 'Status' },
+    { accessorKey: 'url', header: 'Action' },
+  ];
+
+  return <DataTable columns={columns} data={jobs} />;
+};
 
 export default JobList;
