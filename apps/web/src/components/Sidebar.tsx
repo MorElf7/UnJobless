@@ -56,13 +56,17 @@ const Sidebar: React.FC = () => {
           </button>
         </div>
         <div className="border-t flex p-3">
-          <img src={process.env.PUBLIC_URL + "user.jpg"} className="w-10 h-10 rounded-md" alt="Profile" />
+          <Link to="/profile">
+            <img src={process.env.PUBLIC_URL + "user.jpg"} className="w-10 h-10 rounded-md" alt="Profile" />
+          </Link>
           <div className={`flex justify-between items-center overflow-hidden transition-all ${expanded ? "w-48 ml-3" : "w-0"} `}>
-            <div className="leading-4">
+            <Link to="/profile" className="leading-4">
               <h4 className="font-semibold">Real Name</h4>
               <span className="text-xs text-gray-600">realname@example.com</span>
-            </div>
-            <LogOut size={20} strokeWidth={2} />
+            </Link>
+            <Link to="/">
+              <LogOut size={20} strokeWidth={2} />
+            </Link>
           </div>
         </div>
       </nav>

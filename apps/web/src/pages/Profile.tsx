@@ -79,6 +79,7 @@ export const Profile = () => {
                 {editMode ? (
                     // ----------------------------------EDIT MODE----------------------------------
                     <div className="grid grid-cols-4 sm:grid-cols-12 gap-6 px-4">
+                        {/* --------------------Info Card-------------------- */}
                         <div className="col-span-4 sm:col-span-3">
                             <div className="bg-white shadow rounded-lg p-6">
                                 <div className="flex flex-col items-center">
@@ -98,12 +99,14 @@ export const Profile = () => {
                                 <label>Username</label>
                                 <input name="username" value={profile.username} onChange={handleFieldChange} className="mb-4 w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none" placeholder="Username" />
                                 <label>Password</label>
-                                <input name="password" value={profile.password} onChange={handleFieldChange} className="mb-4 w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none" placeholder="Password" />
+                                <input type="password" name="password" value={profile.password} onChange={handleFieldChange} className="mb-4 w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none" placeholder="Password" />
                             </div>
                             <div className="mt-6 flex flex-wrap gap-4 justify-center">
                                 <button onClick={handleSaveClick} className="mb-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Save</button>
                             </div>
                         </div>
+
+                        {/* --------------------Achievement Card-------------------- */}
                         <div className="col-span-4 sm:col-span-9">
                             <div className="bg-white shadow rounded-lg p-6">
                                 <h2 className="text-xl font-bold mb-4">About Me</h2>
@@ -178,6 +181,7 @@ export const Profile = () => {
                 ) : (
                     // ----------------------------------VIEW MODE----------------------------------
                     <div className="grid grid-cols-4 sm:grid-cols-12 gap-6 px-4">
+                        {/* --------------------Info Card-------------------- */}
                         <div className="col-span-4 sm:col-span-3">
                             <div className="bg-white shadow rounded-lg p-6">
                                 <div className="flex flex-col items-center">
@@ -193,13 +197,15 @@ export const Profile = () => {
                                 <hr className="mt-4 mb-6 border-t border-gray-300" />
                                 <div className="flex flex-col text-gray-700">
                                     <p>Username: {profile.username}</p>
-                                    <p className="mt-3">Password: {profile.password}</p>
+                                    <p className="mt-3">Password: {Array(profile.password.length).fill("\u2022").join('')}</p>
                                 </div>
                             </div>
                             <div className="mt-6 flex flex-wrap gap-4 justify-center">
                                 <button onClick={handleEditClick} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Edit</button>
                             </div>
                         </div>
+
+                        {/* --------------------Achievement Card-------------------- */}
                         <div className="col-span-4 sm:col-span-9">
                             <div className="bg-white shadow rounded-lg p-6">
                                 <h2 className="text-xl font-bold mb-4">About Me</h2>
