@@ -37,7 +37,6 @@ var PROFILE = {
     sponsorship: "",
     legally_authorized: "",
     gender : "",
-    hispanic_eth: "",
     race: "",
     veteran: "",
     disability: "",
@@ -63,8 +62,7 @@ var TEST_PROFILE = {
     sponsorship: "Yes",
     legally_authorized: "Yes",
     gender: "Male",
-    hispanic_eth: "No",
-    race: "Asian",
+    race: "Southeast Asian",
     veteran: "No",
     disability: "No",
 }

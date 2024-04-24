@@ -1,4 +1,4 @@
-import { tryInput, selectOptionByPartialText } from "@root/utils/utils";
+import { tryInput, selectOptionByPartialText, selectOptionByValue, existQuery, emptyFilter, hispanicFilter, ethnicFilter, selectCheckBoxByPartialText, genderFilter, selectCheckBoxByValue } from "@root/utils/utils";
 
 
 const greenHouse = (profile) => {
@@ -21,9 +21,9 @@ const greenHouse = (profile) => {
 
             if (select instanceof HTMLSelectElement && label) {
                 if (/Will you now or in the future require sponsorship/i.test(label)) {
-                    selectOptionByPartialText(select, profile.sponsorship);
+                    selectOptionByPartialText(select, profile.sponsorship, emptyFilter);
                 } else if (/legally authorized/i.test(label)) {
-                    selectOptionByPartialText(select, profile.legally_authorized);
+                    selectOptionByPartialText(select, profile.legally_authorized, emptyFilter);
                 }
             } else if (input instanceof HTMLInputElement && label) {
                 if (/linkedin profile/i.test(label) || /linkedin/i.test(label)) {
@@ -37,15 +37,31 @@ const greenHouse = (profile) => {
                 console.error("No input or select found for field:", label || "Unknown Label");
             }
         });
-    } else {
-        console.error("Custom fields element not found");
-    }
+    } 
     // process eeoc_fields
-    selectOptionByPartialText(document.querySelector("select[id='job_application_gender']"), profile.gender);
-    selectOptionByPartialText(document.querySelector("select[id='job_application_hispanic_ethnicity']"), profile.hispanic_eth);
-    selectOptionByPartialText(document.querySelector("select[id='job_application_race']"), profile.race);
-    selectOptionByPartialText(document.querySelector("select[id='job_application_veteran_status']"), profile.veteran);
-    selectOptionByPartialText(document.querySelector("select[id='job_application_disability_status']"), profile.disability);
+    if (existQuery("div[id='eeoc_fields']")) {
+        selectOptionByValue(document.querySelector("select[id='job_application_gender']"), profile.gender, emptyFilter);
+        selectOptionByPartialText(document.querySelector("select[id='job_application_hispanic_ethnicity']"), profile.race, hispanicFilter);
+        selectOptionByPartialText(document.querySelector("select[id='job_application_race']"), profile.race, ethnicFilter);
+        selectOptionByPartialText(document.querySelector("select[id='job_application_veteran_status']"), profile.veteran, emptyFilter);
+        selectOptionByPartialText(document.querySelector("select[id='job_application_disability_status']"), profile.disability, emptyFilter);
+    }else if (existQuery("div[id='demographic_questions']")) {
+        const demographics = document.querySelectorAll("div[class='field demographic_question ']");
+        demographics.forEach((demo : HTMLDivElement) => {
+            const question = demo.textContent;
+            if (/gender identity/i.test(question)) {
+                selectCheckBoxByValue(demo, profile.gender, genderFilter);
+            } else if (/racial/i.test(question)) {
+                selectCheckBoxByPartialText(demo, profile.race, emptyFilter);
+            } else if (/veteran/i.test(question)) {
+                selectCheckBoxByPartialText(demo, profile.veteran, emptyFilter);
+            } else if (/disability/i.test(question)) {
+                selectCheckBoxByPartialText(demo, profile.disability, emptyFilter);
+            } 
+            
+        });
+
+    }
 }
 
 export { greenHouse };
