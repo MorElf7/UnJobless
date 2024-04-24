@@ -13,4 +13,4 @@ import { Application, ApplicationSchema } from '../schemas/application.schema';
   controllers: [ApplicationController],
   providers: [ApplicationService],
 })
-export class UserModule {}
+export class ApplicationModule {}
