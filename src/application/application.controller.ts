@@ -12,6 +12,7 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApplicationService } from './application.service';
 import { Application } from '../schemas/application.schema';
 import { CreateApplicationDto, UpdateApplicationDto } from './application.dto';
+import { title } from 'process';
 
 @ApiTags('application')
 @Controller('application')
@@ -28,15 +29,18 @@ export class ApplicationController {
   @ApiBody({
     schema: {
       properties: {
-        name: { type: 'string' },
-        description: { type: 'string' },
+        uid: { type: 'number' },
         status: { type: 'string' },
+        title: { type: 'string' },
+        company: { type: 'string' },
+        resume: { type: 'string' },
       },
     },
   })
   async create(
     @Body() createApplicationDto: CreateApplicationDto,
   ): Promise<Application> {
+    // account for errors
     return this.applicationService.create(createApplicationDto);
   }
 
@@ -57,13 +61,6 @@ export class ApplicationController {
     status: 200,
     description: 'The application details',
     type: Application,
-  })
-  @ApiBody({
-    schema: {
-      properties: {
-        uid: { type: 'string' },
-      },
-    },
   })
   async findOne(@Param('uid') uid: string): Promise<Application> {
     return this.applicationService.findOne(uid);

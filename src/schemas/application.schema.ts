@@ -4,13 +4,20 @@ import { HydratedDocument } from 'mongoose';
 
 export type ApplicationDocument = HydratedDocument<Application>;
 
+export enum ApplicationStatus {
+  Applied = 'applied',
+  Interviewing = 'interviewing',
+  Offer = 'offer',
+  Rejected = 'rejected',
+}
+
 @Schema()
 export class Application {
   @Prop()
-  uid: string;
+  aid: string;
 
   @Prop()
-  aid: string;
+  uid: number;
 
   @Prop()
   title: string;
@@ -18,22 +25,20 @@ export class Application {
   @Prop()
   company: string;
 
-  @Prop()
+  @Prop({ default: Date.now })
   appliedDate: Date;
 
-  @Prop()
-  status: string;
+  // status: applied, interviewing, offer, rejected
+  @Prop({ enum: ApplicationStatus })
+  status: ApplicationStatus;
 
   @Prop()
   notes: string;
 
   @Prop()
-  image: string;
+  resume: string;
 
-  @Prop()
-  createdAt: Date;
-
-  @Prop()
+  @Prop({ default: Date.now })
   updatedAt: Date;
 }
 
