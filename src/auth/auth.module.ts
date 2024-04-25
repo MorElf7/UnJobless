@@ -8,10 +8,13 @@ import { APP_GUARD } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from '../schemas/user.schema';
 import { Application, ApplicationSchema } from '../schemas/application.schema';
+import { UserModule } from 'src/user/user.module';
+import { ApplicationModule } from 'src/application/application.module';
 
 @Module({
   imports: [
-    // UsersModule,
+    UserModule,
+    ApplicationModule,
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MongooseModule.forFeature([
       { name: Application.name, schema: ApplicationSchema },
@@ -23,11 +26,11 @@ import { Application, ApplicationSchema } from '../schemas/application.schema';
     }),
   ],
   providers: [
+    AuthService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
-    AuthService,
   ],
   controllers: [AuthController],
 })

@@ -1,4 +1,3 @@
-// import { Req } from '@nestjs/common';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
@@ -9,26 +8,29 @@ export class User {
   @Prop()
   uid: string;
 
-  @Prop()
+  @Prop({ required: true })
   email: string;
 
-  @Prop()
+  @Prop({ required: true })
+  password: string;
+
+  @Prop({ required: true })
   firstName: string;
 
-  @Prop()
+  @Prop({ required: true })
   lastName: string;
 
   @Prop()
   contact: string;
 
-  @Prop()
+  @Prop({ required: true })
   resume: string;
 
   @Prop()
   links: string;
 
-  @Prop()
-  classExperience: [
+  @Prop({ required: true })
+  Experience: [
     {
       title: string;
       description: string;
@@ -38,8 +40,8 @@ export class User {
     },
   ];
 
-  @Prop()
-  classEducation: [
+  @Prop({ required: true })
+  Education: [
     {
       title: string;
       description: string;

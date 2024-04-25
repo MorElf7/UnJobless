@@ -8,11 +8,17 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ApplicationService } from './application.service';
 import { Application } from '../schemas/application.schema';
 import { CreateApplicationDto, UpdateApplicationDto } from './application.dto';
-import { title } from 'process';
 
 @ApiTags('application')
 @Controller('application')
@@ -21,6 +27,8 @@ export class ApplicationController {
 
   @Post()
   @ApiOperation({ summary: 'Create Application' })
+  @ApiBearerAuth('access-token')
+  @ApiConsumes('application/json')
   @ApiResponse({
     status: 201,
     description: 'The application has been successfully created.',
@@ -57,6 +65,8 @@ export class ApplicationController {
 
   @Get(':uid')
   @ApiOperation({ summary: 'Get Application by UID' })
+  @ApiBearerAuth('access-token')
+  @ApiConsumes('application/json')
   @ApiResponse({
     status: 200,
     description: 'The application details',
@@ -68,6 +78,8 @@ export class ApplicationController {
 
   @Put(':uid')
   @ApiOperation({ summary: 'Update Application' })
+  @ApiBearerAuth('access-token')
+  @ApiConsumes('application/json')
   @ApiResponse({
     status: 200,
     description: 'The application has been successfully updated.',
@@ -82,6 +94,8 @@ export class ApplicationController {
 
   @Delete(':uid')
   @ApiOperation({ summary: 'Delete Application' })
+  @ApiBearerAuth('access-token')
+  @ApiConsumes('application/json')
   @ApiResponse({
     status: 200,
     description: 'The application has been successfully deleted.',

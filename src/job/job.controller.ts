@@ -1,7 +1,7 @@
 // user.controller.ts
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UserService } from './user.service';
+import { UserService } from './job.service';
 import { User } from '../schemas/user.schema';
 
 @ApiTags('users')
