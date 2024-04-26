@@ -1,29 +1,28 @@
-// user.controller.ts
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UserService } from './job.service';
-import { User } from '../schemas/user.schema';
+import { JobService } from './job.service';
+import { Job } from '../schemas/job.schema';
 
-@ApiTags('users')
-@Controller('users')
-export class UserController {
-  constructor(private readonly userService: UserService) {}
+@ApiTags('jobs')
+@Controller('jobs')
+export class JobController {
+  constructor(private readonly jobService: JobService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create user' })
+  @ApiOperation({ summary: 'Create job' })
   @ApiResponse({
     status: 201,
-    description: 'The user has been successfully created.',
+    description: 'The job has been successfully created.',
   })
-  async create(@Body() createUserDto: any) {
-    this.userService.create(createUserDto);
+  async create(@Body() createJobDto: any) {
+    this.jobService.create(createJobDto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'List users' })
-  @ApiResponse({ status: 200, description: 'List of users', type: [User] })
-  async findAll(): Promise<User[]> {
-    return this.userService.findAll();
+  @ApiOperation({ summary: 'List jobs' })
+  @ApiResponse({ status: 200, description: 'List of jobs', type: [job] })
+  async findAll(): Promise<Job[]> {
+    return this.jobService.findAll();
   }
   // Add the rest of the CRUD operations...
 }

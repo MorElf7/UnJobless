@@ -1,24 +1,24 @@
-// user.service.ts
+// Job.service.ts
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from '../schemas/user.schema';
+import { Job } from '../schemas/job.schema';
 
 @Injectable()
-export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+export class JobService {
+  constructor(@InjectModel(Job.name) private JobModel: Model<Job>) {}
 
-  async create(createUserDto: any): Promise<User> {
-    const createdUser = new this.userModel(createUserDto);
-    return createdUser.save();
+  async create(createJobDto: any): Promise<Job> {
+    const createdJob = new this.JobModel(createJobDto);
+    return createdJob.save();
   }
 
-  async findAll(): Promise<User[]> {
-    return this.userModel.find().exec();
+  async findAll(): Promise<Job[]> {
+    return this.JobModel.find().exec();
   }
 
-  async findOne(uid: string): Promise<User> {
-    return this.userModel.findOne({
+  async findOne(uid: string): Promise<Job> {
+    return this.JobModel.findOne({
       uid: uid,
     });
   }
