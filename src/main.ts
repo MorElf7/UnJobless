@@ -8,6 +8,11 @@ async function bootstrap() {
     .setTitle('Unjobless')
     .setDescription('The Unjobless API')
     .setVersion('1.0')
+    .addTag('unjobless')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'access-token',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document, {

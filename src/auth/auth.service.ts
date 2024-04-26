@@ -9,13 +9,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { User, UserDocument } from 'src/schemas/user.schema';
-// import { UserService } from 'src/user/user.service';
 import {
   Application,
   ApplicationDocument,
 } from 'src/schemas/application.schema';
 import { CreateUserDto } from 'src/user/user.dto';
-// import { Job, JobDocument } from 'src/schemas/job.schema';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -63,26 +61,26 @@ export class AuthService {
     }
   }
 
-  async signIn(email: string, password: string): Promise<any> {
-    // const user = await this.usersService.findOne(username);
-    let user;
-    try {
-      user = await this.findOneUser(email);
-    } catch (e) {
-      console.log(e);
-      throw new UnauthorizedException();
+  async signIn(
+    email: string,
+    password: string,
+  ): Promise<{ access_token: string }> {
+    const user = await this.userModel.findOne({ email: email });
+    if (!user) {
+      throw new UnauthorizedException('Invalid email or password');
     }
-    // console.log(user, user.password, password)
-    if (user.password !== password) {
-      console.log(user.password, password);
-      throw new UnauthorizedException();
+
+    const isPasswordMatching = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatching) {
+      throw new UnauthorizedException('Invalid email or password');
     }
+
     const payload = {
-      username: user.name,
       email: user.email,
-      name: user.name,
-      id: user['_id'],
+      id: user._id,
+      name: user.firstName + ' ' + user.lastName,
     };
+
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
@@ -94,5 +92,16 @@ export class AuthService {
       throw new NotFoundException(`User with email ${email} not found`);
     }
     return user;
+  }
+
+  async findOneUserById(@Param('id') id: string): Promise<User> {
+    const user = await this.userModel.findById(id).exec();
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    return user;
+  }
+  async findAllUsers(): Promise<User[]> {
+    return this.userModel.find({}, { password: 0 }).exec();
   }
 }

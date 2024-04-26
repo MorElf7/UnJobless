@@ -19,6 +19,7 @@ import {
 import { ApplicationService } from './application.service';
 import { Application } from '../schemas/application.schema';
 import { CreateApplicationDto, UpdateApplicationDto } from './application.dto';
+import { Public } from 'src/auth/constants';
 
 @ApiTags('application')
 @Controller('application')
@@ -54,6 +55,8 @@ export class ApplicationController {
 
   @Get()
   @ApiOperation({ summary: 'List All Applications' })
+  @Public()
+  @ApiBearerAuth('access-token')
   @ApiResponse({
     status: 200,
     description: 'List of applications',

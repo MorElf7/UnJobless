@@ -1,3 +1,4 @@
+// job.controller.ts
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JobService } from './job.service';
@@ -20,7 +21,7 @@ export class JobController {
 
   @Get()
   @ApiOperation({ summary: 'List jobs' })
-  @ApiResponse({ status: 200, description: 'List of jobs', type: [job] })
+  @ApiResponse({ status: 200, description: 'List of jobs', type: [Job] })
   async findAll(): Promise<Job[]> {
     return this.jobService.findAll();
   }

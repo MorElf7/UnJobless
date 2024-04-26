@@ -49,3 +49,10 @@ export class AuthGuard implements CanActivate {
     return type === 'Bearer' ? token : undefined;
   }
 }
+
+@Injectable()
+export class NoOpGuard implements CanActivate {
+  canActivate(): boolean {
+    return true; // always allow access
+  }
+}

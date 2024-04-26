@@ -26,7 +26,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.CREATED) // Use CREATED status code for successful registration
   @Public()
-  @Post('signup')
+  @Post('sign-up')
   @ApiConsumes('application/json')
   @ApiOperation({ summary: 'User registration' })
   @ApiResponse({
@@ -53,13 +53,19 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   @HttpCode(HttpStatus.OK)
   @Public()
-  @Post('signin')
+  @Post('sign-in')
   @ApiConsumes('application/json')
+  @ApiOperation({ summary: 'User sign-in' })
+  @ApiResponse({
+    status: 200,
+    description: 'Access token provided on successful authentication',
+  })
   @ApiBody({
     schema: {
+      type: 'object',
       properties: {
-        email: { type: 'string' },
-        password: { type: 'string' },
+        email: { type: 'string', example: 'user@example.com' },
+        password: { type: 'string', example: 'securePassword123!' },
       },
     },
   })
@@ -67,10 +73,31 @@ export class AuthController {
     return this.authService.signIn(signInDto.email, signInDto.password);
   }
 
+  //get all users
+  @UseGuards(AuthGuard)
+  @Get('users')
+  @Public()
+  @ApiOperation({ summary: 'List All Users' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of users',
+  })
+  async findAll(): Promise<CreateUserDto[]> {
+    return this.authService.findAllUsers();
+  }
+
   @UseGuards(AuthGuard)
   @ApiBearerAuth('access-token')
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('access-token')
+  @Get('logout')
+  async logout(@Request() req) {
+    req.logout();
+    return 'Logged out';
   }
 }
