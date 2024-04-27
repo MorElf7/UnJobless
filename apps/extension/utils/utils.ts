@@ -12,6 +12,20 @@ export const tryInput = (selector: string, value: string) => {
         console.log(`Selector ${selector} not found`);
     }
 }
+export const tryTextArea = (selector: string, value: string) => {
+    if (existQuery(selector)) {
+        (document.querySelector(selector) as HTMLElement).innerText = value;
+    } else {
+        console.log(`Selector ${selector} not found`);
+    }
+}
+export const tryTextArea = (selector: string, value: string) => {
+    if (existQuery(selector)) {
+        (document.querySelector(selector) as HTMLElement).innerText = value;
+    } else {
+        console.log(`Selector ${selector} not found`);
+    }
+}
 
 export const selectOptionByPartialText = (selectElement: HTMLSelectElement, text: string, filter: (value: string) => string) => {
     const options = selectElement.options;
