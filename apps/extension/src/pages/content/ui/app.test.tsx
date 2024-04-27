@@ -8,7 +8,7 @@ describe('appTest', () => {
     const text = 'content view';
 
     // when
-    render(<App />);
+    render(<App type = {0}/>);
 
     // then
     screen.getByText(text);

@@ -15,7 +15,12 @@ const manifest = {
   name: '__MSG_extensionName__',
   version: packageJson.version,
   description: '__MSG_extensionDescription__',
-  permissions: ['storage'],
+  permissions: [
+    "storage", 
+    "tabs", 
+    "activeTab", 
+    "background"
+  ],
   // side_panel: {
   //   default_path: 'src/pages/sidepanel/index.html',
   // },
@@ -49,7 +54,14 @@ const manifest = {
   devtools_page: 'src/pages/devtools/index.html',
   web_accessible_resources: [
     {
-      resources: ['assets/js/*.js', 'assets/css/*.css', 'icon-128.png', 'icon-34.png'],
+      resources: [
+        'assets/js/*.js', 
+        'assets/css/*.css', 
+        'icon-128.png', 
+        'icon-34.png', 
+        'Chevron_up.svg',
+        'logo.svg'
+      ],
       matches: ['*://*/*'],
     },
   ],

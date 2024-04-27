@@ -5,14 +5,17 @@ export const existQuery = (selector: string) => {
 
 export const tryInput = (selector: string, value: string) => {
     if (existQuery(selector)) {
-        document.querySelector(selector).setAttribute('value', value);
+        const element = document.querySelector(selector);
+        element.scrollIntoView();
+        element.setAttribute('value', value);
     } else {
         console.log(`Selector ${selector} not found`);
     }
 }
 
-export const selectOptionByPartialText = (selectElement: HTMLSelectElement, text: string, filter) => {
+export const selectOptionByPartialText = (selectElement: HTMLSelectElement, text: string, filter: (value: string) => string) => {
     const options = selectElement.options;
+    (selectElement.parentNode as HTMLElement).scrollIntoView();
     let matched = false;
     for (let option of options) {
         if (option && option.text.trim().toLowerCase().includes(filter(text).toLowerCase())) {
@@ -28,8 +31,9 @@ export const selectOptionByPartialText = (selectElement: HTMLSelectElement, text
     }
 }
 
-export const selectOptionByValue = (selectElement: HTMLSelectElement, text: string, filter) => {
+export const selectOptionByValue = (selectElement: HTMLSelectElement, text: string, filter: (value: string) => string) => {
     const options = selectElement.options;
+    (selectElement.parentNode as HTMLElement).scrollIntoView();
     let matched = false;
     for (let option of options) {
         if (option && option.text.trim().toLowerCase() === filter(text).toLowerCase()) {
@@ -45,8 +49,9 @@ export const selectOptionByValue = (selectElement: HTMLSelectElement, text: stri
     }
 }
 
-export const selectCheckBoxByPartialText = (div: HTMLDivElement, text: string, filter) => {
+export const selectCheckBoxByPartialText = (div: HTMLDivElement, text: string, filter: (value: string) => string) => {
     const checkboxs = div.querySelectorAll("label");
+    div.scrollIntoView();
     checkboxs.forEach((checkbox: HTMLLabelElement) => {
         if (checkbox && checkbox.innerText.trim().toLowerCase().includes(filter(text).toLowerCase())) {
             checkbox.querySelector("input").click();
@@ -54,8 +59,9 @@ export const selectCheckBoxByPartialText = (div: HTMLDivElement, text: string, f
     });
 }
 
-export const selectCheckBoxByValue = (div: HTMLDivElement, text: string, filter) => {
+export const selectCheckBoxByValue = (div: HTMLDivElement, text: string, filter: (value: string) => string) => {
     const checkboxs = div.querySelectorAll("label");
+    div.scrollIntoView();
     checkboxs.forEach((checkbox: HTMLLabelElement) => {
         if (checkbox && checkbox.innerText.trim().toLowerCase() === filter(text).toLowerCase()) {
             checkbox.querySelector("input").click();
