@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import{ greenHouse } from './greenhouse';
 import { ChakraProvider, Box, Image, Text, Button, VStack, CloseButton, IconButton, TabPanel, Tab, Tabs, TabList, TabPanels, Icon, UnorderedList, ListItem, Spacer, Flex } from '@chakra-ui/react';
+import { workday } from './workday';
 
 
 const Popup = ({ type }) => {
@@ -62,6 +63,7 @@ const Popup = ({ type }) => {
                 setTimeout(() => setLoading(false), greenHouse(profile));
                 break;
             case 1:
+                workday(profile);
                 // Implement case 1 logic
                 break;
             default:

@@ -9,9 +9,8 @@ export default function App({ type }) {
     //     console.log("The input field with ID 'email' exists.");
     //     type = 0;
     //   }
-    // }; 
+    // };
   }, []);
 
-
-  return  <Popup type={type} />;
+  return <Popup type={type} />;
 }
