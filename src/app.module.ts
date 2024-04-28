@@ -6,11 +6,13 @@ import { UserModule } from './user/user.module';
 import { MONGO_SECRET } from 'config/index';
 import { ApplicationModule } from './application/application.module';
 import { AuthModule } from './auth/auth.module';
+import { JobModule } from './job/job.module';
 
 @Module({
   imports: [
     UserModule,
     ApplicationModule,
+    JobModule,
     AuthModule,
     MongooseModule.forRoot(MONGO_SECRET),
   ],
