@@ -8,12 +8,15 @@ export const existQuery = (selector: string) => {
 export const tryInput = (selector: string, value: string) => {
   if (existQuery(selector)) {
     const element = document.querySelector(selector);
-    element.scrollIntoView();
-    element.setAttribute('value', value);
+    if (element) {
+      element.scrollIntoView();
+      element.setAttribute('value', value);
+    }
   } else {
     console.log(`Selector ${selector} not found`);
   }
 };
+
 export const tryTextArea = (selector: string, value: string) => {
   if (existQuery(selector)) {
     (document.querySelector(selector) as HTMLElement).innerText = value;
