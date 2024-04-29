@@ -1,18 +1,11 @@
-// dtos/create-application.dto.ts
-import { IsDateString, IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsDateString, IsOptional, IsString, IsMongoId } from 'class-validator';
 
 export class CreateApplicationDto {
-  @IsString()
+  @IsMongoId()
   readonly uid: string;
 
-  @IsString()
-  readonly aid: string;
-
-  @IsString()
-  readonly title: string;
-
-  @IsString()
-  readonly company: string;
+  @IsMongoId()
+  readonly jid: string;
 
   @IsDateString()
   readonly appliedDate: Date;
@@ -24,26 +17,11 @@ export class CreateApplicationDto {
   @IsString()
   readonly notes?: string;
 
-  @IsOptional()
-  @IsUrl()
-  readonly image?: string;
-
-  @IsDateString()
-  readonly createdAt: Date;
-
-  @IsDateString()
-  readonly updatedAt: Date;
+  @IsString()
+  readonly resume: string;
 }
 
 export class UpdateApplicationDto {
-  @IsOptional()
-  @IsString()
-  readonly title?: string;
-
-  @IsOptional()
-  @IsString()
-  readonly company?: string;
-
   @IsOptional()
   @IsDateString()
   readonly appliedDate?: Date;
@@ -57,8 +35,8 @@ export class UpdateApplicationDto {
   readonly notes?: string;
 
   @IsOptional()
-  @IsUrl()
-  readonly image?: string;
+  @IsString()
+  readonly resume?: string;
 
   @IsOptional()
   @IsDateString()

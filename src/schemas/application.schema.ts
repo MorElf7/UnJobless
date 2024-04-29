@@ -13,23 +13,17 @@ export enum ApplicationStatus {
 
 @Schema()
 export class Application {
-  @Prop()
-  id: mongoose.Schema.Types.ObjectId;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  uid: mongoose.Schema.Types.ObjectId;
 
-  @Prop()
-  uid: number;
-
-  @Prop()
-  title: string;
-
-  @Prop()
-  company: string;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Job' })
+  jid: mongoose.Schema.Types.ObjectId;
 
   @Prop({ default: Date.now })
   appliedDate: Date;
 
   // status: applied, interviewing, offer, rejected
-  @Prop({ enum: ApplicationStatus })
+  @Prop({ enum: ApplicationStatus, default: ApplicationStatus.Applied })
   status: ApplicationStatus;
 
   @Prop()

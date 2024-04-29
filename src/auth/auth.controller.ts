@@ -93,11 +93,11 @@ export class AuthController {
     return req.user;
   }
 
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('access-token')
-  @Get('logout')
-  async logout(@Request() req) {
-    req.logout();
-    return 'Logged out';
-  }
+  // @UseGuards(AuthGuard)
+  // @ApiBearerAuth('access-token')
+  // @Get('logout')
+  // async logout(@Request() req) {
+  //   req.logout();
+  //   return 'Logged out';
+  // }
 }

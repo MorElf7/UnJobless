@@ -7,6 +7,8 @@ import {
   Param,
   Post,
   Put,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -20,6 +22,7 @@ import { ApplicationService } from './application.service';
 import { Application } from '../schemas/application.schema';
 import { CreateApplicationDto, UpdateApplicationDto } from './application.dto';
 import { Public } from 'src/auth/constants';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @ApiTags('application')
 @Controller('application')
@@ -35,28 +38,31 @@ export class ApplicationController {
     description: 'The application has been successfully created.',
     type: Application,
   })
+  @UseGuards(AuthGuard)
   @ApiBody({
     schema: {
       properties: {
-        uid: { type: 'number' },
-        status: { type: 'string' },
-        title: { type: 'string' },
-        company: { type: 'string' },
+        jid: { type: 'string' },
         resume: { type: 'string' },
+        notes: { type: 'string' },
       },
     },
   })
   async create(
+    @Req() req: any,
     @Body() createApplicationDto: CreateApplicationDto,
   ): Promise<Application> {
-    // account for errors
-    return this.applicationService.create(createApplicationDto);
+    const uid = req.user.id;
+    // Remove the assignment to the 'user' property
+    return this.applicationService.create({
+      ...createApplicationDto,
+      uid,
+    });
   }
 
   @Get()
   @ApiOperation({ summary: 'List All Applications' })
   @Public()
-  @ApiBearerAuth('access-token')
   @ApiResponse({
     status: 200,
     description: 'List of applications',
@@ -66,16 +72,31 @@ export class ApplicationController {
     return this.applicationService.findAll();
   }
 
-  @Get(':uid')
-  @ApiOperation({ summary: 'Get Application by UID' })
-  @ApiBearerAuth('access-token')
-  @ApiConsumes('application/json')
+  @Get(':jid')
+  @ApiOperation({ summary: 'List All Applications by job' })
+  @Public()
   @ApiResponse({
     status: 200,
-    description: 'The application details',
+    description: 'List of applications by job',
+    type: [Application],
+  })
+  // Add the 'jobId' query parameter
+  async findAppByJob(@Param('jid') jid: string): Promise<Application[]> {
+    return this.applicationService.findAppsByJob(jid);
+  }
+
+  @Get('me')
+  @ApiOperation({ summary: 'Get Application of this user' })
+  @ApiBearerAuth('access-token')
+  @ApiConsumes('application/json')
+  @UseGuards(AuthGuard)
+  @ApiResponse({
+    status: 200,
+    description: 'Applications by this user',
     type: Application,
   })
-  async findOne(@Param('uid') uid: string): Promise<Application> {
+  async findOne(@Req() req: any): Promise<Application> {
+    const uid = req.user.id;
     return this.applicationService.findOne(uid);
   }
 
