@@ -27,7 +27,6 @@ export class JobController {
         description: { type: 'string' },
         address: { type: 'string' },
         salary: { type: 'string' },
-        logo: { type: 'string' },
       },
     },
   })

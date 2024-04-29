@@ -4,7 +4,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Job } from '../schemas/job.schema';
 import { Cron, CronExpression } from '@nestjs/schedule';
-// import * as cheerio from 'cheerio';
 import {
   Scraper,
   Root,
@@ -17,10 +16,7 @@ import { CreateJobDto } from './job.dto';
 
 @Injectable()
 export class JobService {
-  constructor(@InjectModel(Job.name) private JobModel: Model<Job>) {
-    // this.jobsUrl =
-    //   'http://api.glassdoor.com/api/api.htm?v=1&format=json&t.p=120&t.k=fz6JLNDfgVs&action=employers&q=pharmaceuticals&userip=192.168.43.42&useragent=Mozilla/%2F4.0'; // Replace with actual API URL
-  }
+  constructor(@InjectModel(Job.name) private JobModel: Model<Job>) {}
 
   async create(createJobDto: CreateJobDto): Promise<Job> {
     const createdJob = new this.JobModel(createJobDto);
@@ -33,33 +29,19 @@ export class JobService {
     const getPageObject = (pageObject: any, pageAddress: any) => {
       pageObject.link = pageAddress;
       pageObject.datePosted = new Date();
-      // console.log(pageObject);
       pages.push(pageObject);
       // convert the pageObject to a Job object before saving
       const job = {
-        title: pageObject.title[0],
-        company: pageObject.company[0],
-        link: pageAddress,
-        image: pageObject.image[0],
-        description: pageObject.description[0],
-        address: pageObject.address[0],
-        salary: pageObject.salary[0],
-        logo: pageObject.logo[0],
+        title: pageObject.title[0] || '',
+        company: pageObject.company[0] || '',
+        link: pageAddress || '',
+        image: pageObject.logo[0] || '',
+        description: pageObject.description[0] || '',
+        address: pageObject.address[0] || '',
+        salary: pageObject.salary[0] || '',
       };
-      console.log(job);
       const createdJob = new this.JobModel(job);
       createdJob.save();
-      // this.create({
-      //   title: pageObject.title[0],
-      //   company: pageObject.company[0],
-      //   datePosted: new Date(),
-      //   link: pageAddress,
-      //   image: pageObject.image[0],
-      //   description: pageObject.description[0],
-      //   address: pageObject.address[0],
-      //   salary: pageObject.salary[0],
-      //   logo: pageObject.logo[0],
-      // });
     };
 
     const config = {
@@ -113,7 +95,6 @@ export class JobService {
     links.addOperation(description);
     links.addOperation(logo);
 
-    // console.log(logo.getData());
     await scraper.scrape(root);
     await fs.remove('./images');
     return pages;

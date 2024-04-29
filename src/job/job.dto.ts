@@ -25,7 +25,4 @@ export class CreateJobDto {
 
   @IsString()
   readonly salary: string;
-
-  @IsUrl()
-  readonly logo: string;
 }

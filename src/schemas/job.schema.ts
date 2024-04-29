@@ -13,32 +13,29 @@ export class Job {
   @Prop()
   applications: Application[];
 
-  @Prop()
+  @Prop({ default: '' })
   title: string;
 
-  @Prop()
+  @Prop({ default: '' })
   company: string;
 
   @Prop({ default: new Date() })
   datePosted: Date;
 
-  @Prop()
+  @Prop({ default: '' })
   link: string;
 
-  @Prop()
+  @Prop({ default: '' })
   image: string;
 
-  @Prop()
+  @Prop({ default: '' })
   description: string;
 
-  @Prop()
+  @Prop({ default: '' })
   address: string;
 
-  @Prop()
+  @Prop({ default: '' })
   salary: string;
-
-  @Prop()
-  logo: string;
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);
