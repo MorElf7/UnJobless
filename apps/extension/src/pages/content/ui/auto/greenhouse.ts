@@ -11,10 +11,8 @@ import { authorizedPattern, githubPattern, linkedInPattern, sponsorshipPattern, 
 const delaySpeed : number = 100;
 
 export class GreenHouseAutoFillManager extends AutoFillManager {
-    private eventEmitter: EventEmitter;
     constructor(eventEmitter: EventEmitter) {
-        super();
-        this.eventEmitter = eventEmitter;
+        super(eventEmitter);
     }
 
     private async handleIdentityFields(profile: Profile): Promise<void> {

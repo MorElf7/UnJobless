@@ -2,10 +2,8 @@ import { AutoFillManager, EventEmitter } from "./autoManager";
 import { Profile } from "@root/src/shared/typing/types";
 
 export class DefaultManager extends AutoFillManager{
-    private eventEmitter: EventEmitter;
     constructor(eventEmitter: EventEmitter) {
-        super();
-        this.eventEmitter = new EventEmitter();
+        super(eventEmitter);
     }
 
     fillIdentityFields(profile: Profile): void {
