@@ -1,15 +1,17 @@
 // DOM manipulation functions
+import { FileResponse } from "@root/src/shared/typing/types";
+
 export const existQuery = (selector: string) => {
     return document.querySelector(selector) !== null;
 }
 
 export const tryInput = (selector: string, value: string) => {
     if (existQuery(selector)) {
-        const element = document.querySelector(selector);
-        element.scrollIntoView();
-        element.setAttribute('value', value);
-    } else {
-        console.log(`Selector ${selector} not found`);
+        const element: HTMLElement | null = document.querySelector(selector);
+        if (element) {
+            element.scrollIntoView();
+            element.setAttribute('value', value);
+        }
     }
 }
 
@@ -53,8 +55,13 @@ export const selectCheckBoxByPartialText = (div: HTMLDivElement, text: string, f
     const checkboxs = div.querySelectorAll("label");
     div.scrollIntoView();
     checkboxs.forEach((checkbox: HTMLLabelElement) => {
-        if (checkbox && checkbox.innerText.trim().toLowerCase().includes(filter(text).toLowerCase())) {
-            checkbox.querySelector("input").click();
+        const input = checkbox.querySelector("input");
+        if (checkbox && input && checkbox.innerText.trim().toLowerCase().includes(filter(text).toLowerCase())) {
+            const wasChecked = input.checked;
+            input.checked = true; // Set the checkbox as checked
+            if (!wasChecked) { // If the checkbox was not previously checked
+                input.dispatchEvent(new Event('change', { bubbles: true, cancelable: true })); // Dispatch a change event
+            }
         }
     });
 }
@@ -63,8 +70,13 @@ export const selectCheckBoxByValue = (div: HTMLDivElement, text: string, filter:
     const checkboxs = div.querySelectorAll("label");
     div.scrollIntoView();
     checkboxs.forEach((checkbox: HTMLLabelElement) => {
-        if (checkbox && checkbox.innerText.trim().toLowerCase() === filter(text).toLowerCase()) {
-            checkbox.querySelector("input").click();
+        const input = checkbox.querySelector("input");
+        if (checkbox && input && checkbox.innerText.trim().toLowerCase() === filter(text).toLowerCase()) {
+            const wasChecked = input.checked;
+            input.checked = true; // Set the checkbox as checked
+            if (!wasChecked) { // If the checkbox was not previously checked
+                input.dispatchEvent(new Event('change', { bubbles: true, cancelable: true })); // Dispatch a change event
+            }
         }
     });
 }
@@ -115,3 +127,43 @@ export const hispanicFilter = (value: string) => {
     }
     return check_value;
 }
+
+export const attachFileToInput = async (
+    fileURL: string, 
+    fileInput: HTMLInputElement, 
+    fileName: string
+): Promise<boolean> => {
+    return new Promise((resolve) => {
+        if (!fileInput) {
+            resolve(false);
+            return;
+        }
+
+        chrome.runtime.sendMessage({
+            method: "getFile",
+            fileURL: fileURL,
+            name: fileName
+        }).then((response: FileResponse) => {
+            if (response.status !== 200) {
+                throw new Error(`Invalid file (status code was ${response.status}, not 200)`);
+            }
+            const byteArray = new Uint8Array(response.arrayBuffer);
+
+            const file = new File([byteArray], response.filename, {
+                type: response.type
+            });
+
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+
+            fileInput.files = dataTransfer.files;
+
+            fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+            resolve(true);
+        }).catch((error: Error) => {
+            fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+            resolve(false);
+        });
+    });
+};

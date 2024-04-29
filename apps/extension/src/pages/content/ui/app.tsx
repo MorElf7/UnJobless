@@ -1,17 +1,18 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Popup } from './Popup';
-import { existQuery } from '@root/utils/utils';
+import { PopupProps } from '@root/src/shared/typing/types';
 
-export default function App({ type }) {
+export default function App({ type } : PopupProps) {
+  const [addtional, setAdditional] = useState<any>({});
   useEffect(() => {
-    // window.onload = () => {
-    //   if (existQuery("input[id='email']")) {
-    //     console.log("The input field with ID 'email' exists.");
-    //     type = 0;
-    //   }
-    // }; 
+    const getAdditionalFields = async() => {
+      
+    }
   }, []);
 
 
-  return  <Popup type={type} />;
+  return  (
+    <div>
+      <Popup type={type} />
+    </div>);
 }

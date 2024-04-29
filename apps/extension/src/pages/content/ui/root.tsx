@@ -50,11 +50,20 @@ const renderApp = (type : number) => {
   );
 }
 
-window.onload = () => {
-    if (existQuery("input[id='email']")) {
-      console.log("The input field with ID 'email' exists.");
-      renderApp(0);
+// window.addEventListener('load', function() {
+const iFrame = document.querySelector("iframe[id='grnhse_iframe']") as HTMLIFrameElement | null;
+if (iFrame) {
+  iFrame.onload = () => {
+    const path = iFrame?.src;
+    if (path){
+      alert("The application is not supported in the iframe. Redirecting to the application page.")
+      window.open(path, '_blank');
     }
-  }; 
+  }
+}
+if (existQuery("input[id='email']")) {
+  renderApp(0);
+}
+// });
 // createRoot(rootIntoShadow).render(<App />);
 
