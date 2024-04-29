@@ -33,6 +33,7 @@
     "cheerio": "^1.0.0-rc.12",
     "class-validator": "^0.14.1",
     "cron": "^3.1.7",
+    "fs-extra": "^11.2.0",
     "indeed-scraper": "^3.1.4",
     "install": "^0.13.0",
     "mongoose": "^8.3.1",

@@ -3,8 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Job } from '../schemas/job.schema';
-// import { Cron, CronExpression } from '@nestjs/schedule';
-// import axios from 'axios';
+import { Cron, CronExpression } from '@nestjs/schedule';
 // import * as cheerio from 'cheerio';
 import {
   Scraper,
@@ -13,6 +12,7 @@ import {
   CollectContent,
   DownloadContent,
 } from 'nodejs-web-scraper';
+import * as fs from 'fs-extra';
 
 @Injectable()
 export class JobService {
@@ -26,6 +26,7 @@ export class JobService {
     return createdJob.save();
   }
 
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async scrapeData(): Promise<any> {
     const pages = [];
     const getPageObject = (pageObject: any, pageAddress: any) => {
@@ -54,8 +55,8 @@ export class JobService {
       },
     });
 
-    const jobAds = new OpenLinks('.row h2 a', {
-      name: 'Ad page',
+    const links = new OpenLinks('.row h2 a', {
+      name: 'link',
       getPageObject,
     });
 
@@ -75,19 +76,20 @@ export class JobService {
     });
 
     console.log(title);
-    root.addOperation(jobAds);
-    jobAds.addOperation(title);
-    jobAds.addOperation(companyName);
-    jobAds.addOperation(companyAddress);
-    jobAds.addOperation(salary);
-    jobAds.addOperation(desc);
-    jobAds.addOperation(logo);
+    root.addOperation(links);
+    links.addOperation(title);
+    links.addOperation(companyName);
+    links.addOperation(companyAddress);
+    links.addOperation(salary);
+    links.addOperation(desc);
+    links.addOperation(logo);
 
+    // console.log(logo.getData());
     await scraper.scrape(root);
+    await fs.remove('./images');
     return pages;
   }
 
-  // @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
 
   async findOne(uid: string): Promise<Job> {
     return this.JobModel.findOne({
