@@ -20,12 +20,19 @@ export class JobController {
     this.jobService.create(createJobDto);
   }
 
-  @Get()
+  @Get('scrape')
   @ApiOperation({ summary: 'List scraped jobs' })
   @Public()
   @ApiResponse({ status: 200, description: 'List of jobs', type: [Job] })
   // async findAll(): Promise<Job[]> {
   async findJobs(): Promise<any> {
     return this.jobService.scrapeData();
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'List jobs' })
+  @ApiResponse({ status: 200, description: 'List of jobs', type: [Job] })
+  async findAll(): Promise<Job[]> {
+    return this.jobService.findAll();
   }
 }

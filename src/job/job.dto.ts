@@ -1,13 +1,7 @@
-// dtos/create-application.dto.ts
-import { IsDateString, IsOptional, IsString, IsUrl } from 'class-validator';
+// dtos/create-job.dto.ts
+import { IsDateString, IsString, IsUrl } from 'class-validator';
 
 export class CreateJobDto {
-  @IsString()
-  readonly uid: string;
-
-  @IsString()
-  readonly aid: string;
-
   @IsString()
   readonly title: string;
 
@@ -15,22 +9,23 @@ export class CreateJobDto {
   readonly company: string;
 
   @IsDateString()
-  readonly appliedDate: Date;
+  readonly datePosted: Date;
 
-  @IsString()
-  readonly status: string;
-
-  @IsOptional()
-  @IsString()
-  readonly notes?: string;
-
-  @IsOptional()
   @IsUrl()
-  readonly image?: string;
+  readonly link: string;
 
-  @IsDateString()
-  readonly createdAt: Date;
+  @IsUrl()
+  readonly image: string;
 
-  @IsDateString()
-  readonly updatedAt: Date;
+  @IsString()
+  readonly description: string;
+
+  @IsString()
+  readonly address: string;
+
+  @IsString()
+  readonly salary: string;
+
+  @IsUrl()
+  readonly logo: string;
 }

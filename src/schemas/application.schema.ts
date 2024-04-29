@@ -1,6 +1,6 @@
 // Path: src/schemas/application.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 
 export type ApplicationDocument = HydratedDocument<Application>;
 
@@ -14,7 +14,7 @@ export enum ApplicationStatus {
 @Schema()
 export class Application {
   @Prop()
-  aid: string;
+  id: mongoose.Schema.Types.ObjectId;
 
   @Prop()
   uid: number;

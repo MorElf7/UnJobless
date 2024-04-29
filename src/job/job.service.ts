@@ -13,6 +13,7 @@ import {
   DownloadContent,
 } from 'nodejs-web-scraper';
 import * as fs from 'fs-extra';
+import { CreateJobDto } from './job.dto';
 
 @Injectable()
 export class JobService {
@@ -21,7 +22,7 @@ export class JobService {
     //   'http://api.glassdoor.com/api/api.htm?v=1&format=json&t.p=120&t.k=fz6JLNDfgVs&action=employers&q=pharmaceuticals&userip=192.168.43.42&useragent=Mozilla/%2F4.0'; // Replace with actual API URL
   }
 
-  async create(createJobDto: any): Promise<Job> {
+  async create(createJobDto: CreateJobDto): Promise<Job> {
     const createdJob = new this.JobModel(createJobDto);
     return createdJob.save();
   }
@@ -30,9 +31,22 @@ export class JobService {
   async scrapeData(): Promise<any> {
     const pages = [];
     const getPageObject = (pageObject: any, pageAddress: any) => {
-      pageObject.link = [pageAddress];
-      pageObject.datePosted = [new Date()];
+      pageObject.link = pageAddress;
+      pageObject.datePosted = new Date();
+      // console.log(pageObject);
       pages.push(pageObject);
+      // convert the pageObject to a Job object before saving
+      this.create({
+        title: pageObject.title[0],
+        company: pageObject.company[0],
+        datePosted: new Date(),
+        link: pageAddress,
+        image: pageObject.image[0],
+        description: pageObject.description[0],
+        address: pageObject.address[0],
+        salary: pageObject.salary[0],
+        logo: pageObject.logo[0],
+      });
     };
 
     const config = {
@@ -63,14 +77,16 @@ export class JobService {
     const title = new CollectContent('h1 .field--name-title', {
       name: 'title',
     });
-    const companyName = new CollectContent('.field__item a', {
-      name: 'companyName',
+    const company = new CollectContent('.field__item a', {
+      name: 'company',
     });
-    const companyAddress = new CollectContent('.company-address', {
-      name: 'companyAddress',
+    const address = new CollectContent('.company-address', {
+      name: 'address',
     });
     const salary = new CollectContent('.provided-salary', { name: 'salary' });
-    const desc = new CollectContent('.job-description p', { name: 'desc' });
+    const description = new CollectContent('.job-description p', {
+      name: 'description',
+    });
     const logo = new DownloadContent('.logo-wrapper-medium img', {
       name: 'logo',
     });
@@ -78,10 +94,10 @@ export class JobService {
     console.log(title);
     root.addOperation(links);
     links.addOperation(title);
-    links.addOperation(companyName);
-    links.addOperation(companyAddress);
+    links.addOperation(company);
+    links.addOperation(address);
     links.addOperation(salary);
-    links.addOperation(desc);
+    links.addOperation(description);
     links.addOperation(logo);
 
     // console.log(logo.getData());
@@ -90,6 +106,9 @@ export class JobService {
     return pages;
   }
 
+  async findAll(): Promise<Job[]> {
+    return this.JobModel.find();
+  }
 
   async findOne(uid: string): Promise<Job> {
     return this.JobModel.findOne({
