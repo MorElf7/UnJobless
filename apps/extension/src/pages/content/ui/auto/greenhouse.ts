@@ -18,15 +18,15 @@ export class GreenHouseAutoFillManager extends AutoFillManager {
     private async handleIdentityFields(profile: Profile): Promise<void> {
         let delayIndex = 0;
         await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
-        await tryInput("input[id='first_name']", profile.first_name);
+        tryInput("input[id='first_name']", profile.first_name);
         await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
-        await tryInput("input[id='last_name']", profile.last_name);
+        tryInput("input[id='last_name']", profile.last_name);
         await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
-        await tryInput("input[id='email']", profile.email);
+        tryInput("input[id='email']", profile.email);
         await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
-        await tryInput("input[id='phone']", profile.phone);
+        tryInput("input[id='phone']", profile.phone);
         await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
-        await tryInput("div[id='location_autocomplete_root'] input[id='auto_complete_input']", profile.street_address);
+        tryInput("div[id='location_autocomplete_root'] input[id='auto_complete_input']", profile.street_address);
     }
 
     private async handleUpload(profile: Profile): Promise<void> {

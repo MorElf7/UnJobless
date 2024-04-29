@@ -24,6 +24,10 @@ export type Profile = {
     disability: string;
 }
 
+export type AdditionType = {
+    [key: string]: [string, string];
+};
+
 export type PopupProps = {
     type: number;
 }
@@ -56,3 +60,12 @@ export type FileResponse = {
 export type EventListener<T> = {
     (data: T): void;
 }
+
+export type Response = {
+    [key: string]: any; 
+}
+
+export type Request = {
+    method: string;
+    [key: string]: any;
+  }

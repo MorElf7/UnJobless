@@ -1,7 +1,11 @@
-const findAdditionalFields = (type: number) => {
+import { combinedPattern } from "@root/src/shared/typing/constant";
+import { AdditionType } from "@root/src/shared/typing/types";
+
+export const findAdditionalFields = async (type: number) => {
     switch (type) {
-        case 1:
-            
+        case 0:
+            await findGreenhouse();
+            break;
         default:
             console.error("Not supported type")
     }
@@ -9,16 +13,19 @@ const findAdditionalFields = (type: number) => {
 //TODO: Add the following code to the content script
 const findGreenhouse = async () => {
     const customs = document.querySelectorAll('#custom_fields .field');
-    customs.forEach(async (field) => {
+    const addition : AdditionType = {};
+    customs.forEach(async (field, index) => {
         const label = field.querySelector('label')?.textContent;
         const input = field.querySelector('input:not([type="hidden"])') as HTMLInputElement | null;
-        const select = field.querySelector('select') as HTMLSelectElement | null;
+        const textarea = field.querySelector('textarea') as HTMLTextAreaElement | null;
 
-        // if (input) {
-        //     if (/linkedin profile/i.test(label || "") || /linkedin/i.test(label || "")) {
-        //     } else if (/github profile/i.test(label || "") || /github/i.test(label || "")) {
-        //     } else if (/website/i.test(label || "")) {
-        //     }
-        // } 
+        if ((input || textarea) && !combinedPattern.test(label || "")) {
+            addition[`value${index}`] = [label || "", ""];
+        }
     });
+    try {
+        chrome.runtime.sendMessage({ method: 'saveAddition' , addition: addition });
+    } catch (error) {
+        console.error('Error saving addition:', error);
+    }
 }

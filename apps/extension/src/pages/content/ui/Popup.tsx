@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { ChakraProvider, Box, Image, Text, Button, VStack, CloseButton, IconButton, TabPanel, Tab, Tabs, TabList, TabPanels, Icon, UnorderedList, ListItem, Spacer, Flex, Divider, Link } from '@chakra-ui/react';
-import { PopupProps, Profile } from '@root/src/shared/typing/types';
+import { AdditionType, PopupProps, Profile } from '@root/src/shared/typing/types';
 import { AutoFillManager, EventEmitter } from './auto/autoManager';
 import { defaultProfile } from '@root/src/shared/typing/constant';
 import { GreenHouseAutoFillManager } from './auto/greenhouse';
@@ -12,13 +12,11 @@ import ProfileActionButtons from './components/ProfileActionButtons';
 
 const Popup = ({ type } : PopupProps) => {
     const [profile, setProfile] = useState<Profile>(defaultProfile);
+    const [additionalFields, setAdditionalFields] = useState<AdditionType>({});
     const [loading, setLoading] = useState<boolean>(false);
     const [open, setOpen] = useState<boolean>(false);
     const [close, setClose] = useState<boolean>(false);
     const eventEmitter = new EventEmitter();
-
-
-    // let autoFillManager: AutoFillManager;
     const autoFillManager: AutoFillManager = useMemo(() => {
         switch (type) {
             case 0:
@@ -28,6 +26,9 @@ const Popup = ({ type } : PopupProps) => {
                 return new DefaultManager(eventEmitter);
         }
     }, [type]);
+
+
+
     useEffect(() => {
         const fetchProfile = async () => {
             try {
@@ -65,6 +66,33 @@ const Popup = ({ type } : PopupProps) => {
                 console.error('Failed to fetch profile:', error);
             }
         };
+        const fetchAdditionalFields = async () => {
+            try{
+                const getAddition = () => new Promise((resolve, reject) => {
+                    chrome.runtime.sendMessage({ method: "getAddition" }, (response) => {
+                        if (chrome.runtime.lastError) {
+                            reject(new Error(chrome.runtime.lastError.message));
+                        } else if (response) {
+                            resolve(response.addition);
+                        } else {
+                            reject(new Error("Failed to fetch additional fields."));
+                        }
+                    });
+                });
+
+                const additionalFields: AdditionType = await getAddition() as AdditionType;
+                if (additionalFields){
+                    setAdditionalFields(additionalFields);
+                }else{
+                    throw new Error("Failed to fetch additional fields.");
+                }
+            }catch (error) {
+                console.error('Failed to fetch additional fields:', error);
+            }
+        }
+
+
+        fetchAdditionalFields();
         fetchProfile();
     }, []);
 
@@ -188,7 +216,7 @@ const Popup = ({ type } : PopupProps) => {
                                     <TabPanel padding="3px 0px 5px 0px">
                                         <Box 
                                             width="100%"
-                                            maxHeight="45vh"
+                                            maxHeight="40vh"
                                             display="flex"
                                             overflowY="auto"
                                             borderRadius="lg"
@@ -367,7 +395,14 @@ const Popup = ({ type } : PopupProps) => {
                                     </TabPanel>
                                     <TabPanel>
                                         <VStack align="flex-start">
-                                            {/* Add functionality related content */}
+                                            {
+                                                Object.keys(additionalFields).length > 0 ? (
+                                                    <Text>Test1</Text>
+                                                ):(
+                                                    <Text>Test2</Text>
+                                                )
+                                            }
+                                            
                                         </VStack>
                                     </TabPanel>
                                 </TabPanels>

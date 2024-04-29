@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Popup } from './Popup';
 import { PopupProps } from '@root/src/shared/typing/types';
+import { findAdditionalFields } from './auto/additionalFields';
 
 export default function App({ type } : PopupProps) {
-  const [addtional, setAdditional] = useState<any>({});
   useEffect(() => {
-    const getAdditionalFields = async() => {
-      
-    }
+    const init = async () => {
+      await findAdditionalFields(type);
+    };
+    init();
   }, []);
 
 

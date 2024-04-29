@@ -162,6 +162,7 @@ export const attachFileToInput = async (
             fileURL: fileURL,
             name: fileName
         }).then((response: FileResponse) => {
+
             if (response.status !== 200) {
                 throw new Error(`Invalid file (status code was ${response.status}, not 200)`);
             }
@@ -177,7 +178,6 @@ export const attachFileToInput = async (
             fileInput.files = dataTransfer.files;
 
             fileInput.dispatchEvent(new Event('change', { bubbles: true }));
-
             resolve(true);
         }).catch((error: Error) => {
             fileInput.dispatchEvent(new Event('change', { bubbles: true }));

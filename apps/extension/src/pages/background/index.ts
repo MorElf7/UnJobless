@@ -1,6 +1,6 @@
 import reloadOnUpdate from 'virtual:reload-on-update-in-background-script';
 import 'webextension-polyfill';
-import { Education, Experience, FileResponse, Profile } from '@src/shared/typing/types';
+import { AdditionType, Education, Experience, FileResponse, Profile, Request, Response } from '@src/shared/typing/types';
 import { defaultProfile } from '@root/src/shared/typing/constant';
 
 reloadOnUpdate('pages/background');
@@ -11,11 +11,6 @@ reloadOnUpdate('pages/background');
  */
 reloadOnUpdate('pages/content/style.scss');
 
-
-const getProfileFromStorage = () => {
-    console.log('getProfileFromStorage');
-    return "";
-}
 
 var PROFILE = defaultProfile
 
@@ -85,7 +80,7 @@ const testProfile: Profile = {
     disability: "No"
 };
 
-const additionalFields = {}
+const additionalFields : AdditionType = {}
 
 
 const saveProfile = async (profile: Object) => {
@@ -135,7 +130,7 @@ const assignTestProfile = async () => {
     await saveProfile(testProfile);
 }
 
-async function getFile(fileURL: string, name: string): Promise<FileResponse> {
+const getFile = async (fileURL: string, name: string): Promise<FileResponse> => {
     const response = await fetch(fileURL);
 
     if (!response.ok) {
@@ -166,7 +161,7 @@ async function getFile(fileURL: string, name: string): Promise<FileResponse> {
     const filename = name + extension;
 
     const arrayBuffer = Array.from(new Uint8Array(buffer));
-
+    
     return {
         status: status,
         type: contentType,
@@ -175,29 +170,96 @@ async function getFile(fileURL: string, name: string): Promise<FileResponse> {
     };
 }
 
+const saveAddition = async (addition: AdditionType) => {
+    const jsonAddition = JSON.stringify(addition);
+    return new Promise((resolve, reject) => {
+        chrome.storage.sync.set({ addition: jsonAddition }, () => {
+            if (chrome.runtime.lastError) {
+                reject(chrome.runtime.lastError.message);
+            } else {
+                resolve(true);
+            }
+        });
+    });
+}
 
-chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+const getAddition = async () => {
+    return new Promise((resolve, reject) => {
+        chrome.storage.sync.get('addition', (result) => {
+            if (chrome.runtime.lastError) {
+                console.error(chrome.runtime.lastError.message);
+                reject(chrome.runtime.lastError.message);
+                return;
+            }
+
+            if (result.addition) {
+                resolve(JSON.parse(result.addition));
+            } else {
+                resolve({});
+            }
+        });
+    });
+
+}
+
+
+function handleRequest(
+    promise: Promise<any>,
+    sendResponse: (response: Response) => void,
+    successHandler: (result: any) => void
+): void {
+    promise.then(successHandler)
+           .catch((error: Error) => {
+               console.error('Error:', error);
+               sendResponse({ error: error.toString() });
+           });
+}
+
+chrome.runtime.onMessage.addListener((request: Request, sender: chrome.runtime.MessageSender, sendResponse: (response: Response) => void): boolean => {
     try {
-        if (request.method === 'getProfile') {
-            console.log('sendgetProfile');
-            const profile = await getProfile();
-            sendResponse({ profile: profile });
-            return true;  
-        } else if (request.method === 'saveProfile') {
-            await saveProfile(request.profile);
-            sendResponse({ success: true });
-            return true;
-        } else if (request.method === 'assignTestProfile') {
-            await assignTestProfile();
-            console.log(PROFILE);
-        } else if (request.method === 'getFile') {
-            const response = await getFile(request.fileURL, request.name);
-            sendResponse(response);
-            return true;
+        switch (request.method) {
+            case 'getProfile':
+                handleRequest(getProfile(), sendResponse, (profile) => {
+                    sendResponse({ profile });
+                });
+                break;
+
+            case 'saveProfile':
+                handleRequest(saveProfile(request.profile), sendResponse, () => {
+                    sendResponse({ success: true });
+                });
+                break;
+
+            case 'assignTestProfile':
+                handleRequest(assignTestProfile(), sendResponse, () => {
+                    console.log("Profile assigned"); // Adjust logging appropriately
+                });
+                break;
+
+            case 'getFile':
+                handleRequest(getFile(request.fileURL!, request.name!), sendResponse, (response) => {
+                    sendResponse(response);
+                });
+                break;
+
+            case 'saveAddition':
+                handleRequest(saveAddition(request.addition), sendResponse, () => {
+                    sendResponse({ success: true });
+                });
+                break;
+
+            case 'getAddition':
+                handleRequest(getAddition(), sendResponse, (addition) => {
+                    sendResponse({ addition });
+                });
+                break;
+
+            default:
+                sendResponse({ error: 'Unsupported request method.' });
         }
-    } catch (error: any) {
-        console.error('Error:', error);
-        sendResponse({ error: error.toString() });
-        return true;
+    } catch (error) {
+        console.error('General Error:', error);
+        sendResponse({ error: 'An unexpected error occurred.' });
     }
+    return true;  // This ensures asynchronous handling of responses
 });

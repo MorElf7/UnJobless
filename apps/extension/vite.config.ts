@@ -33,7 +33,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         devtools: resolve(pagesDir, 'devtools', 'index.html'),
-        panel: resolve(pagesDir, 'panel', 'index.html'),
+        // panel: resolve(pagesDir, 'panel', 'index.html'),
         contentInjected: resolve(pagesDir, 'content', 'injected', 'index.ts'),
         contentUI: resolve(pagesDir, 'content', 'ui', 'index.ts'),
         background: resolve(pagesDir, 'background', 'index.ts'),
