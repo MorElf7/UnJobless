@@ -1,6 +1,12 @@
 // job.controller.ts
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { JobService } from './job.service';
 import { Job } from '../schemas/job.schema';
 import { Public } from 'src/auth/constants';
@@ -47,7 +53,24 @@ export class JobController {
   @Public()
   @ApiOperation({ summary: 'List jobs' })
   @ApiResponse({ status: 200, description: 'List of jobs', type: [Job] })
-  async findAll(): Promise<Job[]> {
-    return this.jobService.findAll();
+  @ApiQuery({
+    name: 'title',
+    type: String,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'company',
+    type: String,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'salary',
+    type: String,
+    required: false,
+  })
+  async findAll(
+    @Query() query: { title?: string; company?: string; salary?: string },
+  ): Promise<Job[]> {
+    return this.jobService.findAll(query);
   }
 }

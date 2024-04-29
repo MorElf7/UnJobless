@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -15,6 +16,7 @@ import {
   ApiBody,
   ApiConsumes,
   ApiOperation,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -68,8 +70,13 @@ export class ApplicationController {
     description: 'List of applications',
     type: [Application],
   })
-  async findAll(): Promise<Application[]> {
-    return this.applicationService.findAll();
+  @ApiQuery({
+    name: 'jid',
+    type: String,
+    required: false,
+  })
+  async findAll(@Query('jid') jid?: string): Promise<Application[]> {
+    return this.applicationService.findAll(jid);
   }
 
   @Get('me')
@@ -115,16 +122,16 @@ export class ApplicationController {
     return this.applicationService.delete(uid);
   }
 
-  @Get(':jid')
-  @ApiOperation({ summary: 'List All Applications by job' })
-  @Public()
-  @ApiResponse({
-    status: 200,
-    description: 'List of applications by job',
-    type: [Application],
-  })
-  // Add the 'jobId' query parameter
-  async findAppByJob(@Param('jid') jid: string): Promise<Application[]> {
-    return this.applicationService.findAppsByJob(jid);
-  }
+  // @Get(':jid')
+  // @ApiOperation({ summary: 'List All Applications by job' })
+  // @Public()
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'List of applications by job',
+  //   type: [Application],
+  // })
+  // // Add the 'jobId' query parameter
+  // async findAppByJob(@Param('jid') jid: string): Promise<Application[]> {
+  //   return this.applicationService.findAppsByJob(jid);
+  // }
 }

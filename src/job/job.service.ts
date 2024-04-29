@@ -100,8 +100,23 @@ export class JobService {
     return pages;
   }
 
-  async findAll(): Promise<Job[]> {
-    return this.JobModel.find().exec();
+  async findAll(filter: {
+    title?: string;
+    company?: string;
+    salary?: string;
+  }): Promise<Job[]> {
+    let query = {};
+
+    if (filter.title) {
+      query = { ...query, title: { $regex: filter.title, $options: 'i' } };
+    }
+    if (filter.company) {
+      query = { ...query, company: { $regex: filter.company, $options: 'i' } };
+    }
+    if (filter.salary) {
+      query = { ...query, salary: { $regex: filter.salary, $options: 'i' } };
+    }
+    return this.JobModel.find(query).exec();
   }
 
   async findOne(uid: string): Promise<Job> {

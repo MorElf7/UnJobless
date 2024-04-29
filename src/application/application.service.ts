@@ -19,18 +19,7 @@ export class ApplicationService {
     return newApplication.save();
   }
 
-  // Retrieve all applications
-  async findAll(): Promise<Application[]> {
-    return this.applicationModel.find().exec();
-  }
-
-  // Retrieve all applications
-  // async findAppByJob(jobId?: string): Promise<Application[]> {
-  //   const query = jobId ? { job: jobId } : {};
-  //   return this.applicationModel.find(query).exec();
-  // }
-
-  async findAppsByJob(jid: string): Promise<Application[]> {
+  async findAll(jid?: string): Promise<Application[]> {
     const query = jid ? { jid } : {};
     return this.applicationModel.find(query).exec();
   }
