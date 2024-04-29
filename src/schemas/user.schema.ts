@@ -55,15 +55,12 @@ export class User {
   skills: string[];
 
   @Prop()
-  arrays_aid: string[];
-
-  @Prop()
   equalOpportunity: boolean;
 
-  @Prop()
+  @Prop({ default: Date.now })
   createdAt: Date;
 
-  @Prop()
+  @Prop({ default: Date.now })
   updatedAt: Date;
 }
 

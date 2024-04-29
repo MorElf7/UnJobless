@@ -26,7 +26,6 @@ export class CreateUserDto {
     },
   ];
   skills: string[];
-  arrays_aid: string[];
   equalOpportunity: boolean;
   createdAt: Date;
   updatedAt: Date;

@@ -72,19 +72,6 @@ export class ApplicationController {
     return this.applicationService.findAll();
   }
 
-  @Get(':jid')
-  @ApiOperation({ summary: 'List All Applications by job' })
-  @Public()
-  @ApiResponse({
-    status: 200,
-    description: 'List of applications by job',
-    type: [Application],
-  })
-  // Add the 'jobId' query parameter
-  async findAppByJob(@Param('jid') jid: string): Promise<Application[]> {
-    return this.applicationService.findAppsByJob(jid);
-  }
-
   @Get('me')
   @ApiOperation({ summary: 'Get Application of this user' })
   @ApiBearerAuth('access-token')
@@ -126,5 +113,18 @@ export class ApplicationController {
   })
   async delete(@Param('uid') uid: string): Promise<Application> {
     return this.applicationService.delete(uid);
+  }
+
+  @Get(':jid')
+  @ApiOperation({ summary: 'List All Applications by job' })
+  @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'List of applications by job',
+    type: [Application],
+  })
+  // Add the 'jobId' query parameter
+  async findAppByJob(@Param('jid') jid: string): Promise<Application[]> {
+    return this.applicationService.findAppsByJob(jid);
   }
 }
