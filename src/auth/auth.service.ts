@@ -94,10 +94,10 @@ export class AuthService {
     return user;
   }
 
-  async findOneUserById(@Param('id') id: string): Promise<User> {
-    const user = await this.userModel.findById(id).exec();
+  async findOneUserById(@Param('id') uid: string): Promise<User> {
+    const user = await this.userModel.findById(uid, { password: 0 }).exec();
     if (!user) {
-      throw new NotFoundException(`User with id ${id} not found`);
+      throw new NotFoundException(`User with id ${uid} not found`);
     }
     return user;
   }

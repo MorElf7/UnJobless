@@ -14,6 +14,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
+  ApiForbiddenResponse,
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
@@ -123,7 +124,10 @@ export class AuthController {
   @ApiBearerAuth('access-token')
   @Get('profile')
   getProfile(@Request() req) {
-    return req.user;
+    // return everything from this user
+    const uid = req.user.id;
+    return this.authService.findOneUserById(uid);
+    // return req.user;
   }
 
   // @UseGuards(AuthGuard)
