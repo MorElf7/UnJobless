@@ -21,7 +21,7 @@
     "lint": "eslint src --ext .ts,.js,.tsx,.jsx",
     "lint:fix": "pnpm lint --fix",
     "prettier": "prettier . --write",
-    "prepare": "husky install"
+    "prepare": "cd ../.. && husky install apps/extension/.husky"
   },
   "type": "module",
   "dependencies": {
