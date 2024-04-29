@@ -3,10 +3,16 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Job } from '../schemas/job.schema';
-import { Cron, CronExpression } from '@nestjs/schedule';
-import axios from 'axios';
-import * as cheerio from 'cheerio';
-import indeed from 'indeed-scraper';
+// import { Cron, CronExpression } from '@nestjs/schedule';
+// import axios from 'axios';
+// import * as cheerio from 'cheerio';
+import {
+  Scraper,
+  Root,
+  OpenLinks,
+  CollectContent,
+  DownloadContent,
+} from 'nodejs-web-scraper';
 
 @Injectable()
 export class JobService {
@@ -19,58 +25,69 @@ export class JobService {
     const createdJob = new this.JobModel(createJobDto);
     return createdJob.save();
   }
-  private extractJobs(html: string): string[] {
-    const $ = cheerio.load(html);
-    const jobDescriptions = [];
-    $('.jobsearch-JobComponent-description').each((index, element) => {
-      jobDescriptions.push($(element).text());
+
+  async scrapeData(): Promise<any> {
+    const pages = [];
+    const getPageObject = (pageObject: any, pageAddress: any) => {
+      pageObject.link = [pageAddress];
+      pageObject.datePosted = [new Date()];
+      pages.push(pageObject);
+    };
+
+    const config = {
+      baseSiteUrl: `https://builtin.com/`,
+      startUrl: `https://builtin.com/jobs`, //`https://www.profesia.sk/praca/`, search?q=software+engineer&l=Amherst%2C+MA
+      filePath: './images/',
+      logPath: './logs/',
+    };
+
+    const scraper = new Scraper(config);
+
+    const root = new Root({
+      pagination: {
+        queryString: 'page',
+        begin: 1,
+        end: 3,
+      },
+      getPageHtml: (htmlString, pageAddress) => {
+        console.log(pageAddress);
+      },
     });
-    return jobDescriptions;
+
+    const jobAds = new OpenLinks('.row h2 a', {
+      name: 'Ad page',
+      getPageObject,
+    });
+
+    const title = new CollectContent('h1 .field--name-title', {
+      name: 'title',
+    });
+    const companyName = new CollectContent('.field__item a', {
+      name: 'companyName',
+    });
+    const companyAddress = new CollectContent('.company-address', {
+      name: 'companyAddress',
+    });
+    const salary = new CollectContent('.provided-salary', { name: 'salary' });
+    const desc = new CollectContent('.job-description p', { name: 'desc' });
+    const logo = new DownloadContent('.logo-wrapper-medium img', {
+      name: 'logo',
+    });
+
+    console.log(title);
+    root.addOperation(jobAds);
+    jobAds.addOperation(title);
+    jobAds.addOperation(companyName);
+    jobAds.addOperation(companyAddress);
+    jobAds.addOperation(salary);
+    jobAds.addOperation(desc);
+    jobAds.addOperation(logo);
+
+    await scraper.scrape(root);
+    return pages;
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
-  // async findAll(): Promise<Job[]> {
-  async findAll(): Promise<string[]> {
-    try {
-      const queryOptions = {
-        host: 'www.indeed.com',
-        query: 'Software',
-        city: 'Seattle, WA',
-        radius: '25',
-        level: 'entry_level',
-        jobType: 'fulltime',
-        maxAge: '7',
-        sort: 'date',
-        limit: 100,
-      };
-
-      indeed.query(queryOptions).then((res) => {
-        console.log(res); // An array of Job objects
-      });
-      const response = await axios.get(
-        'https://www.indeed.com/jobs?q=software+engineer&l=Amherst%2C+MA&from=searchOnHP&vjk=e27ca296efe1fe04',
-      );
-      return this.extractJobs(response.data.response);
-    } catch (error) {
-      console.error('Error scraping jobs:', error);
-      throw new Error('Failed to scrape jobs');
-    }
-    // try {
-    //   const response = await axios.get(
-    //     'http://api.glassdoor.com/api/api.htm?v=1&format=json&t.p=120&t.k=fz6JLNDfgVs&action=employers&q=pharmaceuticals&userip=192.168.43.42&useragent=Mozilla/%2F4.0',
-    //     {
-    //       params: {
-    //         /* API parameters */
-    //       },
-    //     },
-    //   );
-    //   console.log(response.data.response);
-    //   return response.data.response; // Adjust according to actual API response structure
-    // } catch (error) {
-    //   console.error('Failed to refresh jobs:', error);
-    // }
-    // return this.JobModel.find().exec();
-  }
+  // @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
 
   async findOne(uid: string): Promise<Job> {
     return this.JobModel.findOne({

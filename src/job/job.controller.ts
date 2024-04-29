@@ -21,12 +21,11 @@ export class JobController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'List jobs' })
+  @ApiOperation({ summary: 'List scraped jobs' })
   @Public()
   @ApiResponse({ status: 200, description: 'List of jobs', type: [Job] })
   // async findAll(): Promise<Job[]> {
-  async findAll(): Promise<string[]> {
-    return this.jobService.findAll();
+  async findJobs(): Promise<any> {
+    return this.jobService.scrapeData();
   }
-  // Add the rest of the CRUD operations...
 }
