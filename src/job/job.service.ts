@@ -36,17 +36,30 @@ export class JobService {
       // console.log(pageObject);
       pages.push(pageObject);
       // convert the pageObject to a Job object before saving
-      this.create({
+      const job = {
         title: pageObject.title[0],
         company: pageObject.company[0],
-        datePosted: new Date(),
         link: pageAddress,
         image: pageObject.image[0],
         description: pageObject.description[0],
         address: pageObject.address[0],
         salary: pageObject.salary[0],
         logo: pageObject.logo[0],
-      });
+      };
+      console.log(job);
+      const createdJob = new this.JobModel(job);
+      createdJob.save();
+      // this.create({
+      //   title: pageObject.title[0],
+      //   company: pageObject.company[0],
+      //   datePosted: new Date(),
+      //   link: pageAddress,
+      //   image: pageObject.image[0],
+      //   description: pageObject.description[0],
+      //   address: pageObject.address[0],
+      //   salary: pageObject.salary[0],
+      //   logo: pageObject.logo[0],
+      // });
     };
 
     const config = {
@@ -107,7 +120,7 @@ export class JobService {
   }
 
   async findAll(): Promise<Job[]> {
-    return this.JobModel.find();
+    return this.JobModel.find().exec();
   }
 
   async findOne(uid: string): Promise<Job> {

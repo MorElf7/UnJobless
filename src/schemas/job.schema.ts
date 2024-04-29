@@ -19,7 +19,7 @@ export class Job {
   @Prop()
   company: string;
 
-  @Prop()
+  @Prop({ default: new Date() })
   datePosted: Date;
 
   @Prop()
