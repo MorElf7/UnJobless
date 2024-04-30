@@ -34,12 +34,18 @@ export class ApplicationService {
     return this.applicationModel.findOne({ uid }).exec();
   }
 
-  async autofill(question: string): Promise<string> {
+  async autofill(question: string, profile: string): Promise<string> {
     try {
       console.log(question);
       const completion = await this.openai.chat.completions.create({
         messages: [
-          // { role: 'system', content: 'question' },
+          {
+            role: 'system',
+            content:
+              'You are an assistant who are given the following information about the user:' +
+              profile +
+              'You are asked to answer the following question:',
+          },
           {
             role: 'user',
             content:
