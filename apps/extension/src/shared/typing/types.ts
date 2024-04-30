@@ -32,14 +32,13 @@ export type PopupProps = {
     type: number;
 }
 
-type Achievement = {
-    name: string;
-    location: string;
+export type Achievement = {
     start_date: string;
     end_date: string;
 }
 
 export type Education = Achievement & {
+    school: string;
     major: string;
     degree: string;
     gpa: number;
@@ -47,6 +46,9 @@ export type Education = Achievement & {
 
 export type Experience = Achievement & {
     position: string;
+    company: string;
+    location: string;
+    current: boolean;
     description: string;
 }
 

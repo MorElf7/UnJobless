@@ -2,8 +2,7 @@ import { Education, Experience, Profile } from "./types";
 
 const defaultEducation: Education[] = [
     {
-        name: "Default University",
-        location: "Default City",
+        school: "Default University",
         start_date: "0000-00",
         end_date: "0000-00",
         major: "N/A",
@@ -14,12 +13,13 @@ const defaultEducation: Education[] = [
 
 const defaultExperience: Experience[] = [
     {
-        name: "Default Company",
+        company: "Default Company",
         location: "Default City",
         start_date: "0000-00",
         end_date: "0000-00",
         position: "Default Position",
-        description: "Default job description."
+        description: "Default job description.",
+        current: false,
     }
 ];
 
@@ -33,7 +33,7 @@ export const defaultProfile: Profile = {
     github: "https://github.com",
     street_address: "0000 Default St",
     city: "Default City",
-    state: "DF",
+    state: "Maine",
     zip_code: "00000",
     resumeUrl: "",
     resumeFileName: "",

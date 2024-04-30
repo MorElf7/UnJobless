@@ -8,6 +8,7 @@ import { Scrollbar, ScrollbarPlugin } from "smooth-scrollbar-react";
 import { DefaultManager } from './auto/defaultManager';
 import TextToCopy from './components/TextToCopy';
 import ProfileActionButtons from './components/ProfileActionButtons';
+import { WorkdayAutoFillManager } from './auto/workday';
 
 
 const Popup = ({ type } : PopupProps) => {
@@ -21,6 +22,8 @@ const Popup = ({ type } : PopupProps) => {
         switch (type) {
             case 0:
                 return new GreenHouseAutoFillManager(eventEmitter);
+            case 1:
+                return new WorkdayAutoFillManager(eventEmitter);
             default:
                 alert('Provider is not supported.');
                 return new DefaultManager(eventEmitter);
