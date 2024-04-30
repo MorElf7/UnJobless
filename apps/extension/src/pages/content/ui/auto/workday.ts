@@ -1,6 +1,6 @@
 import { tryInput, existQuery, tryTextArea, clickOnPopup, waitForAutomationId, waitForXPath } from '@root/utils/utils';
 import { AutoFillManager, EventEmitter } from './autoManager';
-import { Achievement, Education, Experience, Profile } from '@root/src/shared/typing/types';
+import { Achievement, AdditionType, Education, Experience, Profile } from '@root/src/shared/typing/types';
 import { authorizedPattern, sponsorshipPattern } from '@root/src/shared/typing/constant';
 
 const delaySpeed: number = 100;
@@ -230,7 +230,7 @@ export class WorkdayAutoFillManager extends AutoFillManager {
     }
   }
 
-  async autoFill(profile: Profile): Promise<void> {
+  async autoFill(profile: Profile, additionalFields: AdditionType): Promise<void> {
     this.eventEmitter.publish('loading', true);
     if (!existQuery('h2.css-1j9bnzb')) {
       return;

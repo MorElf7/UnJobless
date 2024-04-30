@@ -123,11 +123,22 @@ export class GreenHouseAutoFillManager extends AutoFillManager {
         }
     }
 
+    private async handleAdditionalFields(addition: AdditionType): Promise<void> {
+        let delayIndex = 0;
+        addition.forEach(async ([label, value, input]) => {
+            await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+            if (input) {
+                input.value = value;
+            }
+        });
+    }
+
     async autoFill(profile: Profile, additionalFields: AdditionType): Promise<void> {
         this.eventEmitter.publish('loading', true);
         await this.handleIdentityFields(profile);
         await this.handleUpload(profile);
         await this.handleCustomFields(profile);
+        await this.handleAdditionalFields(additionalFields);
         await this.handleEEOCFields(profile);
         this.eventEmitter.publish('loading', false);
     }
@@ -158,24 +169,3 @@ export class GreenHouseAutoFillManager extends AutoFillManager {
 
     
 }
-
-// Usage:
-// const profile: Profile = {
-//     first_name: "John",
-//     last_name: "Doe",
-//     email: "john.doe@example.com",
-//     phone: "1234567890",
-//     street_address: "123 Main St",
-//     sponsorship: "Yes",
-//     legally_authorized: "Yes",
-//     linkedin: "https://www.linkedin.com/in/johndoe",
-//     github: "https://github.com/johndoe",
-//     website: "https://www.example.com",
-//     gender: "Male",
-//     race: "Asian",
-//     veteran: "No",
-//     disability: "No"
-// };
-
-// const manager = new GreenHouseAutoFillManager();
-// manager.autoFill(profile, 0);

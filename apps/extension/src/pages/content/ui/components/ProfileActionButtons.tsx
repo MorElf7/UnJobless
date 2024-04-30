@@ -1,10 +1,7 @@
 import React from 'react';
-import { Box, IconButton, Tooltip, Spinner, Icon, VStack} from '@chakra-ui/react';
+import { IconButton, Tooltip, Spinner, Icon, VStack} from '@chakra-ui/react';
 import { FaBoltLightning } from "react-icons/fa6";
-import { TbPencilBolt } from "react-icons/tb";
 import { MdModeEdit } from "react-icons/md";
-
-
 
 
 const ProfileActionButtons = ({ handler, editProfile, loading}: { handler: () => void; editProfile: () => void , loading: boolean}) => {

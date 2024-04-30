@@ -2,35 +2,47 @@ import { combinedPattern } from "@root/src/shared/typing/constant";
 import { AdditionType } from "@root/src/shared/typing/types";
 import { getTrimLabel } from "@root/utils/utils";
 
-export const findAdditionalFields = async (type: number) => {
+const findAdditionalFields = async (type: number): Promise<AdditionType> => {
+    let addition: AdditionType = [];
     switch (type) {
         case 0:
-            await findGreenhouse();
+            addition = await findGreenhouse();
             break;
         default:
-            console.error("Not supported type")
+            console.error("Not supported type");
     }
+    return addition;
 }
 //TODO: Add the following code to the content script
-const findGreenhouse = async () => {
+const findGreenhouse = async (): Promise<AdditionType> => {
     const customs = document.querySelectorAll('#custom_fields .field');
-    const addition : AdditionType = {};
-    let idx = 0;
-    customs.forEach(async (field, index) => {
+    const additions: AdditionType = [];
+
+    for (const field of customs) {
         const label = field.querySelector('label')?.textContent;
         const trimLabel = getTrimLabel(label || "");
         const input = field.querySelector('input[type="text"]') as HTMLInputElement | null;
         const textarea = field.querySelector('textarea') as HTMLTextAreaElement | null;
-        const select = field.querySelector('select') as HTMLSelectElement | null;
-
-        if (!select && (input || textarea) && !combinedPattern.test(trimLabel || "")) {
-            addition[`value${idx}`] = [trimLabel || "", ""];
-            idx++;
+        
+        if (!field.querySelector('select') && !combinedPattern.test(trimLabel)){
+            if (input) {
+                additions.push([trimLabel, input.value, input]);
+            } else if (textarea) {
+                additions.push([trimLabel, textarea.value, textarea]);
+            }
         }
-    });
+    }
+
+    // If you need to send the data immediately after collection, uncomment and handle this part
+    /*
     try {
-        chrome.runtime.sendMessage({ method: 'saveAddition' , addition: addition });
+        await chrome.runtime.sendMessage({ method: 'saveAddition', addition: additions });
     } catch (error) {
         console.error('Error saving addition:', error);
     }
-}
+    */
+
+    return additions;
+};
+
+export default findAdditionalFields;

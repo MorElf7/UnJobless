@@ -1,20 +1,24 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ChakraProvider, Box, Image, Text, Button, VStack, CloseButton, IconButton, TabPanel, Tab, Tabs, TabList, TabPanels, Icon, UnorderedList, ListItem, Spacer, Flex, Divider, Link, Textarea } from '@chakra-ui/react';
+import { ChakraProvider, Box, Image, Text, Button, VStack, CloseButton, IconButton, TabPanel, Tab, Tabs, TabList, TabPanels,  Flex, Divider, Link, Textarea,  InputRightElement } from '@chakra-ui/react';
 import { AdditionType, PopupProps, Profile } from '@root/src/shared/typing/types';
 import { AutoFillManager, EventEmitter } from './auto/autoManager';
 import { defaultProfile } from '@root/src/shared/typing/constant';
 import { GreenHouseAutoFillManager } from './auto/greenhouse';
+import { WorkdayAutoFillManager } from './auto/workday';
+
 import { Scrollbar, ScrollbarPlugin } from "smooth-scrollbar-react";
 import { DefaultManager } from './auto/defaultManager';
 import {IoIosArrowUp} from 'react-icons/io';
+import { FaComment } from "react-icons/fa";
+
+import findAdditionalFields from './auto/additionalFields';
 import TextToCopy from './components/TextToCopy';
 import ProfileActionButtons from './components/ProfileActionButtons';
-import { WorkdayAutoFillManager } from './auto/workday';
 
 
 const Popup = ({ type } : PopupProps) => {
     const [profile, setProfile] = useState<Profile>(defaultProfile);
-    const [additionalFields, setAdditionalFields] = useState<AdditionType>({});
+    const [additionalFields, setAdditionalFields] = useState<AdditionType>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [open, setOpen] = useState<boolean>(false);
     const [close, setClose] = useState<boolean>(false);
@@ -70,31 +74,37 @@ const Popup = ({ type } : PopupProps) => {
                 console.error('Failed to fetch profile:', error);
             }
         };
+        // const fetchAdditionalFields = async () => {
+        //     try{
+        //         const getAddition = () => new Promise((resolve, reject) => {
+        //             chrome.runtime.sendMessage({ method: "getAddition" }, (response) => {
+        //                 if (chrome.runtime.lastError) {
+        //                     reject(new Error(chrome.runtime.lastError.message));
+        //                 } else if (response) {
+        //                     resolve(response.addition);
+        //                 } else {
+        //                     reject(new Error("Failed to fetch additional fields."));
+        //                 }
+        //             });
+        //         });
+
+        //         const additionalFields: AdditionType = await getAddition() as AdditionType;
+        //         if (additionalFields){
+        //             setAdditionalFields(additionalFields);
+        //         }else{
+        //             throw new Error("Failed to fetch additional fields.");
+        //         }
+        //     }catch (error) {
+        //         console.error('Failed to fetch additional fields:', error);
+        //     }
+        // }
         const fetchAdditionalFields = async () => {
-            try{
-                const getAddition = () => new Promise((resolve, reject) => {
-                    chrome.runtime.sendMessage({ method: "getAddition" }, (response) => {
-                        if (chrome.runtime.lastError) {
-                            reject(new Error(chrome.runtime.lastError.message));
-                        } else if (response) {
-                            resolve(response.addition);
-                        } else {
-                            reject(new Error("Failed to fetch additional fields."));
-                        }
-                    });
-                });
-
-                const additionalFields: AdditionType = await getAddition() as AdditionType;
-                if (additionalFields){
-                    setAdditionalFields(additionalFields);
-                }else{
-                    throw new Error("Failed to fetch additional fields.");
-                }
-            }catch (error) {
+            await findAdditionalFields(type).then((addition) => {
+                setAdditionalFields(addition);
+            }).catch((error) => {
                 console.error('Failed to fetch additional fields:', error);
-            }
+            });
         }
-
 
         fetchAdditionalFields();
         fetchProfile();
@@ -123,12 +133,15 @@ const Popup = ({ type } : PopupProps) => {
         window.open(path, '_blank');
     }
 
-    const handleInputChange = (key: string, newValue: string) => {
-        setAdditionalFields(prevFields => ({
-            ...prevFields,
-            [key]: [prevFields[key][0], newValue]
-        }));
-    }
+    const handleInputChange = (index: number, newValue: string) => {
+        setAdditionalFields(prevFields => {
+            const updatedFields = [...prevFields];
+            if (updatedFields[index]) {
+                updatedFields[index] = [updatedFields[index][0], newValue, updatedFields[index][2]];
+            }
+            return updatedFields;
+        });
+    };
 
     return (
         <ChakraProvider>
@@ -285,7 +298,7 @@ const Popup = ({ type } : PopupProps) => {
                                                                 />
                                                                 <VStack align="flex-start" paddingLeft="15px" spacing="1px">
                                                                     <Box fontSize="12px" fontWeight="700">
-                                                                        <TextToCopy text={edu.name} />
+                                                                        <TextToCopy text={edu.school} />
                                                                     </Box>
                                                                     <Flex fontSize="10px" fontWeight="400">
                                                                         <TextToCopy text={edu.degree} />
@@ -327,7 +340,7 @@ const Popup = ({ type } : PopupProps) => {
                                                                         <TextToCopy text={exp.position} />
                                                                     </Box>
                                                                     <Flex fontSize="10px" fontWeight="400">
-                                                                        <TextToCopy text={exp.position} />
+                                                                        <TextToCopy text={exp.company} />
                                                                         <Text padding="0px 3px 0px 3px">, </Text>
                                                                         <TextToCopy text={exp.location} />
                                                                     </Flex>
@@ -402,29 +415,40 @@ const Popup = ({ type } : PopupProps) => {
                                         </Scrollbar>
                                         </Box>
                                     </TabPanel>
-                                    <TabPanel>
-                                        <VStack align="stretch" w="full" gap="10px">
+                                    <TabPanel padding="13px 0px 7px 0px">
+                                        <Scrollbar  
+                                            plugins={{
+                                                overscroll: {
+                                                effect: "bounce"
+                                                } as ScrollbarPlugin
+                                            }}
+                                            >
+                                        <VStack align="stretch" w="full" gap="10px" maxHeight="60vh">
                                             <Text fontWeight="500"> We'll use these values to autofill inputs with matching labels. Press the icon to AI generated the given text</Text>
 
-                                            {
-                                                Object.keys(additionalFields).length > 0 ? (
-                                                    Object.entries(additionalFields).map(([key, value]) => (
-                                                        <VStack  align="stretch" w="full" gap="5px" fontSize="12px">
-                                                            <TextToCopy text={value[0]}/> 
+                                            {additionalFields.length > 0 ? (
+                                                    additionalFields.map(([key, value, element], index) => (
+                                                        <VStack key={index} align="stretch" w="full" gap="5px" fontSize="12px">
+                                                            <TextToCopy text={key} />
                                                             <Textarea
                                                                 placeholder="Enter your Input Here"
-                                                                value={value[1]}
-                                                                onChange={(e) => handleInputChange(key, e.target.value)}
-                                                            />
+                                                                value={value}
+                                                                onChange={(e) => handleInputChange(index, e.target.value)}
+                                                            >
+                                                            {/* <InputRightElement
+                                                                // pointerEvents="none"
+                                                                children={<IconButton icon={<FaComment />} aria-label='gen-ai' color="red"/>}
+                                                            /> */}
+                                                            </Textarea>
                                                             <Divider borderColor="#0F893D"/>
                                                         </VStack>
                                                     ))
-                                                ):(
-                                                    <Text>Test2</Text>
-                                                )
-                                            }
+                                                ) : (
+                                                    <Text>No additional fields</Text>
+                                                )}
                                             
                                         </VStack>
+                                        </Scrollbar>
                                     </TabPanel>
                                 </TabPanels>
                             </Tabs>
@@ -434,11 +458,13 @@ const Popup = ({ type } : PopupProps) => {
                 </Box>
                 }
             </Box>
-            <Button onClick={() => chrome.runtime.sendMessage({ method: "assignTestProfile" })}>Save Profile</Button>
+            <Button onClick={() => {
+                chrome.runtime.sendMessage({ method: "assignTestProfile" })
+                }}>Save Profile</Button>
 
         </ChakraProvider>
   );
 };
 
 
-export { Popup };
+export default Popup;

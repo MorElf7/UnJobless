@@ -24,9 +24,8 @@ export type Profile = {
     disability: string;
 }
 
-export type AdditionType = {
-    [key: string]: [string, string];
-};
+export type AdditionType = Array<[string, string, HTMLInputElement | HTMLTextAreaElement]>;
+
 
 export type PopupProps = {
     type: number;

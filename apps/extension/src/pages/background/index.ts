@@ -12,12 +12,9 @@ reloadOnUpdate('pages/background');
 reloadOnUpdate('pages/content/style.scss');
 
 
-var PROFILE = defaultProfile
-
 const testEducation: Education[] = [
     {
-        name: "University of Example",
-        location: "Example City",
+        school: "University of Example",
         start_date: "2018-08",
         end_date: "2022-05",
         major: "Computer Science",
@@ -25,8 +22,7 @@ const testEducation: Education[] = [
         gpa: 3.8
     },
     {
-        name: "Example Community College",
-        location: "Example Town",
+        school: "Example Community College",
         start_date: "2016-09",
         end_date: "2018-06",
         major: "General Studies",
@@ -37,19 +33,21 @@ const testEducation: Education[] = [
 
 const testExperience: Experience[] = [
     {
-        name: "Example Tech Inc.",
+        company: "Example Tech Inc.",
         location: "Example City",
         start_date: "2022-06",
         end_date: "Present",
         position: "Software Developer",
+        current: true,
         description: "Developed and maintained web applications using React and Node.js."
     },
     {
-        name: "Example Startup LLP",
+        company: "Example Startup LLP",
         location: "Example City",
         start_date: "2020-06",
         end_date: "2022-05",
         position: "Junior Developer",
+        current: false,
         description: "Assisted in the development of mobile applications and performed software testing."
     }
 ];
@@ -80,7 +78,6 @@ const testProfile: Profile = {
     disability: "No"
 };
 
-const additionalFields : AdditionType = {}
 
 
 const saveProfile = async (profile: Object) => {
@@ -241,17 +238,17 @@ chrome.runtime.onMessage.addListener((request: Request, sender: chrome.runtime.M
                 });
                 break;
 
-            case 'saveAddition':
-                handleRequest(saveAddition(request.addition), sendResponse, () => {
-                    sendResponse({ success: true });
-                });
-                break;
+            // case 'saveAddition':
+            //     handleRequest(saveAddition(request.addition), sendResponse, () => {
+            //         sendResponse({ success: true });
+            //     });
+            //     break;
 
-            case 'getAddition':
-                handleRequest(getAddition(), sendResponse, (addition) => {
-                    sendResponse({ addition });
-                });
-                break;
+            // case 'getAddition':
+            //     handleRequest(getAddition(), sendResponse, (addition) => {
+            //         sendResponse({ addition });
+            //     });
+            //     break;
 
             default:
                 sendResponse({ error: 'Unsupported request method.' });
