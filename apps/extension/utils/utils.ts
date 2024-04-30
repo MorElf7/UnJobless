@@ -185,3 +185,12 @@ export const attachFileToInput = async (
         });
     });
 };
+
+export const getTrimLabel = (label: string | ""): string => {
+    const cutoff = "\n";
+    if (!label) {
+        return "";
+    }
+    const index = label.indexOf(cutoff);
+    return index !== -1 ? label.substring(0, index) : label;
+} 

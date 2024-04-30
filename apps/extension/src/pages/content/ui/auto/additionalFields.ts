@@ -1,5 +1,6 @@
 import { combinedPattern } from "@root/src/shared/typing/constant";
 import { AdditionType } from "@root/src/shared/typing/types";
+import { getTrimLabel } from "@root/utils/utils";
 
 export const findAdditionalFields = async (type: number) => {
     switch (type) {
@@ -14,13 +15,17 @@ export const findAdditionalFields = async (type: number) => {
 const findGreenhouse = async () => {
     const customs = document.querySelectorAll('#custom_fields .field');
     const addition : AdditionType = {};
+    let idx = 0;
     customs.forEach(async (field, index) => {
         const label = field.querySelector('label')?.textContent;
-        const input = field.querySelector('input:not([type="hidden"])') as HTMLInputElement | null;
+        const trimLabel = getTrimLabel(label || "");
+        const input = field.querySelector('input[type="text"]') as HTMLInputElement | null;
         const textarea = field.querySelector('textarea') as HTMLTextAreaElement | null;
+        const select = field.querySelector('select') as HTMLSelectElement | null;
 
-        if ((input || textarea) && !combinedPattern.test(label || "")) {
-            addition[`value${index}`] = [label || "", ""];
+        if (!select && (input || textarea) && !combinedPattern.test(trimLabel || "")) {
+            addition[`value${idx}`] = [trimLabel || "", ""];
+            idx++;
         }
     });
     try {

@@ -1,4 +1,4 @@
-import { Profile, EventListener } from "@root/src/shared/typing/types";
+import { Profile, EventListener, AdditionType } from "@root/src/shared/typing/types";
 
 export abstract class AutoFillManager {
     constructor(protected  eventEmitter: EventEmitter ) {}
@@ -6,7 +6,7 @@ export abstract class AutoFillManager {
     abstract fillUpload(profile: Profile): void;
     abstract fillCustomFields(profile: Profile): void;
     abstract fillEEOCFields(profile: Profile): void;
-    abstract autoFill(profile: Profile): void;
+    abstract autoFill(profile: Profile, additionalFields: AdditionType): void;
     
 }
 

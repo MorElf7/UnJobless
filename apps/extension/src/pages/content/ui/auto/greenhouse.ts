@@ -1,10 +1,11 @@
-import { Profile } from "@root/src/shared/typing/types";
+import { AdditionType, Profile } from "@root/src/shared/typing/types";
 import { AutoFillManager, EventEmitter } from "./autoManager";
 import {
 tryInput, selectOptionByPartialText, selectOptionByValue, existQuery,
 emptyFilter, hispanicFilter, ethnicFilter, selectCheckBoxByPartialText,
 genderFilter, selectCheckBoxByValue,
-attachFileToInput
+attachFileToInput,
+getTrimLabel
 } from "@root/utils/utils";
 import { authorizedPattern, githubPattern, linkedInPattern, sponsorshipPattern, websitePattern } from "@root/src/shared/typing/constant";
 
@@ -48,21 +49,22 @@ export class GreenHouseAutoFillManager extends AutoFillManager {
         customs.forEach(async (field) => {
             await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
             const label = field.querySelector('label')?.textContent;
+            const trimLabel = getTrimLabel(label || "");
             const input = field.querySelector('input:not([type="hidden"])') as HTMLInputElement | null;
             const select = field.querySelector('select') as HTMLSelectElement | null;
 
             if (select) {
-                if (sponsorshipPattern.test(label || "")) {
+                if (sponsorshipPattern.test(trimLabel || "")) {
                     selectOptionByPartialText(select, profile.sponsorship, emptyFilter);
-                } else if (authorizedPattern.test(label || "")) {
+                } else if (authorizedPattern.test(trimLabel || "")) {
                     selectOptionByPartialText(select, profile.legally_authorized, emptyFilter);
                 }
             } else if (input) {
-                if (linkedInPattern.test(label || "")) {
+                if (linkedInPattern.test(trimLabel || "")) {
                     input.value = profile.linkedin;
-                } else if (githubPattern.test(label || "")) {
+                } else if (githubPattern.test(trimLabel || "")) {
                     input.value = profile.github;
-                } else if (websitePattern.test(label || "")) {
+                } else if (websitePattern.test(trimLabel || "")) {
                     input.value = profile.website;
                 }
             } 
@@ -121,7 +123,7 @@ export class GreenHouseAutoFillManager extends AutoFillManager {
         }
     }
 
-    async autoFill(profile: Profile): Promise<void> {
+    async autoFill(profile: Profile, additionalFields: AdditionType): Promise<void> {
         this.eventEmitter.publish('loading', true);
         await this.handleIdentityFields(profile);
         await this.handleUpload(profile);

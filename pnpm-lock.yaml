@@ -41,6 +41,12 @@ importers:
       react-dom:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
+      react-icons:
+        specifier: ^5.1.0
+        version: 5.1.0(react@18.2.0)
+      smooth-scrollbar-react:
+        specifier: ^2.4.1
+        version: 2.4.1(react@18.2.0)(smooth-scrollbar@8.8.4)
       webextension-polyfill:
         specifier: 0.10.0
         version: 0.10.0
@@ -13244,6 +13250,14 @@ packages:
       use-sidecar: 1.1.2(@types/react@18.2.37)(react@18.2.0)
     dev: false
 
+  /react-icons@5.1.0(react@18.2.0):
+    resolution: {integrity: sha512-D3zug1270S4hbSlIRJ0CUS97QE1yNNKDjzQe3HqY0aefp2CBn9VgzgES27sRR2gOvFK+0CNx/BW0ggOESp6fqQ==}
+    peerDependencies:
+      react: '*'
+    dependencies:
+      react: 18.2.0
+    dev: false
+
   /react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
@@ -14134,6 +14148,23 @@ packages:
     resolution: {integrity: sha512-94hK0Hh8rPqQl2xXc3HsaBoOXKV20MToPkcXvwbISWLEs+64sBq5kFgn2kJDHb1Pry9yrP0dxrCI9RRci7RXKg==}
     engines: {node: '>= 6.0.0', npm: '>= 3.0.0'}
     dev: true
+
+  /smooth-scrollbar-react@2.4.1(react@18.2.0)(smooth-scrollbar@8.8.4):
+    resolution: {integrity: sha512-9UuVZtQO1V2oeWb1n13ZgXcZ0nM79Tqtgov/8xUeZUWicTIg8xO+tHzhfBrE/3DlvGEQ+keFDX96UGTzICoNSg==}
+    peerDependencies:
+      react: '>=16.8'
+      smooth-scrollbar: ^8.0.0
+    dependencies:
+      react: 18.2.0
+      smooth-scrollbar: 8.8.4
+    dev: false
+
+  /smooth-scrollbar@8.8.4:
+    resolution: {integrity: sha512-Wn2Q/iE+PE1ef4EfhFMhgaIMfSrjJl2LalRu0hBWSrw5nZKGsUIjWFWHnLB/Lpx7N+a1pJH6+wkQzBr+5nWPUg==}
+    dependencies:
+      core-js: 3.37.0
+      tslib: 1.14.1
+    dev: false
 
   /snake-case@2.1.0:
     resolution: {integrity: sha512-FMR5YoPFwOLuh4rRz92dywJjyKYZNLpMn1R5ujVpIYkbA9p01fq8RMg0FkO4M+Yobt4MjHeLTJVm5xFFBHSV2Q==}

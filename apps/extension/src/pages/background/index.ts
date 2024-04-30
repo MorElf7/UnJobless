@@ -98,7 +98,6 @@ const saveProfile = async (profile: Object) => {
 
 const getProfile = () => {
     return new Promise((resolve, reject) => {
-        console.log('getProfile');
         chrome.storage.sync.get('profile', (result) => {
             if (chrome.runtime.lastError) {
                 console.error(chrome.runtime.lastError.message);

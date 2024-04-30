@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ChakraProvider, Box, Image, Text, Button, VStack, CloseButton, IconButton, TabPanel, Tab, Tabs, TabList, TabPanels, Icon, UnorderedList, ListItem, Spacer, Flex, Divider, Link } from '@chakra-ui/react';
+import { ChakraProvider, Box, Image, Text, Button, VStack, CloseButton, IconButton, TabPanel, Tab, Tabs, TabList, TabPanels, Icon, UnorderedList, ListItem, Spacer, Flex, Divider, Link, Textarea } from '@chakra-ui/react';
 import { AdditionType, PopupProps, Profile } from '@root/src/shared/typing/types';
 import { AutoFillManager, EventEmitter } from './auto/autoManager';
 import { defaultProfile } from '@root/src/shared/typing/constant';
 import { GreenHouseAutoFillManager } from './auto/greenhouse';
 import { Scrollbar, ScrollbarPlugin } from "smooth-scrollbar-react";
 import { DefaultManager } from './auto/defaultManager';
+import {IoIosArrowUp} from 'react-icons/io';
 import TextToCopy from './components/TextToCopy';
 import ProfileActionButtons from './components/ProfileActionButtons';
 
@@ -101,13 +102,14 @@ const Popup = ({ type } : PopupProps) => {
     };
     eventEmitter.subscribe<boolean>('loading', handleLoading);
 
+    const handleAutofill = () => {
+        autoFillManager.autoFill(profile, additionalFields);
+    };
+
     const handleDocumnet = (): void => {
         autoFillManager.fillUpload(profile);
     }
 
-    const handleAutofill = () => {
-        autoFillManager.autoFill(profile);
-    };
 
     const handleIdentityFields = () => {
         autoFillManager.fillIdentityFields(profile);
@@ -116,6 +118,13 @@ const Popup = ({ type } : PopupProps) => {
     const editProfile = () => {
         const path = 'https://www.google.com/'
         window.open(path, '_blank');
+    }
+
+    const handleInputChange = (key: string, newValue: string) => {
+        setAdditionalFields(prevFields => ({
+            ...prevFields,
+            [key]: [prevFields[key][0], newValue]
+        }));
     }
 
     return (
@@ -145,10 +154,9 @@ const Popup = ({ type } : PopupProps) => {
                 </Box> :
                 <Box>
                     <Box display="flex" 
-                        // gap={['150px', '130px']} 
                         justifyContent="space-between"
-                        padding="5px" 
-                        paddingBottom="15px">
+                        padding="5px 0px 15px 0px" 
+                        >
                         <Image 
                             src={chrome.runtime.getURL("logo.svg")} 
                             alt="Unjobless Logo"
@@ -158,9 +166,6 @@ const Popup = ({ type } : PopupProps) => {
                         />
                         <CloseButton 
                             size='lg' 
-                            bg={'transparent'}
-                            _hover={{ bg: 'transparent' }}
-                            _active={{ bg: 'transparent' }}
                             onClick={() => setClose(true)} />
                     </Box>
                     <VStack spacing={5}>
@@ -184,19 +189,20 @@ const Popup = ({ type } : PopupProps) => {
                     <IconButton
                         aria-label="Page Up"
                         icon={
-                        <Image
-                            src={chrome.runtime.getURL("Chevron_up.svg")}
-                            alt="Page Up"
-                            transform={open ? 'rotate(180deg)' : 'rotate(0deg)'}
-                            transition="transform 0.2s" // Smooth transition for the rotation
-                        />
+                            <IoIosArrowUp
+                                style={{
+                                    fontSize: "30px",
+                                    transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+                                    transition: 'transform 0.2s'
+                                }}
+                            />
                         }
                         paddingTop="5px"
                         onClick={() => setOpen(!open)}
-                        bg={'transparent'}
+                        bg="transparent"
                         _hover={{ bg: 'transparent' }}
                         _active={{ bg: 'transparent' }}
-                        size="sm"
+                        size="md"
                     />
                     </Box>
 
@@ -216,7 +222,7 @@ const Popup = ({ type } : PopupProps) => {
                                     <TabPanel padding="3px 0px 5px 0px">
                                         <Box 
                                             width="100%"
-                                            maxHeight="40vh"
+                                            maxHeight={['35vh', '43vh']}
                                             display="flex"
                                             overflowY="auto"
                                             borderRadius="lg"
@@ -228,7 +234,7 @@ const Popup = ({ type } : PopupProps) => {
                                                 } as ScrollbarPlugin
                                             }}
                                         >
-                                        <Box width="100%">
+                                        <Box >
                                             <Box>
                                                 <Flex paddingBottom="7px" fontWeight="700" fontSize="12px">
                                                 <TextToCopy text={profile.first_name} />
@@ -394,10 +400,22 @@ const Popup = ({ type } : PopupProps) => {
                                         </Box>
                                     </TabPanel>
                                     <TabPanel>
-                                        <VStack align="flex-start">
+                                        <VStack align="stretch" w="full" gap="10px">
+                                            <Text fontWeight="500"> We'll use these values to autofill inputs with matching labels. Press the icon to AI generated the given text</Text>
+
                                             {
                                                 Object.keys(additionalFields).length > 0 ? (
-                                                    <Text>Test1</Text>
+                                                    Object.entries(additionalFields).map(([key, value]) => (
+                                                        <VStack  align="stretch" w="full" gap="5px" fontSize="12px">
+                                                            <TextToCopy text={value[0]}/> 
+                                                            <Textarea
+                                                                placeholder="Enter your Input Here"
+                                                                value={value[1]}
+                                                                onChange={(e) => handleInputChange(key, e.target.value)}
+                                                            />
+                                                            <Divider borderColor="#0F893D"/>
+                                                        </VStack>
+                                                    ))
                                                 ):(
                                                     <Text>Test2</Text>
                                                 )

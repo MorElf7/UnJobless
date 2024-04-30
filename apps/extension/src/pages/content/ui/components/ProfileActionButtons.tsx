@@ -1,31 +1,37 @@
 import React from 'react';
-import { Box, IconButton, Image, Tooltip, Spinner} from '@chakra-ui/react';
+import { Box, IconButton, Tooltip, Spinner, Icon, VStack} from '@chakra-ui/react';
+import { FaBoltLightning } from "react-icons/fa6";
+import { TbPencilBolt } from "react-icons/tb";
+import { MdModeEdit } from "react-icons/md";
+
+
+
 
 const ProfileActionButtons = ({ handler, editProfile, loading}: { handler: () => void; editProfile: () => void , loading: boolean}) => {
     return (
-        <Box display="flex" flexDirection="column" fontFamily="Ubuntu" >
+        <VStack spacing="5px" fontFamily="Ubuntu" >
             <Tooltip label="Auto Fill Profile" placement='right' fontSize="6px">
                 <IconButton
                     aria-label="Auto Fill"
-                    icon={loading ? <Spinner size="sm" color="#FFFFFF"/> : <Image src={chrome.runtime.getURL("AutoFill.svg")} alt="Auto Fill Profile" boxSize="20px"/>}
+                    icon={loading ? <Spinner size="sm" color="#FFFFFF"/> : <Icon as={FaBoltLightning} color="white" w="15px" h="15px"/>}
                     onClick={handler}
                     disabled={loading}
-                    bg = {loading ? "#B1DAC2" : "transparent"}
-                    _hover={{ bg: loading ? "#B1DAC2" : "#E1E1E9" }}
-                    fontSize="5px"
+                    bg = {loading ? "#B1DAC2" : "#45BC7A"}
+                    _hover={{ bg: loading ? "#B1DAC2" : "#3DA367" }}
                     size="sm"
                 />
             </Tooltip>
             <Tooltip label="Edit Profile" placement='right' fontSize="6px">
                 <IconButton
                     aria-label="Edit"
-                    icon={<Image src={chrome.runtime.getURL("Edit.svg")} alt="Edit Profile" boxSize="20px" />}
+                    icon={<Icon as={MdModeEdit} color="white" w="15px" h="15px"/>}
                     onClick={editProfile}
-                    bg="transparent"
+                    _hover={{ bg: '#3DA367' }}
+                    bg="#45BC7A"
                     size="sm"
                 />
             </Tooltip>
-        </Box>
+        </VStack>
     );
 };
 
