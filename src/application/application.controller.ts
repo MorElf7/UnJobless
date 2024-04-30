@@ -140,10 +140,10 @@ export class ApplicationController {
   })
   async autofill(
     @Body() body: { question: string },
-    @Req() req: any,
+    // @Req() req: any,
   ): Promise<string> {
-    const uid = req.user.id;
-    const profile = await this.applicationService.findOne(uid);
-    return this.applicationService.autofill(body.question, profile);
+    // const uid = req.user.id;
+    // const profile = await this.applicationService.findOne(uid);
+    return this.applicationService.autofill(body.question, 'profile');
   }
 }
