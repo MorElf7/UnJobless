@@ -122,16 +122,23 @@ export class ApplicationController {
     return this.applicationService.delete(uid);
   }
 
-  // @Get(':jid')
-  // @ApiOperation({ summary: 'List All Applications by job' })
-  // @Public()
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'List of applications by job',
-  //   type: [Application],
-  // })
-  // // Add the 'jobId' query parameter
-  // async findAppByJob(@Param('jid') jid: string): Promise<Application[]> {
-  //   return this.applicationService.findAppsByJob(jid);
-  // }
+  @Post('autofill')
+  @Public()
+  @ApiOperation({ summary: 'Autofill Application' })
+  @ApiBearerAuth('access-token')
+  @ApiConsumes('application/json')
+  @ApiResponse({
+    status: 200,
+    description: 'The application has been successfully autofilled.',
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        question: { type: 'string' },
+      },
+    },
+  })
+  async autofill(@Body() body: { question: string }): Promise<string> {
+    return this.applicationService.autofill(body.question);
+  }
 }
