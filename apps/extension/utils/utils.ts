@@ -1,5 +1,5 @@
 // DOM manipulation functions
-import { FileResponse } from "@root/src/shared/typing/types";
+import { FileResponse } from '@root/src/shared/typing/types';
 
 export const existQuery = (selector: string) => {
   return document.querySelector(selector) !== null;
@@ -70,34 +70,36 @@ export const selectOptionByValue = (
 };
 
 export const selectCheckBoxByPartialText = (div: HTMLDivElement, text: string, filter: (value: string) => string) => {
-    const checkboxs = div.querySelectorAll("label");
-    div.scrollIntoView();
-    checkboxs.forEach((checkbox: HTMLLabelElement) => {
-        const input = checkbox.querySelector("input");
-        if (checkbox && input && checkbox.innerText.trim().toLowerCase().includes(filter(text).toLowerCase())) {
-            const wasChecked = input.checked;
-            input.checked = true; // Set the checkbox as checked
-            if (!wasChecked) { // If the checkbox was not previously checked
-                input.dispatchEvent(new Event('change', { bubbles: true, cancelable: true })); // Dispatch a change event
-            }
-        }
-    });
-}
+  const checkboxs = div.querySelectorAll('label');
+  div.scrollIntoView();
+  checkboxs.forEach((checkbox: HTMLLabelElement) => {
+    const input = checkbox.querySelector('input');
+    if (checkbox && input && checkbox.innerText.trim().toLowerCase().includes(filter(text).toLowerCase())) {
+      const wasChecked = input.checked;
+      input.checked = true; // Set the checkbox as checked
+      if (!wasChecked) {
+        // If the checkbox was not previously checked
+        input.dispatchEvent(new Event('change', { bubbles: true, cancelable: true })); // Dispatch a change event
+      }
+    }
+  });
+};
 
 export const selectCheckBoxByValue = (div: HTMLDivElement, text: string, filter: (value: string) => string) => {
-    const checkboxs = div.querySelectorAll("label");
-    div.scrollIntoView();
-    checkboxs.forEach((checkbox: HTMLLabelElement) => {
-        const input = checkbox.querySelector("input");
-        if (checkbox && input && checkbox.innerText.trim().toLowerCase() === filter(text).toLowerCase()) {
-            const wasChecked = input.checked;
-            input.checked = true; // Set the checkbox as checked
-            if (!wasChecked) { // If the checkbox was not previously checked
-                input.dispatchEvent(new Event('change', { bubbles: true, cancelable: true })); // Dispatch a change event
-            }
-        }
-    });
-}
+  const checkboxs = div.querySelectorAll('label');
+  div.scrollIntoView();
+  checkboxs.forEach((checkbox: HTMLLabelElement) => {
+    const input = checkbox.querySelector('input');
+    if (checkbox && input && checkbox.innerText.trim().toLowerCase() === filter(text).toLowerCase()) {
+      const wasChecked = input.checked;
+      input.checked = true; // Set the checkbox as checked
+      if (!wasChecked) {
+        // If the checkbox was not previously checked
+        input.dispatchEvent(new Event('change', { bubbles: true, cancelable: true })); // Dispatch a change event
+      }
+    }
+  });
+};
 
 // Filter functions
 export const genderFilter = (value: string) => {
@@ -134,56 +136,128 @@ export const emptyFilter = (value: string) => {
 };
 
 export const hispanicFilter = (value: string) => {
-    let check_value = "";
-    switch (value) {
-        case "Hispanic":
-            check_value = "Yes";
-            break;
-        default:
-            check_value = "No";
-            break;
-    }
-    return check_value;
-}
+  let check_value = '';
+  switch (value) {
+    case 'Hispanic':
+      check_value = 'Yes';
+      break;
+    default:
+      check_value = 'No';
+      break;
+  }
+  return check_value;
+};
 
 export const attachFileToInput = async (
-    fileURL: string, 
-    fileInput: HTMLInputElement, 
-    fileName: string
+  fileURL: string,
+  fileInput: HTMLInputElement,
+  fileName: string,
 ): Promise<boolean> => {
-    return new Promise((resolve) => {
-        if (!fileInput) {
-            resolve(false);
-            return;
+  return new Promise(resolve => {
+    if (!fileInput) {
+      resolve(false);
+      return;
+    }
+
+    chrome.runtime
+      .sendMessage({
+        method: 'getFile',
+        fileURL: fileURL,
+        name: fileName,
+      })
+      .then((response: FileResponse) => {
+        if (response.status !== 200) {
+          throw new Error(`Invalid file (status code was ${response.status}, not 200)`);
         }
+        const byteArray = new Uint8Array(response.arrayBuffer);
 
-        chrome.runtime.sendMessage({
-            method: "getFile",
-            fileURL: fileURL,
-            name: fileName
-        }).then((response: FileResponse) => {
-
-            if (response.status !== 200) {
-                throw new Error(`Invalid file (status code was ${response.status}, not 200)`);
-            }
-            const byteArray = new Uint8Array(response.arrayBuffer);
-
-            const file = new File([byteArray], response.filename, {
-                type: response.type
-            });
-
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-
-            fileInput.files = dataTransfer.files;
-
-            fileInput.dispatchEvent(new Event('change', { bubbles: true }));
-            resolve(true);
-        }).catch((error: Error) => {
-            fileInput.dispatchEvent(new Event('change', { bubbles: true }));
-            resolve(false);
+        const file = new File([byteArray], response.filename, {
+          type: response.type,
         });
+
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+
+        fileInput.files = dataTransfer.files;
+
+        fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+        resolve(true);
+      })
+      .catch((error: Error) => {
+        fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+        resolve(false);
+      });
+  });
+};
+
+export const clickOnPopup = async (e: HTMLElement | null, value: string): Promise<void> => {
+  if (!e) return;
+  e.click();
+  const target: null | HTMLElement = (await waitForXPath(`//div[contains(text(), "${value}")]`)) as null | HTMLElement;
+  if (target) {
+    target.click();
+  }
+};
+
+export const waitForXPath = (xpath: string): Promise<Node | null> => {
+  return new Promise(function (resolve, reject) {
+    const element: Node | null = document
+      .evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
+      .snapshotItem(0);
+
+    if (element) {
+      resolve(element);
+      return;
+    }
+
+    const observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        const nodes: Node[] = Array.from(mutation.addedNodes);
+        for (const node of nodes) {
+          if (
+            node ===
+            document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0)
+          ) {
+            observer.disconnect();
+            resolve(node);
+            return;
+          }
+        }
+      });
     });
+
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+    // Set timeout to exit wait stae
+    setTimeout(() => resolve(null), 4000);
+  });
+};
+
+export const waitForAutomationId = (id: string): Promise<Node | null> => {
+  return new Promise(function (resolve, reject) {
+    const element: Node | null = document.querySelector(`[data-automation-id="${id}"]`);
+
+    if (element) {
+      resolve(element);
+      return;
+    }
+
+    const observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        const nodes: Node[] = Array.from(mutation.addedNodes);
+        for (const node of nodes) {
+          if (node == document.querySelector(`[data-automation-id="${id}"]`)) {
+            observer.disconnect();
+            resolve(node);
+            return;
+          }
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+    // Set timout to exit wait state
+    setTimeout(() => resolve(null), 4000);
+  });
 };
 
 export const getTrimLabel = (label: string | ""): string => {

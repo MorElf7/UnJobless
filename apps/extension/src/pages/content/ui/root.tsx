@@ -63,6 +63,8 @@ if (iFrame) {
 }
 if (existQuery("input[id='email']")) {
   renderApp(0);
+} else if (window.location.href.includes("workday")) {
+  renderApp(1);
 }
 // });
 // createRoot(rootIntoShadow).render(<App />);
