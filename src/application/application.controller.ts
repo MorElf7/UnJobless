@@ -123,7 +123,6 @@ export class ApplicationController {
   }
 
   @Post('autofill')
-  @Public()
   @ApiOperation({ summary: 'Autofill Application' })
   @ApiBearerAuth('access-token')
   @ApiConsumes('application/json')
@@ -140,10 +139,11 @@ export class ApplicationController {
   })
   async autofill(
     @Body() body: { question: string },
-    // @Req() req: any,
+    @Req() req: any,
   ): Promise<string> {
-    // const uid = req.user.id;
-    // const profile = await this.applicationService.findOne(uid);
-    return this.applicationService.autofill(body.question, 'profile');
+    const uid = req.user.id;
+    const profile = await this.applicationService.findUser(uid);
+    console.log(profile);
+    return this.applicationService.autofill(body.question, profile.toString());
   }
 }

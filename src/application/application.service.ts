@@ -1,17 +1,19 @@
 // application.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Application } from '../schemas/application.schema';
 import { CreateApplicationDto, UpdateApplicationDto } from './application.dto';
 import OpenAI from 'openai';
 import { OPENAI_API_KEY } from 'config/index';
+import { User } from 'src/schemas/user.schema';
 
 @Injectable()
 export class ApplicationService {
   private openai: OpenAI;
   constructor(
     @InjectModel(Application.name) private applicationModel: Model<Application>,
+    @InjectModel(User.name) private userModel: Model<User>,
   ) {
     this.openai = new OpenAI({ apiKey: OPENAI_API_KEY }); // Replace with your OpenAI API key
   }
@@ -34,6 +36,13 @@ export class ApplicationService {
     return this.applicationModel.findOne({ uid }).exec();
   }
 
+  async findUser(uid: string): Promise<User> {
+    const user = await this.userModel.findById(uid, { password: 0 }).exec();
+    if (!user) {
+      throw new NotFoundException(`User with id ${uid} not found`);
+    }
+    return user;
+  }
   async autofill(question: string, profile: string): Promise<string> {
     try {
       console.log(question);
@@ -44,7 +53,7 @@ export class ApplicationService {
             content:
               'You are an assistant who are given the following information about the user:' +
               profile +
-              'You are asked to answer the following question:',
+              'You are asked to answer their questions from their perspective.',
           },
           {
             role: 'user',
