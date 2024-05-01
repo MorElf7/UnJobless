@@ -5,7 +5,7 @@ import { Model } from 'mongoose';
 import { Application } from '../schemas/application.schema';
 import { CreateApplicationDto, UpdateApplicationDto } from './application.dto';
 import OpenAI from 'openai';
-import { OPENAI_API_KEY } from 'config/index';
+// import { OPENAI_API_KEY } from 'config/index';
 import { User } from 'src/schemas/user.schema';
 
 @Injectable()
@@ -15,7 +15,11 @@ export class ApplicationService {
     @InjectModel(Application.name) private applicationModel: Model<Application>,
     @InjectModel(User.name) private userModel: Model<User>,
   ) {
-    this.openai = new OpenAI({ apiKey: OPENAI_API_KEY }); // Replace with your OpenAI API key
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('Missing required environment variable: OPENAI_API_KEY');
+    }
+    // console.log(process.env.OPENAI_API_KEY);
+    this.openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY }); // Replace with your OpenAI API key
   }
 
   // Create a new application
@@ -43,6 +47,7 @@ export class ApplicationService {
     }
     return user;
   }
+
   async autofill(question: string, profile: string): Promise<string> {
     try {
       console.log(question);
