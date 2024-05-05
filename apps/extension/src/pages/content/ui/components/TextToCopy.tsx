@@ -2,7 +2,7 @@ import { Text, Box } from '@chakra-ui/react';
 import ReactDOM from 'react-dom';
 import React from 'react'
 
-const TextToCopy = ({ text }: { text: string }) => {
+const TextToCopy = ({ text, defaultValue }: { text: string, defaultValue: string }) => {
     return (
         <Box
             onClick={() => navigator.clipboard.writeText(text)}
@@ -20,7 +20,7 @@ const TextToCopy = ({ text }: { text: string }) => {
             }}
         >
             <Text borderRadius="1px" _hover={{ color: '#0F893D' }} >
-                {text}
+                {text || defaultValue}
             </Text>
         </Box>
     );

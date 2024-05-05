@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ChakraProvider, Box, Image, Text, Button, VStack, CloseButton, IconButton, TabPanel, Tab, Tabs, TabList, TabPanels,  Flex, Divider, Link, Textarea,  InputRightElement } from '@chakra-ui/react';
+import { ChakraProvider, Box, Image, Text, Button, VStack, CloseButton, IconButton, TabPanel, Tab, Tabs, TabList, TabPanels,  Flex, Divider, Link, Textarea, calc } from '@chakra-ui/react';
 import { AdditionType, PopupProps, Profile } from '@root/src/shared/typing/types';
 import { AutoFillManager, EventEmitter } from './auto/autoManager';
-import { defaultProfile } from '@root/src/shared/typing/constant';
+import { defaultEducation, defaultExperience, defaultProfile } from '@root/src/shared/typing/constant';
 import { GreenHouseAutoFillManager } from './auto/greenhouse';
 import { WorkdayAutoFillManager } from './auto/workday';
 
 import { Scrollbar, ScrollbarPlugin } from "smooth-scrollbar-react";
 import { DefaultManager } from './auto/defaultManager';
 import {IoIosArrowUp} from 'react-icons/io';
-import { FaComment } from "react-icons/fa";
+import { RiSparkling2Fill } from "react-icons/ri";
 
 import findAdditionalFields from './auto/additionalFields';
 import TextToCopy from './components/TextToCopy';
@@ -34,7 +34,6 @@ const Popup = ({ type } : PopupProps) => {
                 return new DefaultManager(eventEmitter);
         }
     }, [type]);
-
 
 
     useEffect(() => {
@@ -123,7 +122,6 @@ const Popup = ({ type } : PopupProps) => {
         autoFillManager.fillUpload(profile);
     }
 
-
     const handleIdentityFields = () => {
         autoFillManager.fillIdentityFields(profile);
     }
@@ -131,6 +129,36 @@ const Popup = ({ type } : PopupProps) => {
     const editProfile = () => {
         const path = 'https://www.google.com/'
         window.open(path, '_blank');
+    }
+
+    const handleGenAi = async (index: number, label:string) => {
+        const writingSpeed = 10;
+        setLoading(true);
+        try {
+            const response = await chrome.runtime.sendMessage({ method: "genAi", question: label });
+            const text = response.data;
+            const error = response.error;
+            if (error) {
+                throw new Error(error);
+            }
+            let idx = 0;
+    
+            await new Promise((resolve) => { 
+                const interval = setInterval(() => {
+                    if (idx < text.length) {
+                        handleInputChange(index, text.slice(0, idx + 1));
+                        idx += 1;
+                    } else {
+                        clearInterval(interval);
+                        resolve(true); 
+                    }
+                }, writingSpeed);
+            });
+        } catch (error) {
+            console.error('Failed to generate AI:', error);
+        }
+        setLoading(false);
+
     }
 
     const handleInputChange = (index: number, newValue: string) => {
@@ -148,8 +176,8 @@ const Popup = ({ type } : PopupProps) => {
             <Box
                 id="unjobless_container"
                 position="fixed"
-                top="30px" 
-                right="5px"
+                top="5vh" 
+                right="1vw"
                 maxWidth={['240px', '360px']} // This sets responsive width
                 maxHeight="80vh"
                 bg="white"
@@ -162,6 +190,7 @@ const Popup = ({ type } : PopupProps) => {
                 color="gray.700"
                 overflowY="auto" 
                 overflow="hidden"
+                zIndex="6"
             >   
             {close ? 
                 <Box>
@@ -176,7 +205,7 @@ const Popup = ({ type } : PopupProps) => {
                         <Image 
                             src={chrome.runtime.getURL("logo.svg")} 
                             alt="Unjobless Logo"
-                            width='150px' // This sets responsive width
+                            width='150px'
                             height='auto'
                             objectFit='contain'
                         />
@@ -187,13 +216,14 @@ const Popup = ({ type } : PopupProps) => {
                     <VStack spacing={5}>
                         <Text fontSize="14px"  fontFamily="'Ubuntu', sans-serif">Get ready to job hunt like a boss! Hit 'Let's Do It!' and watch the magic happen!</Text>
                         <Button 
-                            size="lg" 
                             fontFamily="Nunito"
                             fontWeight="bold"
-                            width="100%"
+                            fontSize="14px"
+                            width="full"
+                            height= "40px"
                             bgColor='#45BC7A'
                             isLoading = {loading}
-                            loadingText='Auto-filling...'
+                            loadingText='Running...'
                             color="white"
                             _hover={{ bg: '#3DA367' }}
                             onClick={handleAutofill}
@@ -201,7 +231,8 @@ const Popup = ({ type } : PopupProps) => {
                             LET'S DO IT!!
                         </Button>
                     </VStack>
-                    <Box display="flex" flexDirection="row" justifyContent="flex-end">
+                    { profile &&
+                    (<Box display="flex" flexDirection="row" justifyContent="flex-end">
                     <IconButton
                         aria-label="Page Up"
                         icon={
@@ -220,9 +251,9 @@ const Popup = ({ type } : PopupProps) => {
                         _active={{ bg: 'transparent' }}
                         size="md"
                     />
-                    </Box>
-
-                    { open && (
+                    </Box>)
+            }
+                    { open && profile && (
                         <>
                             <Tabs 
                                 isFitted 
@@ -231,14 +262,14 @@ const Popup = ({ type } : PopupProps) => {
                                 fontFamily="Ubuntu"
                                 >
                                 <TabList mb="1em" shadow="0 0 0 1px #E1E1E9" borderRadius="5px" p="1" marginBottom="5px">
-                                    <Tab borderRadius="5px" fontFamily="Nunito" fontWeight="600" _selected={{ color: 'white', bg: '#45BC7A', fontWeight: '700' }}>PROFILE</Tab>
-                                    <Tab borderRadius="5px" fontFamily="Nunito" fontWeight="600" _selected={{ color: 'white', bg: '#45BC7A', fontWeight: '700' }}>FUNCTIONALITY</Tab>
+                                    <Tab fontSize="12px" borderRadius="5px" fontFamily="Nunito" fontWeight="600" _selected={{ color: 'white', bg: '#45BC7A', fontWeight: '700' }}>PROFILE</Tab>
+                                    <Tab fontSize="12px" borderRadius="5px" fontFamily="Nunito" fontWeight="600" _selected={{ color: 'white', bg: '#45BC7A', fontWeight: '700' }}>FUNCTIONALITY</Tab>
                                 </TabList>
                                 <TabPanels>
                                     <TabPanel padding="3px 0px 5px 0px">
                                         <Box 
-                                            width="100%"
-                                            maxHeight={['35vh', '43vh']}
+                                            width="full"
+                                            maxHeight="calc(75vh - 250px)"
                                             display="flex"
                                             overflowY="auto"
                                             borderRadius="lg"
@@ -253,9 +284,9 @@ const Popup = ({ type } : PopupProps) => {
                                         <Box >
                                             <Box>
                                                 <Flex paddingBottom="7px" fontWeight="700" fontSize="12px">
-                                                <TextToCopy text={profile.first_name} />
+                                                <TextToCopy text={profile.first_name} defaultValue={defaultProfile.first_name}/>
                                                 <Text paddingRight="3px">, </Text>
-                                                <TextToCopy text={profile.last_name} />
+                                                <TextToCopy text={profile.last_name} defaultValue={defaultProfile.last_name}/>
                                                 </Flex>
                                                 <Box display="flex" flexDirection="column">
                                                 <Box display="flex" justifyContent="space-between">
@@ -267,14 +298,14 @@ const Popup = ({ type } : PopupProps) => {
                                                     />
                                                     <VStack align="flex-start" paddingLeft="15px" spacing="1px" fontSize="12px" fontWeight="400">
                                                         <Flex>
-                                                        <TextToCopy text={profile.city} />
+                                                        <TextToCopy text={profile.city} defaultValue={defaultProfile.city}/>
                                                         <Text paddingRight="3px">, </Text>
-                                                        <TextToCopy text={profile.state} />
+                                                        <TextToCopy text={profile.state} defaultValue={defaultProfile.state}/>
                                                         <Text paddingRight="3px">, </Text>
-                                                        <TextToCopy text={profile.zip_code} />
+                                                        <TextToCopy text={profile.zip_code} defaultValue={defaultProfile.zip_code} />
                                                         </Flex>
-                                                        <TextToCopy text={profile.email} />
-                                                        <TextToCopy text={profile.phone} />
+                                                        <TextToCopy text={profile.email} defaultValue={defaultProfile.email}/>
+                                                        <TextToCopy text={profile.phone} defaultValue={defaultProfile.phone}/>
                                                     </VStack>
                                                     </Box>
                                                     <ProfileActionButtons handler={handleIdentityFields} editProfile={editProfile} loading = {loading}/>
@@ -288,7 +319,7 @@ const Popup = ({ type } : PopupProps) => {
                                                 <Box display="flex" justifyContent="space-between">
                                                     <VStack spacing="5px" align="stretch" w="full">
                                                     {
-                                                        profile.education.map((edu, index) => (
+                                                        profile.education && profile.education.map((edu, index) => (
                                                             <Box paddingBottom="5px">
                                                                 <Box display="flex" alignItems="center" paddingTop="5px">
                                                                 <Image 
@@ -298,17 +329,17 @@ const Popup = ({ type } : PopupProps) => {
                                                                 />
                                                                 <VStack align="flex-start" paddingLeft="15px" spacing="1px">
                                                                     <Box fontSize="12px" fontWeight="700">
-                                                                        <TextToCopy text={edu.school} />
+                                                                        <TextToCopy text={edu.school} defaultValue={defaultEducation[0].school}/>
                                                                     </Box>
                                                                     <Flex fontSize="10px" fontWeight="400">
-                                                                        <TextToCopy text={edu.degree} />
+                                                                        <TextToCopy text={edu.degree} defaultValue={defaultEducation[0].degree} />
                                                                         <Text padding="0px 3px 0px 3px"> in </Text>
-                                                                        <TextToCopy text={edu.major} />
+                                                                        <TextToCopy text={edu.major} defaultValue={defaultEducation[0].major}/>
                                                                     </Flex>
                                                                     <Flex fontSize="10px" fontWeight="400">
-                                                                        <TextToCopy text={edu.start_date} />
+                                                                        <TextToCopy text={edu.start_date} defaultValue={defaultEducation[0].start_date}/>
                                                                         <Text paddingRight="3px" paddingLeft="3px"> - </Text>
-                                                                        <TextToCopy text={edu.end_date} />
+                                                                        <TextToCopy text={edu.end_date} defaultValue={defaultEducation[0].end_date}/>
                                                                     </Flex>
                                                                 </VStack>
                                                                 </Box>
@@ -327,7 +358,7 @@ const Popup = ({ type } : PopupProps) => {
                                                 <Box display="flex" justifyContent="space-between">
                                                     <VStack spacing="5px" align="stretch" w="full">
                                                     {
-                                                        profile.experience.map((exp, index) => (
+                                                        profile.experience && profile.experience.map((exp, index) => (
                                                             <VStack paddingBottom="5px" align="stretch" w="full" spacing="5px"> 
                                                                 <Box display="flex" alignItems="center" paddingTop="5px">
                                                                 <Image 
@@ -337,22 +368,22 @@ const Popup = ({ type } : PopupProps) => {
                                                                 />
                                                                 <VStack align="flex-start" paddingLeft="15px" spacing="1px">
                                                                     <Box fontSize="12px" fontWeight="700">
-                                                                        <TextToCopy text={exp.position} />
+                                                                        <TextToCopy text={exp.position} defaultValue={defaultExperience[0].position}/>
                                                                     </Box>
                                                                     <Flex fontSize="10px" fontWeight="400">
-                                                                        <TextToCopy text={exp.company} />
+                                                                        <TextToCopy text={exp.company} defaultValue={defaultExperience[0].company}/>
                                                                         <Text padding="0px 3px 0px 3px">, </Text>
-                                                                        <TextToCopy text={exp.location} />
+                                                                        <TextToCopy text={exp.location} defaultValue={defaultExperience[0].location}/>
                                                                     </Flex>
                                                                     <Flex fontSize="10px" fontWeight="400">
-                                                                        <TextToCopy text={exp.start_date} />
+                                                                        <TextToCopy text={exp.start_date} defaultValue={defaultExperience[0].start_date}/>
                                                                         <Text paddingRight="3px" paddingLeft="3px"> - </Text>
-                                                                        <TextToCopy text={exp.end_date} />
+                                                                        <TextToCopy text={exp.end_date} defaultValue={defaultExperience[0].end_date}/>
                                                                     </Flex>
                                                                 </VStack>
                                                                 </Box>
                                                                 <Box fontSize="12px" fontWeight="400">
-                                                                    <TextToCopy text={exp.description} />
+                                                                    <TextToCopy text={exp.description} defaultValue={defaultExperience[0].description}/>
                                                                 </Box>
                                                             </VStack>
                                                         ))
@@ -423,31 +454,54 @@ const Popup = ({ type } : PopupProps) => {
                                                 } as ScrollbarPlugin
                                             }}
                                             >
-                                        <VStack align="stretch" w="full" gap="10px" maxHeight="60vh">
-                                            <Text fontWeight="500"> We'll use these values to autofill inputs with matching labels. Press the icon to AI generated the given text</Text>
-
+                                        <Box w="full" maxHeight="calc(75vh - 250px)">
+                                            <Text fontWeight="500"> We'll use these values to autofill inputs with matching labels. Press the icon to AI generated the given text.</Text>
+                                            <Box paddingTop="10px">
                                             {additionalFields.length > 0 ? (
                                                     additionalFields.map(([key, value, element], index) => (
-                                                        <VStack key={index} align="stretch" w="full" gap="5px" fontSize="12px">
-                                                            <TextToCopy text={key} />
+                                                        <Box key={index} w="full" fontSize="12px">
+                                                            <TextToCopy text={key} defaultValue={"default question"}/>
+                                                            <Box position="relative" marginTop="7px" >
+                                                            <IconButton 
+                                                                aria-label='gen-ai' 
+                                                                icon={<RiSparkling2Fill
+                                                                    style={{
+                                                                        fontSize: "20px",
+                                                                        color: "#45BC7A"
+                                                                    }}
+                                                                />} 
+                                                                position="absolute" 
+                                                                bottom="7px" 
+                                                                right="7px" 
+                                                                zIndex="tooltip"
+                                                                bg="transparent"
+                                                                _hover={{ bg: 'transparent', transform: "scale(1.2)", transition: "transform 0.2s ease" }}
+                                                                onClick= {() => {handleGenAi(index, key)}}
+                                                                isDisabled={loading}
+                                                                />
                                                             <Textarea
                                                                 placeholder="Enter your Input Here"
                                                                 value={value}
                                                                 onChange={(e) => handleInputChange(index, e.target.value)}
-                                                            >
-                                                            {/* <InputRightElement
-                                                                // pointerEvents="none"
-                                                                children={<IconButton icon={<FaComment />} aria-label='gen-ai' color="red"/>}
-                                                            /> */}
-                                                            </Textarea>
-                                                            <Divider borderColor="#0F893D"/>
-                                                        </VStack>
+                                                                position="relative"
+                                                                sx={{
+                                                                    '&::-webkit-scrollbar': {
+                                                                      display: 'none', // This hides the scrollbar in WebKit browsers like Chrome and Safari
+                                                                    },
+                                                                    '-ms-overflow-style': 'none',  // This hides the scrollbar in IE and Edge
+                                                                    'scrollbar-width': 'none'  // This hides the scrollbar in Firefox
+                                                                  }}
+                                                                overflowY="scroll" // keeps the scroll functionality without the scrollbar
+                                                            />
+                                                            </Box>
+                                                            <Divider borderColor="#0F893D" margin="7px 0px 7px 0px"/>
+                                                        </Box>
                                                     ))
                                                 ) : (
-                                                    <Text>No additional fields</Text>
+                                                    <Text fontSize="14px" color="red">Page don't have any text to genrate.</Text>
                                                 )}
-                                            
-                                        </VStack>
+                                            </Box>
+                                        </Box>
                                         </Scrollbar>
                                     </TabPanel>
                                 </TabPanels>
@@ -461,6 +515,9 @@ const Popup = ({ type } : PopupProps) => {
             <Button onClick={() => {
                 chrome.runtime.sendMessage({ method: "assignTestProfile" })
                 }}>Save Profile</Button>
+            <Button onClick={() => {
+                chrome.runtime.sendMessage({ method: "clearTestProfile" })
+                }}>Delete Profile</Button>
 
         </ChakraProvider>
   );

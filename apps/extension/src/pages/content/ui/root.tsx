@@ -61,11 +61,20 @@ if (iFrame) {
     }
   }
 }
-if (existQuery("input[id='email']")) {
-  renderApp(0);
-} else if (window.location.href.includes("workday")) {
-  renderApp(1);
+// if (existQuery("input[id='email']")) {
+//   renderApp(0);
+// } else if (window.location.href.includes("workday")) {
+//   renderApp(1);
+// }
+// "*://boards.greenhouse.io/*
+// "*://*.myworkdayjobs.com/*/apply*", "*://*.myworkdaysite.com/*/apply*"
+if (/^https?:\/\/boards\.greenhouse\.io\//.test(window.location.href)) {
+  renderApp(0);  
+} else if (/^https?:\/\/.*\.myworkdayjobs\.com\/.*\/apply/.test(window.location.href) || 
+           /^https?:\/\/.*\.myworkdaysite\.com\/.*\/apply/.test(window.location.href)) {
+  renderApp(1);  
 }
+// DEBATE: Should we add inject to each textarea for ai text generation?
 // });
 // createRoot(rootIntoShadow).render(<App />);
 

@@ -9,6 +9,7 @@ export type Profile = {
     street_address: string;
     city: string;
     state: string;
+    country: string;
     zip_code: string;
     resumeUrl: string;
     resumeFileName: string;
@@ -70,3 +71,10 @@ export type Request = {
     method: string;
     [key: string]: any;
   }
+
+export type WebsiteData = {
+    url: string;
+    type: string;
+    questionId?: string;
+  }
+  

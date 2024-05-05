@@ -1,51 +1,116 @@
-import { tryInput, existQuery, tryTextArea, clickOnPopup, waitForAutomationId, waitForXPath } from '@root/utils/utils';
+import { tryInput, existQuery, tryTextArea, clickOnPopup, waitForAutomationId, waitForXPath, delay, tryReactInput, stateFilter, countryFilter, setValue, degreeFilter, attachFileToInput, getTrimLabel, emptyFilter, ethnicFilter, vetFilter } from '@root/utils/utils';
 import { AutoFillManager, EventEmitter } from './autoManager';
-import { Achievement, AdditionType, Education, Experience, Profile } from '@root/src/shared/typing/types';
-import { authorizedPattern, sponsorshipPattern } from '@root/src/shared/typing/constant';
+import { Achievement, AdditionType, Education, Experience, Profile, WebsiteData } from '@root/src/shared/typing/types';
+import { authorizedPattern, eighteenPattern, githubPattern, linkedInPattern, sponsorshipPattern, websitePattern } from '@root/src/shared/typing/constant';
 
-const delaySpeed: number = 100;
+const delaySpeed: number = 50;
 
-const fillCurrentDate = (input_date: XPathResult, index: number): void => {
-  const month = input_date.snapshotItem(0 + index * 3) as HTMLInputElement,
-    day = input_date.snapshotItem(1 + index * 3) as HTMLInputElement,
-    year = input_date.snapshotItem(2 + index * 3) as HTMLInputElement;
-  const date = new Date();
-  month.value = (date.getMonth() + 1).toString();
-  day.value = date.getDate().toString();
-  year.value = date.getFullYear().toString();
-};
-
-const fillStartDate = (input_date: XPathResult, experience: Achievement, index: number): void => {
-  const from_month = input_date.snapshotItem(index * 4 + 0) as HTMLInputElement,
-    from_year = input_date.snapshotItem(index * 4 + 1) as HTMLInputElement;
-  from_month.value = experience.start_date.split('-')[1];
-  from_year.value = experience.start_date.split('-')[0];
-};
-
-const fillEndDate = (input_date: XPathResult, experience: Achievement, index: number): void => {
-  const to_month = input_date.snapshotItem(index * 4 + 2) as HTMLInputElement,
-    to_year = input_date.snapshotItem(index * 4 + 3) as HTMLInputElement;
-  to_month.value = experience.end_date.split('-')[1];
-  to_year.value = experience.end_date.split('-')[0];
-};
-
-const fillWorkExperienceTime = (input_date: XPathResult, experience: Experience, index: number): void => {
-  if (input_date) {
-    fillStartDate(input_date, experience, index);
+const fillDate = (frame: Node, input_value: string, type: string): void => {
+  const dateParts = input_value.split('-');
+  const year = dateParts[0];
+  const month = dateParts[1];
+  const day = dateParts.length > 2 ? dateParts[2] : undefined;
+  const input_day = document.evaluate(
+    `.//div[@data-automation-id='formField-${type}']//input[@aria-label='Day']`,
+    frame,
+    null,
+    XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+    null,
+  ).snapshotItem(0) as HTMLInputElement;
+  if (input_day) {
+    input_day.scrollIntoView();
+    setValue(input_day, day);
   }
-  if ((experience.current = true)) {
-    (document.querySelector('[data-automation-id="currentlyWorkHere"]') as HTMLElement).click();
+  const input_month = document.evaluate(
+    `.//div[@data-automation-id='formField-${type}']//input[@aria-label='Month']`,  
+    frame,
+    null,
+    XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+    null,
+  ).snapshotItem(0) as HTMLInputElement;
+  if (input_month) {
+    input_month.scrollIntoView();
+    setValue(input_month, month);
+  }
+  const input_year = document.evaluate(
+    `.//div[@data-automation-id='formField-${type}']//input[@aria-label='Year']`,
+    frame,
+    null,
+    XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+    null,
+  ).snapshotItem(0 ) as HTMLInputElement;
+  if (input_year) {
+    input_year.scrollIntoView();
+    setValue(input_year, year);
+  }
+};
+
+const fillWorkExperienceTime = (frame:Node, experience: Experience): void => {
+  fillDate(frame, experience.start_date, "startDate");
+  if (experience.current === true) {
+    const checkbox = document.evaluate('//input[@data-automation-id="currentlyWorkHere"]', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0) as HTMLInputElement;
+    if (checkbox && !checkbox.checked) {
+      checkbox.dispatchEvent(new FocusEvent('focus'));
+      checkbox.dispatchEvent(new MouseEvent('mousedown'));
+      checkbox.dispatchEvent(new MouseEvent('mouseup'));
+      checkbox.click();
+      checkbox.dispatchEvent(new FocusEvent('blur'));
+    }
   } else {
-    fillEndDate(input_date, experience, index);
+    fillDate(frame, experience.end_date, "endDate");
   }
 };
 
-const fillEducationTime = (input_date: XPathResult, education: Education, index: number) => {
-  if (input_date) {
-    fillStartDate(input_date, education, index);
-
-    fillEndDate(input_date, education, index);
+const fillEducationTime = (frame: Node, education: Education) => {
+  if (frame) {
+    fillDate(frame, education.start_date, "startDate");
+    fillDate(frame, education.end_date, "endDate");
   }
+};
+
+const createOptionXPath = (option: string) => {
+  const normalizedOption = option.toUpperCase().replace(/ /g, " ");
+  return `//div[@data-automation-activepopup="true"]//ul[@role="listbox"]//li[@role="option" and starts-with(translate(normalize-space(translate(., " ", " ")), "${normalizedOption}", "${normalizedOption.toLowerCase()}"), "${normalizedOption.toLowerCase()}")]`;
+}
+
+const createButtonXPath = (buttons: string[]): string => {
+  const parts = buttons.map(button => {
+    const normalizedButton = button.toUpperCase().replace(/ /g, " ");
+    return `contains(translate(@aria-label, "${normalizedButton.toUpperCase()}", "${normalizedButton.toLowerCase()}"), "${normalizedButton.toLowerCase()}")`;
+  });
+
+  return `//button[${parts.join(' or ')}]`;
+};
+
+const fillContent = async (text: string, delay: number) => {
+  const targetstate = document.evaluate(createOptionXPath(text), document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0) as HTMLElement;
+  if (!targetstate) {
+    return;
+  }
+
+  targetstate.scrollIntoView();
+  console.log(targetstate);
+  targetstate.dispatchEvent(new FocusEvent('focus'));
+  targetstate.dispatchEvent(new MouseEvent('mousedown'));
+  targetstate.dispatchEvent(new MouseEvent('mouseup'));
+  await new Promise(resolve => setTimeout(resolve, delay));
+  targetstate.click();
+  targetstate.dispatchEvent(new FocusEvent('blur'));
+}
+
+const clickButton = async (xpath: string): Promise<void> => {
+  const button = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue as HTMLButtonElement;
+  if (button) {
+    button.click();
+    await delay(300);
+  }
+};
+
+const clickSelection = async (xpath: string, input: string, filter: (value: string) => string, delayIndex: number): Promise<void> => {
+  await clickButton(xpath);
+  await waitForXPath(createOptionXPath(filter(input))).then(async () => {
+    await fillContent(filter(input), delaySpeed * delayIndex++);
+  });
 };
 
 export class WorkdayAutoFillManager extends AutoFillManager {
@@ -54,181 +119,230 @@ export class WorkdayAutoFillManager extends AutoFillManager {
   }
 
   private async handleIdentityFields(profile: Profile): Promise<void> {
-    tryInput("input[data-automation-id='legalNameSection_firstName']", profile.first_name);
-    tryInput("input[data-automation-id='legalNameSection_lastName']", profile.last_name);
-    tryInput("input[data-automation-id='addressSection_city']", profile.city);
-    tryInput("input[data-automation-id='phone-number']", profile.city);
-    await clickOnPopup(
-      document.querySelector("button[data-automation-id='addressSection_countryRegion']"),
-      profile.state,
-    );
+    let delayIndex = 0;
+    await clickSelection('//label[contains(text(), "Country")]//following::button[1]', profile.country, countryFilter, delayIndex);
+
+
+    await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+    tryReactInput("input[data-automation-id='legalNameSection_firstName']", profile.first_name);
+    await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+    tryReactInput("input[data-automation-id='legalNameSection_lastName']", profile.last_name);
+    await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+    tryReactInput("input[data-automation-id='addressSection_city']", profile.city);
+    await clickSelection('//label[contains(text(), "State")]//following::button[1]', profile.state, stateFilter, delayIndex++);
+    await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+    tryReactInput("input[data-automation-id='addressSection_postalCode']", profile.zip_code);
+    await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+    await clickSelection('//label[contains(text(), "Phone Device Type")]//following::button[1]', "Mobile", (value) => value, delayIndex);
+    tryReactInput("input[data-automation-id='phone-number']", profile.phone);
   }
 
-  private async handleUpload(profile: Profile): Promise<void> {}
+  private async handleUpload(profile: Profile): Promise<void> {
+    if (profile.resumeUrl) {
+      const resumeInput = document.evaluate("//input[@data-automation-id='file-upload-input-ref']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue as HTMLInputElement | null;
+      if (resumeInput) {
+        await attachFileToInput(profile.resumeUrl, resumeInput, profile.resumeFileName);
+      }
+    }
+
+    if (profile.coverLetterUrl) {
+      const coverLetterInput = document.evaluate("//input[@data-automation-id='file-upload-input-ref']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue as HTMLInputElement | null;
+      if (coverLetterInput) {
+        await attachFileToInput(profile.coverLetterUrl, coverLetterInput, profile.coverLetterFileName);
+      }
+    }
+  }
 
   private async handleCustomFields(profile: Profile): Promise<void> {
     let delayIndex: number = 0;
-    const customs = document.querySelectorAll("button[aria-haspopup='listbox']");
-    customs.forEach(async custom => {
-      await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
-      const label = custom.getAttribute('aria-label');
+    const primaryQuestion = document.evaluate("//div[@data-automation-id='primaryQuestionnairePage']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue as HTMLElement | null;
+    if (primaryQuestion) {
+      primaryQuestion.childNodes.forEach(async (node) => {
+        await new Promise(resolve => setTimeout(resolve, 700 * delayIndex++));
+        const label = document.evaluate(".//div[@data-automation-id='richText']//p//b", node, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue as unknown as HTMLBRElement | null;
+        const input = document.evaluate(".//input[@type='text']", node, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null) as unknown as HTMLInputElement | null;
+        const button = document.evaluate("//button[@aria-haspopup='listbox']", node, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null) as unknown as HTMLButtonElement | null;
+        const question = getTrimLabel(label?.innerText.toLowerCase() || "");
+        if (button){
+          if (sponsorshipPattern.test(question || "")) {
+            const sponsorshipPatterns = sponsorshipPattern.source.split('|');
+            await clickSelection(createButtonXPath(sponsorshipPatterns), profile.sponsorship, emptyFilter, delayIndex);
+          } else if (authorizedPattern.test(question || "")) {
+            const authorizedPatterns = authorizedPattern.source.split('|');
+            await clickSelection(createButtonXPath(authorizedPatterns), profile.legally_authorized, emptyFilter, delayIndex);
 
-      if (sponsorshipPattern.test(label || '')) {
-        clickOnPopup(custom as HTMLElement, profile.sponsorship);
-      } else if (authorizedPattern.test(label || '')) {
-        clickOnPopup(custom as HTMLElement, profile.legally_authorized);
-      }
-    });
+          } else if (eighteenPattern.test(question || "")) {
+            const eighteenPatterns = eighteenPattern.source.split('|');
+            await clickSelection(createButtonXPath(eighteenPatterns), "Yes", emptyFilter, delayIndex);
+
+          }
+        }else if (input) {
+          if (linkedInPattern.test(question || "")) {
+            tryReactInput(input, profile.linkedin);
+          } else if (githubPattern.test(question || "")) {
+            tryReactInput(input, profile.github);
+          } else if (websitePattern.test(question || "")) {
+            tryReactInput(input, profile.website);
+          } else if (sponsorshipPattern.test(question || "")) {
+            tryReactInput(input, profile.sponsorship);
+          } else if (authorizedPattern.test(question || "")) {
+            tryReactInput(input, profile.legally_authorized);
+          } else if (eighteenPattern.test(question || "")) {
+            tryReactInput(input, "Yes");
+          }
+        }
+      });
+    }
   }
 
   private async handleEEOCFields(profile: Profile): Promise<void> {
-    await clickOnPopup(document.querySelector("button[data-automation-id='gender']"), profile.gender);
-    await clickOnPopup(document.querySelector("button[data-automation-id='ethnicityDropdown']"), profile.race);
-    await clickOnPopup(document.querySelector("button[data-automation-id='veteranStatus']"), profile.veteran);
-    tryInput("input[data-automation-id='name']", `${profile.first_name} ${profile.last_name}`);
-    const input_date: XPathResult = document.evaluate(
-      "//*[@data-automation-id='selfIdentificationPage']//*[@data-automation-id='dateInputWrapper']/input",
-      document,
-      null,
-      XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-      null,
-    );
-    const input_date_length = document.querySelectorAll("[data-automation-id='dateInputWrapper']").length;
-    for (let i = 0; i < input_date_length; i++) {
-      fillCurrentDate(input_date, i);
+    let delayIndex = 0;
+    if (existQuery("div[data-automation-id='voluntaryDisclosuresPage']")){
+      await clickSelection("//button[@data-automation-id='gender']", profile.gender, emptyFilter, delayIndex++);
+      await clickSelection("//button[@data-automation-id='ethnicityDropdown']", profile.race, ethnicFilter, delayIndex++);
+      await clickSelection("//button[@data-automation-id='veteranStatus']", profile.veteran, vetFilter, delayIndex++);
     }
 
-    if (existQuery("[data-automation-id='disability']")) {
-      const labels = document.evaluate(
-        "//*[@data-automation-id='disability']/label",
-        document,
-        null,
-        XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-        null,
-      );
-      let label = labels.iterateNext() as HTMLElement | null;
-
-      while (label) {
-        const input = document.querySelector(`#${label.getAttribute('for')}`) as HTMLInputElement;
-        if (label.innerText.includes(profile.disability)) {
-          input.checked = true;
-          input.setAttribute('aria-checked', 'true');
-          break;
-        }
-
-        label = labels.iterateNext() as HTMLElement | null;
+    if (existQuery("div[data-automation-id='selfIdentificationPage']")) {
+      await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+      tryReactInput("input[data-automation-id='name']", profile.first_name + " " + profile.last_name);
+      const e = document.querySelector("div[data-automation-id='selfIdentificationPage']")
+      if (e) {
+        const date = new Date();
+        await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+        fillDate(e, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`, "todaysDate");
       }
+      await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+      const disabilityPath = '//*[@data-automation-id="disability"]';
+      const value = profile.disability.toUpperCase().replace(/ /g, " ");
+      const disabilityXpath = `${disabilityPath}//label[starts-with(translate(normalize-space(translate(., "Â ", " ")), "${value.toUpperCase()}", "${value.toLowerCase()}"), "${value.toLowerCase()}")]/parent::*//input[@type="checkbox"]`;
+      const checkbox = document.evaluate(disabilityXpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue as HTMLInputElement | null;
+      if (checkbox && !checkbox.checked) {
+        checkbox.click();
+      }
+
     }
+    
   }
 
   private async handleExperience(profile: Profile): Promise<void> {
+    let delayIndex = 0;
     const experiences: Experience[] = profile.experience;
     if (experiences.length == 0) {
       return;
     }
-    if (existQuery("[data-automation-id='workExperienceSection']")) {
+    if (existQuery("div[data-automation-id='workExperienceSection']")) {
       let experience = experiences[0];
-      (document.querySelector("[aria-label='Add Work Experience']") as HTMLElement).click();
-      let e = await waitForAutomationId('jobTitle');
-      const input_date: XPathResult = document.evaluate(
-        "//*[@data-automation-id='experienceSection']//*[@data-automation-id='dateInputWrapper']/input",
-        document,
-        null,
-        XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-        null,
-      );
+      let i = 0;
+      await clickButton("//button[@aria-label='Add Work Experience']");
+      //Maybe add mutation observer here
+      let e = await waitForAutomationId(`workExperience-${i + 1}`);
       if (e) {
-        tryInput("input[data-automation-id='jobTitle']", experience.position); // Is this field called position
-        tryInput("input[data-automation-id='company']", experience.company);
-        tryInput("input[data-automation-id='location']", experience.location);
-        tryTextArea("textarea[data-automation-id='description']", experience.description);
-        fillWorkExperienceTime(input_date, experience, 0);
+        await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+        tryReactInput(`div[data-automation-id='workExperience-${i + 1}'] input[data-automation-id='jobTitle']`, experience.position);
+        await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+        tryReactInput(`div[data-automation-id='workExperience-${i + 1}'] input[data-automation-id='company']`, experience.company);
+        await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+        tryReactInput(`div[data-automation-id='workExperience-${i + 1}'] input[data-automation-id='location']`, experience.location);
+        await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+        fillWorkExperienceTime(e, experience);
+        await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+        tryReactInput(`div[data-automation-id='workExperience-${i + 1}'] textarea[data-automation-id='description']`, experience.description);
       }
-
-      for (let i = 1; i < experiences.length; i++) {
+      i++;
+      for (; i < experiences.length; i++) {
         let experience = experiences[i];
-        (document.querySelector("[aria-label='Add Another Work Experience']") as HTMLElement).click();
-        e = await waitForAutomationId('jobTitle');
+        if (document.querySelector(`[data-automation-id="workExperience-${i + 1}"]`) == null) {
+            await clickButton("//button[@aria-label='Add Another Work Experience']");
+        }
+        e = await waitForAutomationId(`workExperience-${i + 1}`);
         if (e) {
-          tryInput("input[data-automation-id='jobTitle']", experience.position);
-          tryInput("input[data-automation-id='company']", experience.company);
-          tryInput("input[data-automation-id='location']", experience.location);
-          tryTextArea("textarea[data-automation-id='description']", experience.description);
-          fillWorkExperienceTime(input_date, experience, i);
+          await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+          tryReactInput(`div[data-automation-id='workExperience-${i + 1}'] input[data-automation-id='jobTitle']`, experience.position);
+          await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+          tryReactInput(`div[data-automation-id='workExperience-${i + 1}'] input[data-automation-id='company']`, experience.company);
+          await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+          tryReactInput(`div[data-automation-id='workExperience-${i + 1}'] input[data-automation-id='location']`, experience.location);
+          await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+          fillWorkExperienceTime(e, experience);
+          await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+          tryReactInput(`div[data-automation-id='workExperience-${i + 1}'] textarea[data-automation-id='description']`, experience.description);
         }
       }
     }
   }
   private async handleEducation(profile: Profile): Promise<void> {
     const educations: Education[] = profile.education;
+    const initalEducation = educations[0];
+    let i = 0;
+    let delayIndex = 0;
     if (educations.length == 0) {
       return;
     }
     if (existQuery("[data-automation-id='educationSection']")) {
-      let education = educations[0];
-      (
-        document
-          .evaluate(
-            '//*[contains(text(), "Education")]//following::button',
-            document,
-            null,
-            XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-            null,
-          )
-          .snapshotItem(0) as HTMLElement
-      ).click();
-      let e = await waitForAutomationId('school');
-      const input_date: XPathResult = document.evaluate(
-        "//*[@data-automation-id='educationSection']//*[@data-automation-id='dateInputWrapper']/input",
-        document,
-        null,
-        XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-        null,
-      );
+      await clickButton("//button[@aria-label='Add Education']");
+      let e = await waitForAutomationId(`education-${i + 1}`);
       if (e) {
-        tryInput("input[data-automation-id='school']", education.school);
-        tryInput("input[data-automation-id='gpa']", education.gpa.toString());
-        await clickOnPopup(document.querySelector("button[data-automation-id='degree']"), education.degree);
-        fillEducationTime(input_date, education, 0);
-      }
+        tryReactInput(`div[data-automation-id='education-${i + 1}'] input[data-automation-id='school']`, initalEducation.school);
+        tryReactInput(`div[data-automation-id='education-${i + 1}'] input[data-automation-id='gpa']`, initalEducation.gpa.toString());
+        const degreeButtonXPath = `//div[@data-automation-id='education-${i + 1}']//label[contains(text(), 'Degree')]//following::button[1]`;
+        await clickSelection(degreeButtonXPath, initalEducation.degree, degreeFilter, delayIndex);
 
-      for (let i = 1; i < educations.length; i++) {
+        fillEducationTime(e, initalEducation);
+      }
+      i++;
+      for (; i < educations.length; i++) {
         let education = educations[i];
-        (document.querySelector("[aria-label='Add Another Work Experience']") as HTMLElement).click();
-        e = await waitForAutomationId('jobTitle');
+        if (document.querySelector(`[data-automation-id="education-${i + 1}"]`) == null) {
+            await clickButton("//button[@aria-label='Add Another Education']");
+        }
+        e = await waitForAutomationId(`education-${i + 1}`)
         if (e) {
-          tryInput("input[data-automation-id='school']", education.school);
-          tryInput("input[data-automation-id='gpa']", education.gpa.toString());
-          await clickOnPopup(document.querySelector("button[data-automation-id='degree']"), education.degree);
-          fillEducationTime(input_date, education, 0);
+          tryReactInput(`div[data-automation-id='education-${i + 1}'] input[data-automation-id='school']`, education.school);
+          tryReactInput(`div[data-automation-id='education-${i + 1}'] input[data-automation-id='gpa']`, education.gpa.toString());
+          const degreeButtonXPath = `//div[@data-automation-id='education-${i + 1}']//label[contains(text(), 'Degree')]//following::button[1]`;
+          await clickSelection(degreeButtonXPath, education.degree, degreeFilter, delayIndex);
+          fillEducationTime(e, education);
         }
       }
     }
   }
 
   private async handleLinks(profile: Profile): Promise<void> {
-    tryInput("input[data-automation-id='linkedinQuestion']", profile.linkedin);
-    tryInput("input[data-automation-id='github']", profile.github);
-    if (existQuery("[data-automation-id='websiteSection']")) {
-      (
-        document
-          .evaluate(
-            '//*[contains(text(), "Websites")]//following::button',
-            document,
-            null,
-            XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-            null,
-          )
-          .snapshotItem(0) as HTMLElement
-      ).click();
-      let e = (await waitForXPath(
-        "//*[contains(text(), 'Websites 1')]//following::input[data-automation-id='website']",
-      )) as HTMLInputElement;
-      if (e) {
-        e.value = profile.website;
-      }
+    const shouldSkipInput = (automationId?: string): boolean => {
+      return automationId ? Boolean(document.querySelector(`input[data-automation-id="${automationId}"]`)) : false;
+    };
+  
+    let websiteData: WebsiteData[] = [
+      { url: profile.linkedin, type: 'linkedin', questionId: 'linkedinQuestion' },
+      { url: profile.github, type: 'github', questionId: 'githubQuestion' },
+      { url: profile.website, type: 'website' }
+    ]
+
+    if(websiteData[0] && websiteData[0].questionId) {
+      tryReactInput(`input[data-automation-id='${websiteData[0].questionId}']`, websiteData[0].url);
     }
-  }
+
+    if(websiteData[1] && websiteData[1].questionId) {
+      tryReactInput(`input[data-automation-id='${websiteData[1].questionId}']`, websiteData[1].url);
+    }
+
+    websiteData= websiteData.filter((website) => website.url && !shouldSkipInput(website.questionId));
+  
+    const handleWebsiteAddition = async (website: WebsiteData, index: number): Promise<void> => {
+      if (index > 0) {
+        await clickButton("//button[@aria-label='Add Another Websites']");
+      } else {
+        await clickButton("//button[@aria-label='Add Websites']");
+      }
+      tryReactInput(`div[data-automation-id='websitePanelSet-${index + 1}'] input[data-automation-id="website"]`, website.url);
+    };
+    for (let i = 0; i < websiteData.length; i++) {
+      await handleWebsiteAddition(websiteData[i], i);
+    }
+
+  };
+  
 
   async autoFill(profile: Profile, additionalFields: AdditionType): Promise<void> {
     this.eventEmitter.publish('loading', true);
@@ -244,11 +358,11 @@ export class WorkdayAutoFillManager extends AutoFillManager {
     } else if (currentPage.includes('my experience')) {
       await this.handleExperience(profile);
       await this.handleEducation(profile);
+      await this.handleUpload(profile);
       await this.handleLinks(profile);
-      // await this.handleUpload(profile);
-    } else if (currentPage.includes('questionnaire')) {
+    } else if (currentPage.includes('application questions')) {
       await this.handleCustomFields(profile);
-    } else if (currentPage.includes('equal opportunity')) {
+    } else if (currentPage.includes('voluntary disclosures') || currentPage.includes('self identify') ){
       await this.handleEEOCFields(profile);
     }
     this.eventEmitter.publish('loading', false);

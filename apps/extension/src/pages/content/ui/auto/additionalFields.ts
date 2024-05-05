@@ -8,6 +8,9 @@ const findAdditionalFields = async (type: number): Promise<AdditionType> => {
         case 0:
             addition = await findGreenhouse();
             break;
+        case 1:
+            addition = await findWorkday();
+            break;
         default:
             console.error("Not supported type");
     }
@@ -44,5 +47,28 @@ const findGreenhouse = async (): Promise<AdditionType> => {
 
     return additions;
 };
+
+const findWorkday = async (): Promise<AdditionType> => {
+    const primaryQuestion = document.evaluate("//div[@data-automation-id='primaryQuestionnairePage']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue as HTMLElement | null;
+    const additions: AdditionType = [];
+    if (primaryQuestion) {
+      primaryQuestion.childNodes.forEach(async (node) => {
+        const label = document.evaluate(".//div[@data-automation-id='richText']//p//b", node, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue as unknown as HTMLBRElement | null;
+        const input = document.evaluate(".//input[@type='text']", node, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null) as unknown as HTMLInputElement | null;
+        const button = document.evaluate("//button[@aria-haspopup='listbox']", node, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null) as unknown as HTMLButtonElement | null;
+        const textarea = document.evaluate(".//textarea", node, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null) as unknown as HTMLTextAreaElement | null;
+        const question = getTrimLabel(label?.innerText.toLowerCase() || "");
+        if (!button && !combinedPattern.test(question)) {
+          if (input) {
+            additions.push([question, input.value, input]);
+          } else if (textarea) {
+            additions.push([question, textarea.value, textarea]);
+          }
+        }
+      });
+    }
+
+    return additions;
+}
 
 export default findAdditionalFields;

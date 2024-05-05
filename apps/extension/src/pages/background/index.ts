@@ -62,11 +62,12 @@ const testProfile: Profile = {
     github: "https://github.com/johndoe",
     street_address: "1234 Example St",
     city: "Example City",
-    state: "Ex",
+    state: "MA",
     zip_code: "12345",
-    resumeUrl: "https://storage.googleapis.com/simplify-resumes/095d312e-3834-4d91-9c5b-537c8133984f/1704811265.pdf?Expires=1714594158&GoogleAccessId=gcs-signing-service-account%40mifflin-backend.iam.gserviceaccount.com&Signature=vJdyVaoFzfH75gHH52Hjc%2FO3Srw1TLVt3cgdtTyWfC%2FfFT1D7Ox34BvEQrGU2CyIQIfCJ48I2VIqdx1M%2BTIaPXeqdl01Ska%2BPuP7rxpPkoCdTfbrdasLLJSRfIfY%2FIcplGxtYGG8txhIexAFba3zgyVsuxAZcc5MoW9%2BuZJiHCHRzYJJwZa1Sow5K7H7C0xJxsiPRXucEttPzC5FSoS4oBYV0B6E4%2BFnO01374id4fnuCgEaGt8SZDnCfu80ay1xqdFV0ZD1MlgtD6JDvZ8i9x0cv3JTGlOrENrrE6Bda2J%2FYh%2B5QnWNFC5sjwP5%2BnsEkEq221W1an3IX%2BI5FvIboA%3D%3D",
+    country: "United States",
+    resumeUrl: "https://storage.googleapis.com/simplify-resumes/095d312e-3834-4d91-9c5b-537c8133984f/1704811265.pdf?Expires=1717272984&GoogleAccessId=gcs-signing-service-account%40mifflin-backend.iam.gserviceaccount.com&Signature=nSWFOS2Tr%2FB1QH06eYkfekjJQw%2FT2guHNvTFW468NjodC3uZHTVvb4mji9U%2By21DPzLeVNYjAHZtJqcMhr6RSVdL4VaWcaUdo6hq6%2BQG9kqsnitWgQlPBoDMW4%2FiyIiMxkB0vtwrQXeHx4wOWb1mMWQa4LyQKc%2BFUxt9nZIhbXXZEPDj7pmL7S7pE79U3UdlfOIfgJEBq9fPGPkqHY34Yz5KVYvKZ1aqoXBuxayN5Zq2SfxVBc48BX%2BYrA9Jr%2FHebxdXCNrSoam4FFPzj6iRjgYLAXEj4Fr%2Bd7dm4B2C5dALqOmqDFPg4bng%2FArnZSww2rauKPSsbrHk1HdI6irU3w%3D%3D&",
     resumeFileName: "John Doe Resume",
-    coverLetterUrl: "https://storage.googleapis.com/simplify-resumes/095d312e-3834-4d91-9c5b-537c8133984f/1704811265.pdf?Expires=1714594158&GoogleAccessId=gcs-signing-service-account%40mifflin-backend.iam.gserviceaccount.com&Signature=vJdyVaoFzfH75gHH52Hjc%2FO3Srw1TLVt3cgdtTyWfC%2FfFT1D7Ox34BvEQrGU2CyIQIfCJ48I2VIqdx1M%2BTIaPXeqdl01Ska%2BPuP7rxpPkoCdTfbrdasLLJSRfIfY%2FIcplGxtYGG8txhIexAFba3zgyVsuxAZcc5MoW9%2BuZJiHCHRzYJJwZa1Sow5K7H7C0xJxsiPRXucEttPzC5FSoS4oBYV0B6E4%2BFnO01374id4fnuCgEaGt8SZDnCfu80ay1xqdFV0ZD1MlgtD6JDvZ8i9x0cv3JTGlOrENrrE6Bda2J%2FYh%2B5QnWNFC5sjwP5%2BnsEkEq221W1an3IX%2BI5FvIboA%3D%3D",
+    coverLetterUrl: "https://storage.googleapis.com/simplify-resumes/095d312e-3834-4d91-9c5b-537c8133984f/1704811265.pdf?Expires=1717272984&GoogleAccessId=gcs-signing-service-account%40mifflin-backend.iam.gserviceaccount.com&Signature=nSWFOS2Tr%2FB1QH06eYkfekjJQw%2FT2guHNvTFW468NjodC3uZHTVvb4mji9U%2By21DPzLeVNYjAHZtJqcMhr6RSVdL4VaWcaUdo6hq6%2BQG9kqsnitWgQlPBoDMW4%2FiyIiMxkB0vtwrQXeHx4wOWb1mMWQa4LyQKc%2BFUxt9nZIhbXXZEPDj7pmL7S7pE79U3UdlfOIfgJEBq9fPGPkqHY34Yz5KVYvKZ1aqoXBuxayN5Zq2SfxVBc48BX%2BYrA9Jr%2FHebxdXCNrSoam4FFPzj6iRjgYLAXEj4Fr%2Bd7dm4B2C5dALqOmqDFPg4bng%2FArnZSww2rauKPSsbrHk1HdI6irU3w%3D%3D",
     coverLetterFileName: "John Doe Cover Letter",
     education: testEducation,
     experience: testExperience,
@@ -95,7 +96,7 @@ const saveProfile = async (profile: Object) => {
 
 const getProfile = () => {
     return new Promise((resolve, reject) => {
-        chrome.storage.sync.get('profile', (result) => {
+        chrome.storage.sync.get('profile', async (result) => {
             if (chrome.runtime.lastError) {
                 console.error(chrome.runtime.lastError.message);
                 reject(chrome.runtime.lastError.message);
@@ -106,16 +107,26 @@ const getProfile = () => {
                 console.log('profile', result.profile);
                 resolve(JSON.parse(result.profile));
             } else {
-                // Here, you might need to fetch the profile from another storage or a remote API
-                console.log('No profile found in storage, fetching from another source...');
-                // Simulate fetching profile from another source
-                // For example, let's simulate it with a timeout (you would replace this with an actual API call)
-                setTimeout(() => {
-                    // This is just an example payload, replace with actual data retrieval logic
-                    const simulatedProfile = { name: "John Doe", email: "john@example.com" };
-                    console.log('getProfileFromStorage:', simulatedProfile);
-                    resolve(simulatedProfile); // resolve the fetched profile
-                }, 1000);
+                // https://cs520-backend-iz0mg9q8e-kientos-projects.vercel.app
+                // const response = await fetch('https://cs520-backend-iz0mg9q8e-kientos-projects.vercel.app/application/autofill', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //         'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIiwiaWQiOiI2NjMzYmI2MmU3MWQzMzA0NzBjNDI4ZTgiLCJmaXJzdE5hbWUiOiJKb2huIiwibGFzdE5hbWUiOiJEb2UiLCJpYXQiOjE3MTQ2NjYzMzgsImV4cCI6MTcxNDcwMjMzOH0.fE8JhQ18Gqkf13XpgZMYDmGTCcHFw2XMNisYHv1gdu0'
+                //     },
+                //     body: JSON.stringify({
+                //         prompt: "John Doe is"
+                //     })
+                    
+                // });
+
+                // if (!response.ok) {
+                //     throw new Error(`HTTP error! Status: ${response.status}`);
+                // }
+
+                // const data = await response.json();
+                // await saveProfile(data);
+                // resolve(data);
             }
         });
     });
@@ -124,6 +135,19 @@ const getProfile = () => {
 const assignTestProfile = async () => {
     console.log('assignTestProfile');
     await saveProfile(testProfile);
+}
+
+const clearTestProfile = async () => {
+    return new Promise((resolve, reject) => {
+        chrome.storage.sync.remove('profile', () => {
+            if (chrome.runtime.lastError) {
+                reject(chrome.runtime.lastError.message);
+            } else {
+                resolve(true);
+            }
+        });
+    });
+
 }
 
 const getFile = async (fileURL: string, name: string): Promise<FileResponse> => {
@@ -164,6 +188,30 @@ const getFile = async (fileURL: string, name: string): Promise<FileResponse> => 
         arrayBuffer: arrayBuffer,
         filename: filename
     };
+}
+
+const genAi = async (text: string): Promise<Response> => {
+    const response = await fetch('https://cs520-backend-iz0mg9q8e-kientos-projects.vercel.app/application/autofill', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIiwiaWQiOiI2NjMzYmI2MmU3MWQzMzA0NzBjNDI4ZTgiLCJmaXJzdE5hbWUiOiJKb2huIiwibGFzdE5hbWUiOiJEb2UiLCJpYXQiOjE3MTQ2NjYzMzgsImV4cCI6MTcxNDcwMjMzOH0.fE8JhQ18Gqkf13XpgZMYDmGTCcHFw2XMNisYHv1gdu0'
+        },
+        body: JSON.stringify({
+            question: text
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.text();
+    // const data = "This is a test response from the AI."
+
+    return {
+        data: data
+    };
+
 }
 
 const saveAddition = async (addition: AdditionType) => {
@@ -231,13 +279,21 @@ chrome.runtime.onMessage.addListener((request: Request, sender: chrome.runtime.M
                     console.log("Profile assigned"); // Adjust logging appropriately
                 });
                 break;
-
+            case 'clearTestProfile':
+                handleRequest(clearTestProfile(), sendResponse, () => {
+                    console.log("Profile cleared"); // Adjust logging appropriately
+                });
+                break;
             case 'getFile':
                 handleRequest(getFile(request.fileURL!, request.name!), sendResponse, (response) => {
                     sendResponse(response);
                 });
                 break;
-
+            case 'genAi':
+                handleRequest(genAi(request.question), sendResponse, (response) => {
+                    sendResponse(response);
+                });
+                break;
             // case 'saveAddition':
             //     handleRequest(saveAddition(request.addition), sendResponse, () => {
             //         sendResponse({ success: true });

@@ -5,9 +5,10 @@ tryInput, selectOptionByPartialText, selectOptionByValue, existQuery,
 emptyFilter, hispanicFilter, ethnicFilter, selectCheckBoxByPartialText,
 genderFilter, selectCheckBoxByValue,
 attachFileToInput,
-getTrimLabel
+getTrimLabel,
+vetFilter
 } from "@root/utils/utils";
-import { authorizedPattern, githubPattern, linkedInPattern, sponsorshipPattern, websitePattern } from "@root/src/shared/typing/constant";
+import { authorizedPattern, eighteenPattern, githubPattern, linkedInPattern, sponsorshipPattern, websitePattern } from "@root/src/shared/typing/constant";
 
 const delaySpeed : number = 100;
 
@@ -58,6 +59,8 @@ export class GreenHouseAutoFillManager extends AutoFillManager {
                     selectOptionByPartialText(select, profile.sponsorship, emptyFilter);
                 } else if (authorizedPattern.test(trimLabel || "")) {
                     selectOptionByPartialText(select, profile.legally_authorized, emptyFilter);
+                } else if (eighteenPattern.test(trimLabel || "")) {
+                    selectOptionByPartialText(select, "Yes", emptyFilter);
                 }
             } else if (input) {
                 if (linkedInPattern.test(trimLabel || "")) {
@@ -114,7 +117,7 @@ export class GreenHouseAutoFillManager extends AutoFillManager {
                     } else if (/racial/i.test(question)) {
                         selectCheckBoxByPartialText(demo, profile.race, emptyFilter);
                     } else if (/veteran/i.test(question)) {
-                        selectCheckBoxByPartialText(demo, profile.veteran, emptyFilter);
+                        selectCheckBoxByPartialText(demo, profile.veteran, vetFilter);
                     } else if (/disability/i.test(question)) {
                         selectCheckBoxByPartialText(demo, profile.disability, emptyFilter);
                     }
@@ -128,6 +131,7 @@ export class GreenHouseAutoFillManager extends AutoFillManager {
         addition.forEach(async ([label, value, input]) => {
             await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
             if (input) {
+                input.scrollIntoView();
                 input.value = value;
             }
         });

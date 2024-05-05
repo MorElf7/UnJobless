@@ -1,6 +1,6 @@
 import { Education, Experience, Profile } from "./types";
 
-const defaultEducation: Education[] = [
+export const defaultEducation: Education[] = [
     {
         school: "Default University",
         start_date: "0000-00",
@@ -11,7 +11,7 @@ const defaultEducation: Education[] = [
     }
 ];
 
-const defaultExperience: Experience[] = [
+export const defaultExperience: Experience[] = [
     {
         company: "Default Company",
         location: "Default City",
@@ -35,6 +35,7 @@ export const defaultProfile: Profile = {
     city: "Default City",
     state: "Maine",
     zip_code: "00000",
+    country: "United States",
     resumeUrl: "",
     resumeFileName: "",
     coverLetterUrl: "",
@@ -55,13 +56,19 @@ const patterns = [
     "github profile",
     "github",
     "website",
-    "Will you now or in the future require sponsorship",
-    "legally authorized"
+    "sponsorship",
+    "lawfully work",
+    "authorized to work",
+    "eligible to work",
+    "18 years",
+    "age of 18"
 ];
+
 
 export const linkedInPattern = new RegExp(patterns.slice(0,2).join('|'), "i");
 export const githubPattern = new RegExp(patterns.slice(2,4).join('|'), "i");
 export const websitePattern = new RegExp(patterns[4], "i");
 export const sponsorshipPattern = new RegExp(patterns[5], "i");
-export const authorizedPattern = new RegExp(patterns[6], "i");
+export const authorizedPattern = new RegExp(patterns.slice(6,9).join('|'), "i");
+export const eighteenPattern = new RegExp(patterns.slice(9,11).join('|'), "i");
 export const combinedPattern = new RegExp(patterns.join('|'), "i");
