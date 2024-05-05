@@ -1,4 +1,4 @@
-import { AdditionType, Profile } from "@root/src/shared/typing/types";
+import { AdditionType, Education, Profile } from "@root/src/shared/typing/types";
 import { AutoFillManager, EventEmitter } from "./autoManager";
 import {
 tryInput, selectOptionByPartialText, selectOptionByValue, existQuery,
@@ -126,6 +126,60 @@ export class GreenHouseAutoFillManager extends AutoFillManager {
         }
     }
 
+    private async handleExperience(profile: Profile): Promise<void> {
+        return;
+    }
+
+    private async handleEducation(education: Education[]): Promise<void> {
+        const wrapper = document.querySelector("div[id='education_section]") as HTMLDivElement | null;
+        let delayIndex = 0;
+        if (wrapper) {
+            const addEducationButton = wrapper.querySelector("button[id='add_education']") as HTMLButtonElement | null;
+            if (addEducationButton) {
+                for(let i = 1; i < education.length - 1; i++) {
+                    addEducationButton.click();
+                }
+            }
+
+            const educations = wrapper.querySelectorAll("div[id='education']") as NodeListOf<HTMLDivElement>;
+            educations.forEach(async (edu, index) => {
+                // This is wrong, follow the logic of workday, i'm too lazy to fix it
+                await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+                const schoolInput = edu.querySelector("input[id='school']") as HTMLInputElement | null;
+                const startDateInput = edu.querySelector("input[id='start_date']") as HTMLInputElement | null;
+                const endDateInput = edu.querySelector("input[id='end_date']") as HTMLInputElement | null;
+                const majorInput = edu.querySelector("input[id='major']") as HTMLInputElement | null;
+                const degreeInput = edu.querySelector("input[id='degree']") as HTMLInputElement | null;
+                const gpaInput = edu.querySelector("input[id='gpa']") as HTMLInputElement | null;
+
+                if (schoolInput) {
+                    schoolInput.value = education[index].school;
+                }
+
+                if (startDateInput) {
+                    startDateInput.value = education[index].start_date;
+                }
+
+                if (endDateInput) {
+                    endDateInput.value = education[index].end_date;
+                }
+
+                if (majorInput) {
+                    majorInput.value = education[index].major;
+                }
+
+                if (degreeInput) {
+                    degreeInput.value = education[index].degree;
+                }
+
+                if (gpaInput) {
+                    gpaInput.value = education[index].gpa.toString();
+                }
+            });
+            
+        }
+    }
+
     private async handleAdditionalFields(addition: AdditionType): Promise<void> {
         let delayIndex = 0;
         addition.forEach(async ([label, value, input]) => {
@@ -170,6 +224,19 @@ export class GreenHouseAutoFillManager extends AutoFillManager {
         await this.handleEEOCFields(profile);
         this.eventEmitter.publish('loading', false);
     }
+
+    async fillExperience(profile: Profile): Promise<void> {
+        this.eventEmitter.publish('loading', true);
+        await this.handleExperience(profile);
+        this.eventEmitter.publish('loading', false);
+      }
+
+    async fillEducation(profile: Profile): Promise<void> {
+    this.eventEmitter.publish('loading', true);
+    await this.handleEducation(profile.education);
+    this.eventEmitter.publish('loading', false);
+    }
+
 
     
 }

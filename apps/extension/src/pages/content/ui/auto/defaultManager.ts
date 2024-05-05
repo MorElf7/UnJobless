@@ -22,6 +22,14 @@ export class DefaultManager extends AutoFillManager{
         alert("Provider not supported")
     }
 
+    fillExperience(profile: Profile): void {
+        alert("Provider not supported")
+    }
+
+    fillEducation(profile: Profile): void {
+        alert("Provider not supported")
+    }
+
     autoFill(profile: Profile): void {
         alert("Provider not supported")
     }

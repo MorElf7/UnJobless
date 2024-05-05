@@ -6,7 +6,10 @@ export abstract class AutoFillManager {
     abstract fillUpload(profile: Profile): void;
     abstract fillCustomFields(profile: Profile): void;
     abstract fillEEOCFields(profile: Profile): void;
+    abstract fillExperience(profile: Profile): void;
+    abstract fillEducation(profile: Profile): void;
     abstract autoFill(profile: Profile, additionalFields: AdditionType): void;
+
     
 }
 
