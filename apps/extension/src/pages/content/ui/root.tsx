@@ -61,19 +61,29 @@ if (iFrame) {
     }
   }
 }
-// if (existQuery("input[id='email']")) {
-//   renderApp(0);
-// } else if (window.location.href.includes("workday")) {
-//   renderApp(1);
-// }
-// "*://boards.greenhouse.io/*
-// "*://*.myworkdayjobs.com/*/apply*", "*://*.myworkdaysite.com/*/apply*"
-if (/^https?:\/\/boards\.greenhouse\.io\//.test(window.location.href)) {
-  renderApp(0);  
-} else if (/^https?:\/\/.*\.myworkdayjobs\.com\/.*\/apply/.test(window.location.href) || 
-           /^https?:\/\/.*\.myworkdaysite\.com\/.*\/apply/.test(window.location.href)) {
-  renderApp(1);  
-}
+(function() {
+  let lastUrl = location.href; 
+  new MutationObserver(() => {
+    const url = location.href;
+    if (url !== lastUrl) {
+      lastUrl = url;
+      onUrlChange();
+    }
+  }).observe(document, {subtree: true, childList: true});
+
+  function onUrlChange() {
+    console.log('URL changed:', location.href);
+    if (/^https?:\/\/boards\.greenhouse\.io\//.test(window.location.href)) {
+      renderApp(0);  
+    } else if (/^https?:\/\/.*\.myworkdayjobs\.com\/.*\/apply/.test(window.location.href) || 
+               /^https?:\/\/.*\.myworkdaysite\.com\/.*\/apply/.test(window.location.href)) {
+      renderApp(1);  
+    }
+  }
+
+  // Initial check in case the page loads directly with the target URL
+  onUrlChange();
+})();
 // DEBATE: Should we add inject to each textarea for ai text generation?
 // });
 // createRoot(rootIntoShadow).render(<App />);

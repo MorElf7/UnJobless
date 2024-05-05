@@ -17,16 +17,19 @@ export const tryInput = (selector: string, value: string) => {
   }
 };
 
-export const tryReactInput = (selector: string | HTMLInputElement, input: string) => {  
+export const tryReactInput = (selector: string | HTMLInputElement | HTMLTextAreaElement, input: string) => {  
+  let ele: HTMLInputElement | HTMLTextAreaElement | null = null;
+
   if (typeof selector === 'string') {
-    var ele = document.querySelector(selector) as HTMLInputElement | null;
-  } else {
-    var ele = selector as HTMLInputElement | null;
+    ele = document.querySelector(selector);
+  } else if (selector instanceof HTMLInputElement || selector instanceof HTMLTextAreaElement) {
+    ele = selector;
   }
+
   if (ele) {
-      ele.scrollIntoView();
-      ele.value = input;
-      ele.dispatchEvent(new Event('blur', { bubbles: true }));
+    ele.scrollIntoView();
+    ele.value = input;
+    ele.dispatchEvent(new Event('blur', { bubbles: true }));
   }
 }
 

@@ -24,6 +24,7 @@ export const defaultExperience: Experience[] = [
 ];
 
 export const defaultProfile: Profile = {
+    uid: "",
     first_name: "Firstname",
     last_name: "Lastname",
     email: "email@example.com",

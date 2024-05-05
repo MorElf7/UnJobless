@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ChakraProvider, Box, Image, Text, Button, VStack, CloseButton, IconButton, TabPanel, Tab, Tabs, TabList, TabPanels,  Flex, Divider, Link, Textarea, calc } from '@chakra-ui/react';
+import { ChakraProvider, Box, Image, Text, Button, VStack, CloseButton, IconButton, TabPanel, Tab, Tabs, TabList, TabPanels,  Flex, Divider, Link, Textarea, calc, HStack, Icon } from '@chakra-ui/react';
 import { AdditionType, PopupProps, Profile } from '@root/src/shared/typing/types';
 import { AutoFillManager, EventEmitter } from './auto/autoManager';
 import { defaultEducation, defaultExperience, defaultProfile } from '@root/src/shared/typing/constant';
@@ -11,9 +11,11 @@ import { DefaultManager } from './auto/defaultManager';
 import {IoIosArrowUp} from 'react-icons/io';
 import { RiSparkling2Fill } from "react-icons/ri";
 
+
 import findAdditionalFields from './auto/additionalFields';
 import TextToCopy from './components/TextToCopy';
 import ProfileActionButtons from './components/ProfileActionButtons';
+import saveApplication from './auto/saveApplication';
 
 
 const Popup = ({ type } : PopupProps) => {
@@ -58,11 +60,10 @@ const Popup = ({ type } : PopupProps) => {
                         chrome.runtime.sendMessage({ method: "getProfile" }, (response) => {
                             if (chrome.runtime.lastError) {
                                 reject(new Error(chrome.runtime.lastError.message));
-                            } else if (response) {
-                                resolve(response);
+                            } else if (response.error) {
+                                reject(new Error(response.error));
                             } else {
-                                reject(new Error("Failed to fetch profile."));
-                            }
+                                resolve(response);                            }
                         });
                     });
 
@@ -108,6 +109,10 @@ const Popup = ({ type } : PopupProps) => {
         fetchAdditionalFields();
         fetchProfile();
     }, []);
+    useEffect(() => {
+        saveApplication(type, profile);
+    }, []);
+
 
     const handleLoading = (isLoading: boolean): void => {
         setLoading(isLoading);
@@ -173,6 +178,27 @@ const Popup = ({ type } : PopupProps) => {
 
     return (
         <ChakraProvider>
+            {close ? 
+                <Box
+                bg="#45BC7A"
+                position="fixed"
+                top="5vh"
+                right="-15px"
+                fontFamily="Ubuntu"
+                borderRadius="15px"
+                boxShadow="xl"
+                p="5"
+                mt="4"
+                onClick={() => setClose(false)}
+                transition="right 0.3s ease-in-out"
+                _hover={{
+                  right: "2", // Moves the box to be fully visible on hover
+                  bg: "#3DA367",
+                  cursor: "pointer"
+                }}
+              >
+                <Image src={chrome.runtime.getURL("logo_white.svg")} alt="Unjobless Logo" width="50px" objectFit="contain" />
+              </Box> : 
             <Box
                 id="unjobless_container"
                 position="fixed"
@@ -192,11 +218,6 @@ const Popup = ({ type } : PopupProps) => {
                 overflow="hidden"
                 zIndex="6"
             >   
-            {close ? 
-                <Box>
-                    <Image src={chrome.runtime.getURL("logo.svg")} alt="Unjobless Logo" width='150px' height='auto' objectFit='contain' />
-                    <Button onClick={() => setClose(false)}>Open</Button>
-                </Box> :
                 <Box>
                     <Box display="flex" 
                         justifyContent="space-between"
@@ -510,14 +531,15 @@ const Popup = ({ type } : PopupProps) => {
                         
                     )}
                 </Box>
-                }
+                
             </Box>
-            <Button onClick={() => {
+            }
+            {/* <Button onClick={() => {
                 chrome.runtime.sendMessage({ method: "assignTestProfile" })
                 }}>Save Profile</Button>
             <Button onClick={() => {
                 chrome.runtime.sendMessage({ method: "clearTestProfile" })
-                }}>Delete Profile</Button>
+                }}>Delete Profile</Button> */}
 
         </ChakraProvider>
   );

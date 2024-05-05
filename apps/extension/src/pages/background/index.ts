@@ -53,6 +53,7 @@ const testExperience: Experience[] = [
 ];
 
 const testProfile: Profile = {
+    uid: "string",
     first_name: "John",
     last_name: "Doe",
     email: "john.doe@example.com",
@@ -81,20 +82,46 @@ const testProfile: Profile = {
 
 
 
-const saveProfile = async (profile: Object) => {
+const saveProfile = async (profile: Object) : Promise<Response>=> {
     const jsonProfile = JSON.stringify(profile);
     return new Promise((resolve, reject) => {
         chrome.storage.sync.set({ profile: jsonProfile }, () => {
             if (chrome.runtime.lastError) {
                 reject(chrome.runtime.lastError.message);
             } else {
-                resolve(true);
+                resolve({ success: true });
             }
         });
     });
 }
 
-const getProfile = () => {
+const saveApplication = async (Profile: Profile, company: string): Promise<Response> => {
+
+    return new Promise(async (resolve, reject) => {
+        // change to saveApplication
+        // const response = await fetch('https://cs520-backend-iz0mg9q8e-kientos-projects.vercel.app/application', {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIiwiaWQiOiI2NjMzYmI2MmU3MWQzMzA0NzBjNDI4ZTgiLCJmaXJzdE5hbWUiOiJKb2huIiwibGFzdE5hbWUiOiJEb2UiLCJpYXQiOjE3MTQ2NjYzMzgsImV4cCI6MTcxNDcwMjMzOH0.fE8JhQ18Gqkf13XpgZMYDmGTCcHFw2XMNisYHv1gdu0'
+        //     },
+        //     body: JSON.stringify({
+        //         company: company,
+        //         uid: Profile.uid,
+        //     })
+        // });
+
+        // if (!response.ok) {
+        //     reject(new Error(`HTTP error! Status: ${response.status}`));
+        // }
+
+        // resolve({ success: true });
+        console.log('saveApplication');
+    });
+
+}
+
+const getProfile = (): Promise<Response> => {
     return new Promise((resolve, reject) => {
         chrome.storage.sync.get('profile', async (result) => {
             if (chrome.runtime.lastError) {
@@ -107,6 +134,7 @@ const getProfile = () => {
                 console.log('profile', result.profile);
                 resolve(JSON.parse(result.profile));
             } else {
+                // change to getProfile
                 // https://cs520-backend-iz0mg9q8e-kientos-projects.vercel.app
                 // const response = await fetch('https://cs520-backend-iz0mg9q8e-kientos-projects.vercel.app/application/autofill', {
                 //     method: 'POST',
@@ -214,37 +242,37 @@ const genAi = async (text: string): Promise<Response> => {
 
 }
 
-const saveAddition = async (addition: AdditionType) => {
-    const jsonAddition = JSON.stringify(addition);
-    return new Promise((resolve, reject) => {
-        chrome.storage.sync.set({ addition: jsonAddition }, () => {
-            if (chrome.runtime.lastError) {
-                reject(chrome.runtime.lastError.message);
-            } else {
-                resolve(true);
-            }
-        });
-    });
-}
+// const saveAddition = async (addition: AdditionType) => {
+//     const jsonAddition = JSON.stringify(addition);
+//     return new Promise((resolve, reject) => {
+//         chrome.storage.sync.set({ addition: jsonAddition }, () => {
+//             if (chrome.runtime.lastError) {
+//                 reject(chrome.runtime.lastError.message);
+//             } else {
+//                 resolve(true);
+//             }
+//         });
+//     });
+// }
 
-const getAddition = async () => {
-    return new Promise((resolve, reject) => {
-        chrome.storage.sync.get('addition', (result) => {
-            if (chrome.runtime.lastError) {
-                console.error(chrome.runtime.lastError.message);
-                reject(chrome.runtime.lastError.message);
-                return;
-            }
+// const getAddition = async () => {
+//     return new Promise((resolve, reject) => {
+//         chrome.storage.sync.get('addition', (result) => {
+//             if (chrome.runtime.lastError) {
+//                 console.error(chrome.runtime.lastError.message);
+//                 reject(chrome.runtime.lastError.message);
+//                 return;
+//             }
 
-            if (result.addition) {
-                resolve(JSON.parse(result.addition));
-            } else {
-                resolve({});
-            }
-        });
-    });
+//             if (result.addition) {
+//                 resolve(JSON.parse(result.addition));
+//             } else {
+//                 resolve({});
+//             }
+//         });
+//     });
 
-}
+// }
 
 
 function handleRequest(
@@ -292,6 +320,11 @@ chrome.runtime.onMessage.addListener((request: Request, sender: chrome.runtime.M
             case 'genAi':
                 handleRequest(genAi(request.question), sendResponse, (response) => {
                     sendResponse(response);
+                });
+                break;
+            case 'submitForm':
+                handleRequest(saveApplication(request.profile, request.company), sendResponse, () => {
+                    sendResponse({ success: true });
                 });
                 break;
             // case 'saveAddition':

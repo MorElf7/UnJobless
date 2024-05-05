@@ -59,10 +59,8 @@ const manifest = {
         'assets/css/*.css', 
         'icon-128.png', 
         'icon-34.png', 
-        'Chevron_up.svg',
-        'AutoFill.svg',
-        'Edit.svg',
-        'logo.svg'
+        'logo.svg',
+        'logo_white.svg',
       ],
       matches: ['*://*/*'],
     },

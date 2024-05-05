@@ -342,6 +342,17 @@ export class WorkdayAutoFillManager extends AutoFillManager {
     }
 
   };
+
+  private async handleAdditionalFields(addition: AdditionType): Promise<void> {
+    let delayIndex = 0;
+    addition.forEach(async ([label, value, input]) => {
+      await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
+      if (input) {
+        input.scrollIntoView();
+        tryReactInput(input, value);
+      }
+    });
+}
   
 
   async autoFill(profile: Profile, additionalFields: AdditionType): Promise<void> {
@@ -362,6 +373,7 @@ export class WorkdayAutoFillManager extends AutoFillManager {
       await this.handleLinks(profile);
     } else if (currentPage.includes('application questions')) {
       await this.handleCustomFields(profile);
+      await this.handleAdditionalFields(additionalFields);
     } else if (currentPage.includes('voluntary disclosures') || currentPage.includes('self identify') ){
       await this.handleEEOCFields(profile);
     }
