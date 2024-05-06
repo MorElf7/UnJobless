@@ -80,6 +80,12 @@ if (iFrame) {
       renderApp(1);  
     }
   }
+    window.addEventListener("message", (e:any) => {
+    if (e.data?.type == "api_token") {
+      chrome.storage.sync.set({"unjobless_token": e.data.token}).then(() => {})
+    }
+  })
+
 
   // Initial check in case the page loads directly with the target URL
   onUrlChange();

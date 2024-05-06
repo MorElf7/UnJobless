@@ -109,10 +109,25 @@ const Popup = ({ type } : PopupProps) => {
         fetchAdditionalFields();
         fetchProfile();
     }, []);
-    useEffect(() => {
-        saveApplication(type, profile);
-    }, []);
 
+    useEffect(() => {
+        if (type == 1) {
+            const h2 = document.querySelector("h2.css-1j9bnzb")
+            if (!h2) return;
+            const observer = new MutationObserver(() => {
+                saveApplication(type, profile);
+            })
+            observer.observe(h2, {
+                childList: true, // Watch for changes in child nodes
+                subtree: true // Watch for changes in the whole subtree
+            });
+
+            return () => {
+                observer.disconnect();
+            }
+        } 
+
+    }, []);
 
     const handleLoading = (isLoading: boolean): void => {
         setLoading(isLoading);

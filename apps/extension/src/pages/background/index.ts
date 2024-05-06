@@ -3,6 +3,7 @@ import 'webextension-polyfill';
 import { AdditionType, Education, Experience, FileResponse, Profile, Request, Response } from '@src/shared/typing/types';
 import { defaultProfile } from '@root/src/shared/typing/constant';
 
+
 reloadOnUpdate('pages/background');
 
 /**
@@ -98,24 +99,25 @@ const saveProfile = async (profile: Object) : Promise<Response>=> {
 const saveApplication = async (Profile: Profile, company: string): Promise<Response> => {
 
     return new Promise(async (resolve, reject) => {
+        const token = await chrome.storage.sync.get(["unjobless_token"]);
         // change to saveApplication
-        // const response = await fetch('https://cs520-backend-iz0mg9q8e-kientos-projects.vercel.app/application', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIiwiaWQiOiI2NjMzYmI2MmU3MWQzMzA0NzBjNDI4ZTgiLCJmaXJzdE5hbWUiOiJKb2huIiwibGFzdE5hbWUiOiJEb2UiLCJpYXQiOjE3MTQ2NjYzMzgsImV4cCI6MTcxNDcwMjMzOH0.fE8JhQ18Gqkf13XpgZMYDmGTCcHFw2XMNisYHv1gdu0'
-        //     },
-        //     body: JSON.stringify({
-        //         company: company,
-        //         uid: Profile.uid,
-        //     })
-        // });
+        const response = await fetch('https://cs520-backend-iz0mg9q8e-kientos-projects.vercel.app/application', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                company: company,
+                uid: Profile.uid,
+            })
+        });
 
-        // if (!response.ok) {
-        //     reject(new Error(`HTTP error! Status: ${response.status}`));
-        // }
+        if (!response.ok) {
+            reject(new Error(`HTTP error! Status: ${response.status}`));
+        }
 
-        // resolve({ success: true });
+        resolve({ success: true });
         console.log('saveApplication');
     });
 
@@ -136,25 +138,23 @@ const getProfile = (): Promise<Response> => {
             } else {
                 // change to getProfile
                 // https://cs520-backend-iz0mg9q8e-kientos-projects.vercel.app
-                // const response = await fetch('https://cs520-backend-iz0mg9q8e-kientos-projects.vercel.app/application/autofill', {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json',
-                //         'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIiwiaWQiOiI2NjMzYmI2MmU3MWQzMzA0NzBjNDI4ZTgiLCJmaXJzdE5hbWUiOiJKb2huIiwibGFzdE5hbWUiOiJEb2UiLCJpYXQiOjE3MTQ2NjYzMzgsImV4cCI6MTcxNDcwMjMzOH0.fE8JhQ18Gqkf13XpgZMYDmGTCcHFw2XMNisYHv1gdu0'
-                //     },
-                //     body: JSON.stringify({
-                //         prompt: "John Doe is"
-                //     })
+                const token = await chrome.storage.sync.get(["unjobless_token"]);
+                const response = await fetch('https://cs520-backend-iz0mg9q8e-kientos-projects.vercel.app/profile', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
                     
-                // });
+                });
 
-                // if (!response.ok) {
-                //     throw new Error(`HTTP error! Status: ${response.status}`);
-                // }
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
 
-                // const data = await response.json();
-                // await saveProfile(data);
-                // resolve(data);
+                const data = await response.json();
+                await saveProfile(data);
+                resolve(data);
             }
         });
     });
