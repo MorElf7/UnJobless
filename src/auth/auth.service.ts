@@ -49,8 +49,8 @@ export class AuthService {
       const payload = {
         email: user.email,
         id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        firstName: user.first_name,
+        lastName: user.last_name,
       };
       return {
         access_token: await this.jwtService.signAsync(payload),
@@ -78,7 +78,7 @@ export class AuthService {
     const payload = {
       email: user.email,
       id: user._id,
-      name: user.firstName + ' ' + user.lastName,
+      name: user.first_name + ' ' + user.last_name,
     };
 
     return {

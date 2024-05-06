@@ -7,6 +7,7 @@ import { MONGO_SECRET } from 'config/index';
 import { ApplicationModule } from './application/application.module';
 import { AuthModule } from './auth/auth.module';
 import { JobModule } from './job/job.module';
+import { OrganizationModule } from './organization/org.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { JobModule } from './job/job.module';
     ApplicationModule,
     JobModule,
     AuthModule,
+    OrganizationModule,
     MongooseModule.forRoot(MONGO_SECRET),
   ],
   controllers: [AppController],
