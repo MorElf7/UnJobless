@@ -52,9 +52,6 @@ class ExperienceDto extends AchievementDto {
 
 export class CreateUserDto {
   @IsString()
-  uid: string;
-
-  @IsString()
   email: string;
 
   @IsString()

@@ -37,48 +37,108 @@ export class AuthController {
     schema: {
       type: 'object',
       properties: {
-        uid: { type: 'string' },
+        first_name: { type: 'string' },
+        last_name: { type: 'string' },
         email: { type: 'string' },
+        phone: { type: 'string' },
         password: { type: 'string' },
-        firstName: { type: 'string' },
-        lastName: { type: 'string' },
-        contact: { type: 'string' },
-        resume: { type: 'string' },
-        links: { type: 'string' },
-        experience: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              title: { type: 'string' },
-              description: { type: 'string' },
-              startDate: { type: 'string', format: 'date' },
-              endDate: { type: 'string', format: 'date' },
-              location: { type: 'string' },
-            },
-          },
-        },
+        linkedin: { type: 'string' },
+        website: { type: 'string' },
+        github: { type: 'string' },
+        street_address: { type: 'string' },
+        city: { type: 'string' },
+        state: { type: 'string' },
+        zip_code: { type: 'string' },
+        resumeUrl: { type: 'string' },
+        resumeFileName: { type: 'string' },
+        coverLetterUrl: { type: 'string' },
+        coverLetterFileName: { type: 'string' },
         education: {
           type: 'array',
           items: {
             type: 'object',
             properties: {
-              title: { type: 'string' },
-              description: { type: 'string' },
+              school: { type: 'string' },
+              major: { type: 'string' },
+              degree: { type: 'string' },
+              gpa: { type: 'number' },
               startDate: { type: 'string', format: 'date' },
               endDate: { type: 'string', format: 'date' },
-              location: { type: 'string' },
+              logo: { type: 'string' },
             },
           },
         },
-        skills: {
+        experience: {
           type: 'array',
-          items: { type: 'string' },
+          items: {
+            type: 'object',
+            properties: {
+              position: { type: 'string' },
+              company: { type: 'string' },
+              location: { type: 'string' },
+              current: { type: 'boolean' },
+              description: { type: 'string' },
+              startDate: { type: 'string', format: 'date' },
+              endDate: { type: 'string', format: 'date' },
+              logo: { type: 'string' },
+            },
+          },
         },
-        equalOpportunity: { type: 'boolean' },
+        sponsorship: { type: 'string' },
+        legally_authorized: { type: 'string' },
+        gender: { type: 'string' },
+        race: { type: 'string' },
+        veteran: { type: 'string' },
+        disability: { type: 'string' },
       },
     },
   })
+  // @ApiBody({
+  //   schema: {
+  //     type: 'object',
+  //     properties: {
+  //       uid: { type: 'string' },
+  //       email: { type: 'string' },
+  //       password: { type: 'string' },
+  //       firstName: { type: 'string' },
+  //       lastName: { type: 'string' },
+  //       contact: { type: 'string' },
+  //       resume: { type: 'string' },
+  //       links: { type: 'string' },
+  //       experience: {
+  //         type: 'array',
+  //         items: {
+  //           type: 'object',
+  //           properties: {
+  //             title: { type: 'string' },
+  //             description: { type: 'string' },
+  //             startDate: { type: 'string', format: 'date' },
+  //             endDate: { type: 'string', format: 'date' },
+  //             location: { type: 'string' },
+  //           },
+  //         },
+  //       },
+  //       education: {
+  //         type: 'array',
+  //         items: {
+  //           type: 'object',
+  //           properties: {
+  //             title: { type: 'string' },
+  //             description: { type: 'string' },
+  //             startDate: { type: 'string', format: 'date' },
+  //             endDate: { type: 'string', format: 'date' },
+  //             location: { type: 'string' },
+  //           },
+  //         },
+  //       },
+  //       skills: {
+  //         type: 'array',
+  //         items: { type: 'string' },
+  //       },
+  //       equalOpportunity: { type: 'boolean' },
+  //     },
+  //   },
+  // })
   signUp(@Body() createUserDto: CreateUserDto) {
     return this.authService.signUp(createUserDto);
   }
