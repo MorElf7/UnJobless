@@ -163,6 +163,7 @@ type Education = Achievement & {
   major: string;
   degree: string;
   gpa: number;
+  logo: string;
 };
 
 type Experience = Achievement & {
@@ -171,4 +172,5 @@ type Experience = Achievement & {
   location: string;
   current: boolean;
   description: string;
+  logo: string;
 };

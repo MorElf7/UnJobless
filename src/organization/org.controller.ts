@@ -3,7 +3,7 @@ import { OrganizationService } from './org.service';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/auth/constants';
 
-@ApiTags('')
+@ApiTags('organizations')
 @Controller('')
 export class OrganizationsController {
   constructor(private readonly service: OrganizationService) {}
