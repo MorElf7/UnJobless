@@ -135,12 +135,6 @@ export class AuthController {
       createUserDto.resumeUrl = resumeUrl;
       createUserDto.resumeFileName = files.resume[0].originalname;
     }
-
-    // createUserDto.resumeUrl = `/uploads/${resumeFile.filename}`;
-    // createUserDto.resumeFileName = resumeFile.originalname;
-    // createUserDto.coverLetterUrl = `/uploads/${coverLetterFile.filename}`;
-    // createUserDto.coverLetterFileName = coverLetterFile.originalname;
-
     return this.authService.signUp(createUserDto);
   }
 

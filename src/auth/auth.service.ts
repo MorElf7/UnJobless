@@ -53,6 +53,7 @@ export class AuthService {
         lastName: user.last_name,
       };
       return {
+        id: user._id,
         access_token: await this.jwtService.signAsync(payload),
       };
     } catch (e) {
