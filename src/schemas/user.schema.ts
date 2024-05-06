@@ -47,11 +47,11 @@ export class User {
   @Prop()
   resumeFileName: string;
 
-  // @Prop()
-  // coverLetterUrl: string;
+  @Prop()
+  coverLetterUrl: string;
 
-  // @Prop()
-  // coverLetterFileName: string;
+  @Prop()
+  coverLetterFileName: string;
 
   @Prop({ type: [{ type: Object }] })
   education: Education[];

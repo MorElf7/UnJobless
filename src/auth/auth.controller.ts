@@ -12,7 +12,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
-import { diskStorage } from 'multer';
 import { AuthService } from './auth.service';
 import {
   ApiBearerAuth,
@@ -25,7 +24,6 @@ import { Public } from './constants';
 import { CreateUserDto } from 'src/user/user.dto';
 import {
   FileFieldsInterceptor,
-  FileInterceptor,
   // FileInterceptor,
 } from '@nestjs/platform-express';
 import { S3Service } from './aws.service';
@@ -47,25 +45,11 @@ export class AuthController {
     description: 'User successfully registered and JWT token returned',
   })
   @UseInterceptors(
-    FileFieldsInterceptor(
-      [
-        { name: 'resume', maxCount: 1 },
-        // { name: 'coverLetter', maxCount: 1 },
-      ],
-      // {
-      //   storage: diskStorage({
-      //     destination: './uploads',
-      //     filename: (req, file, callback) => {
-      //       const uniqueSuffix =
-      //         Date.now() + '-' + Math.round(Math.random() * 1e9);
-      //       const filename = `${uniqueSuffix}-${file.originalname}`;
-      //       callback(null, filename);
-      //     },
-      //   }),
-      // },
-    ),
+    FileFieldsInterceptor([
+      { name: 'resume', maxCount: 1 },
+      { name: 'coverLetter', maxCount: 1 },
+    ]),
   )
-  // @UseInterceptors(FileInterceptor('resume'))
   @ApiBody({
     schema: {
       type: 'object',
@@ -83,11 +67,7 @@ export class AuthController {
         state: { type: 'string' },
         zip_code: { type: 'string' },
         resume: { type: 'string', format: 'binary' },
-        // coverLetter: { type: 'string', format: 'binary' },
-        // resumeUrl: { type: 'string' },
-        // resumeFileName: { type: 'string' },
-        // coverLetterUrl: { type: 'string' },
-        // coverLetterFileName: { type: 'string' },
+        coverLetter: { type: 'string', format: 'binary' },
         education: {
           type: 'array',
           items: {
@@ -130,10 +110,16 @@ export class AuthController {
   })
   async signUp(@UploadedFiles() files, @Body() createUserDto: CreateUserDto) {
     if (files.resume) {
-      console.log(files.resume);
       const resumeUrl = await this.s3Service.uploadFile(files.resume[0]);
       createUserDto.resumeUrl = resumeUrl;
       createUserDto.resumeFileName = files.resume[0].originalname;
+    }
+    if (files.coverLetter) {
+      const coverLetterUrl = await this.s3Service.uploadFile(
+        files.coverLetter[0],
+      );
+      createUserDto.coverLetterUrl = coverLetterUrl;
+      createUserDto.coverLetterFileName = files.coverLetter[0].originalname;
     }
     return this.authService.signUp(createUserDto);
   }
@@ -186,7 +172,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('access-token')
-  @Put('update')
+  @Put('profile')
   @ApiConsumes('application/json')
   @ApiResponse({
     status: 200,

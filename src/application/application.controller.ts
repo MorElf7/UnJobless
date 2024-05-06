@@ -45,7 +45,8 @@ export class ApplicationController {
     schema: {
       properties: {
         jid: { type: 'string' },
-        resume: { type: 'string' },
+        accepted: { type: 'boolean' },
+        // resume: { type: 'string' },
         notes: { type: 'string' },
       },
     },
@@ -89,10 +90,39 @@ export class ApplicationController {
     description: 'Applications by this user',
     type: Application,
   })
+  @ApiQuery({
+    name: 'accepted',
+    type: Boolean,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'page',
+    type: Number,
+    required: false,
+    description: 'Page number of the results',
+  })
+  @ApiQuery({
+    name: 'page_size',
+    type: Number,
+    required: false,
+    description: 'Number of results per page',
+  })
+
   // add parameters to filter by status
-  async findOne(@Req() req: any): Promise<Application> {
+  // Add page_size in applications
+  async findOne(
+    @Req() req: any,
+    @Query('accepted') accepted?: boolean,
+    @Query('page') page: number = 1,
+    @Query('page_size') pageSize: number = 10,
+  ): Promise<Application[]> {
     const uid = req.user.id;
-    return this.applicationService.findOne(uid);
+    return this.applicationService.findAllFromUser(
+      uid,
+      accepted,
+      page,
+      pageSize,
+    );
   }
 
   @Put(':uid')
@@ -103,6 +133,15 @@ export class ApplicationController {
     status: 200,
     description: 'The application has been successfully updated.',
     type: Application,
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        accepted: { type: 'boolean' },
+        // resume: { type: 'string' },
+        notes: { type: 'string' },
+      },
+    },
   })
   async update(
     @Param('uid') uid: string,

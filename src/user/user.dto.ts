@@ -91,23 +91,17 @@ export class CreateUserDto {
   @IsString()
   zip_code: string;
 
-  // @ApiProperty({ type: 'string', format: 'binary' })
-  // files: any;
-
-  // @ApiProperty({ type: 'string', format: 'binary' })
-  // coverLetter: any;
-
   @IsString()
   resumeUrl: string;
 
   @IsString()
   resumeFileName: string;
 
-  // @IsString()
-  // coverLetterUrl: string;
+  @IsString()
+  coverLetterUrl: string;
 
-  // @IsString()
-  // coverLetterFileName: string;
+  @IsString()
+  coverLetterFileName: string;
 
   @IsArray()
   @ValidateNested({ each: true })

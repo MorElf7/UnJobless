@@ -62,10 +62,7 @@ export class AuthService {
     }
   }
 
-  async signIn(
-    email: string,
-    password: string,
-  ): Promise<{ access_token: string }> {
+  async signIn(email: string, password: string): Promise<any> {
     const user = await this.userModel.findOne({ email: email });
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');
@@ -83,6 +80,7 @@ export class AuthService {
     };
 
     return {
+      id: user._id,
       access_token: await this.jwtService.signAsync(payload),
     };
   }

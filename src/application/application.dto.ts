@@ -1,4 +1,10 @@
-import { IsDateString, IsOptional, IsString, IsMongoId } from 'class-validator';
+import {
+  IsDateString,
+  IsOptional,
+  IsString,
+  IsMongoId,
+  IsBoolean,
+} from 'class-validator';
 
 export class CreateApplicationDto {
   @IsMongoId()
@@ -10,15 +16,15 @@ export class CreateApplicationDto {
   @IsDateString()
   readonly appliedDate: Date;
 
-  @IsString()
-  readonly status: string;
+  @IsBoolean()
+  readonly applied: boolean;
 
   @IsOptional()
   @IsString()
   readonly notes?: string;
 
-  @IsString()
-  readonly resume: string;
+  // @IsString()
+  // readonly resume: string;
 }
 
 export class UpdateApplicationDto {
@@ -31,12 +37,12 @@ export class UpdateApplicationDto {
   readonly status?: string;
 
   @IsOptional()
-  @IsString()
-  readonly notes?: string;
+  @IsBoolean()
+  readonly applied: boolean;
 
-  @IsOptional()
-  @IsString()
-  readonly resume?: string;
+  // @IsOptional()
+  // @IsString()
+  // readonly resume?: string;
 
   @IsOptional()
   @IsDateString()

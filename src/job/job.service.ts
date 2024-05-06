@@ -116,7 +116,7 @@ export class JobService {
     if (filter.salary) {
       query = { ...query, salary: { $regex: filter.salary, $options: 'i' } };
     }
-    return this.JobModel.find(query).exec();
+    return this.JobModel.find(query).sort({ datePosted: -1 }).exec();
   }
 
   async findOne(uid: string): Promise<Job> {

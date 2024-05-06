@@ -4,12 +4,12 @@ import mongoose, { HydratedDocument } from 'mongoose';
 
 export type ApplicationDocument = HydratedDocument<Application>;
 
-export enum ApplicationStatus {
-  Applied = 'applied',
-  Interviewing = 'interviewing',
-  Offer = 'offer',
-  Rejected = 'rejected',
-}
+// export enum ApplicationStatus {
+//   Applied = 'applied',
+//   Interviewing = 'interviewing',
+//   Offer = 'offer',
+//   Rejected = 'rejected',
+// }
 
 @Schema()
 export class Application {
@@ -23,8 +23,11 @@ export class Application {
   appliedDate: Date;
 
   // status: applied, interviewing, offer, rejected
-  @Prop({ enum: ApplicationStatus, default: ApplicationStatus.Applied })
-  status: ApplicationStatus;
+  // @Prop({ enum: ApplicationStatus, default: ApplicationStatus.Applied })
+  // status: ApplicationStatus;
+
+  @Prop({ default: false })
+  accepted: boolean;
 
   @Prop()
   notes: string;

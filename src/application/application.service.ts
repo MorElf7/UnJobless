@@ -32,12 +32,28 @@ export class ApplicationService {
 
   async findAll(jid?: string): Promise<Application[]> {
     const query = jid ? { jid } : {};
-    return this.applicationModel.find(query).exec();
+    return this.applicationModel
+      .find(query)
+      .populate('jid') // Populates job data in each application
+      .exec();
   }
 
   // Retrieve a single application by UID
-  async findOne(uid: string): Promise<Application> {
-    return this.applicationModel.findOne({ uid }).exec();
+  // sort by appliedDate
+  // Add page_size in applications
+  async findAllFromUser(
+    uid: string,
+    accepted: boolean,
+    page: number,
+    pageSize: number,
+  ): Promise<Application[]> {
+    return this.applicationModel
+      .find({ uid, accepted })
+      .sort({ appliedDate: -1 })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .populate('jid') // Populates job data in each application
+      .exec();
   }
 
   async findUser(uid: string): Promise<User> {
@@ -47,6 +63,17 @@ export class ApplicationService {
     }
     return user;
   }
+
+  // add functions to find the number of unapplied jobs (for the user) by finding the total number of jobs minus the number of applied jobs
+  // Add page_size in applications
+  async countUnappliedJobs(uid: string): Promise<number> {
+    const totalJobs = await this.applicationModel.countDocuments({}).exec();
+    const appliedJobs = await this.applicationModel
+      .countDocuments({ uid })
+      .exec();
+    return totalJobs - appliedJobs;
+  }
+
 
   async autofill(question: string, profile: string): Promise<string> {
     try {
