@@ -4,13 +4,6 @@ import mongoose, { HydratedDocument } from 'mongoose';
 
 export type ApplicationDocument = HydratedDocument<Application>;
 
-// export enum ApplicationStatus {
-//   Applied = 'applied',
-//   Interviewing = 'interviewing',
-//   Offer = 'offer',
-//   Rejected = 'rejected',
-// }
-
 @Schema()
 export class Application {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
@@ -21,10 +14,6 @@ export class Application {
 
   @Prop({ default: Date.now })
   appliedDate: Date;
-
-  // status: applied, interviewing, offer, rejected
-  // @Prop({ enum: ApplicationStatus, default: ApplicationStatus.Applied })
-  // status: ApplicationStatus;
 
   @Prop({ default: false })
   accepted: boolean;
