@@ -24,7 +24,6 @@ export class OrganizationService {
 
   async getCompanies(name: string): Promise<any> {
     try {
-      console.log(name);
       const response = await axios.get(
         `https://autocomplete.clearbit.com/v1/companies/suggest?query=:${name}`,
       );
