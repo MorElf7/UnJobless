@@ -21,6 +21,8 @@ export class S3Service {
         Key: `${uuidv4()}-${file.originalname}`,
         Body: file.buffer,
         ACL: 'public-read',
+        ContentType: 'application/pdf', // Explicitly set the content type
+        ContentDisposition: 'inline; filename="' + file.originalname + '"', // Set to inline to display in browser
       })
       .promise();
 

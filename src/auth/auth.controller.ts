@@ -25,6 +25,7 @@ import { Public } from './constants';
 import { CreateUserDto } from 'src/user/user.dto';
 import {
   FileFieldsInterceptor,
+  FileInterceptor,
   // FileInterceptor,
 } from '@nestjs/platform-express';
 import { S3Service } from './aws.service';
@@ -51,19 +52,20 @@ export class AuthController {
         { name: 'resume', maxCount: 1 },
         // { name: 'coverLetter', maxCount: 1 },
       ],
-      {
-        storage: diskStorage({
-          destination: './uploads',
-          filename: (req, file, callback) => {
-            const uniqueSuffix =
-              Date.now() + '-' + Math.round(Math.random() * 1e9);
-            const filename = `${uniqueSuffix}-${file.originalname}`;
-            callback(null, filename);
-          },
-        }),
-      },
+      // {
+      //   storage: diskStorage({
+      //     destination: './uploads',
+      //     filename: (req, file, callback) => {
+      //       const uniqueSuffix =
+      //         Date.now() + '-' + Math.round(Math.random() * 1e9);
+      //       const filename = `${uniqueSuffix}-${file.originalname}`;
+      //       callback(null, filename);
+      //     },
+      //   }),
+      // },
     ),
   )
+  // @UseInterceptors(FileInterceptor('resume'))
   @ApiBody({
     schema: {
       type: 'object',
@@ -127,11 +129,8 @@ export class AuthController {
     },
   })
   async signUp(@UploadedFiles() files, @Body() createUserDto: CreateUserDto) {
-    // console.log(createUserDto);
-    // console.log(files);
-    // const resumeFile = files.resume[0];
-    // const coverLetterFile = files.coverLetter[0];
     if (files.resume) {
+      console.log(files.resume);
       const resumeUrl = await this.s3Service.uploadFile(files.resume[0]);
       createUserDto.resumeUrl = resumeUrl;
       createUserDto.resumeFileName = files.resume[0].originalname;
