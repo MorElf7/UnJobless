@@ -22,6 +22,9 @@ export class JobService {
     const createdJob = new this.JobModel(createJobDto);
     return createdJob.save();
   }
+  async countAllJobs(): Promise<number> {
+    return this.JobModel.countDocuments().exec();
+  }
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async scrapeData(): Promise<any> {

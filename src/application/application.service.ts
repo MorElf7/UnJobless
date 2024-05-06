@@ -7,6 +7,7 @@ import { CreateApplicationDto, UpdateApplicationDto } from './application.dto';
 import OpenAI from 'openai';
 // import { OPENAI_API_KEY } from 'config/index';
 import { User } from 'src/schemas/user.schema';
+import { JobService } from 'src/job/job.service';
 
 @Injectable()
 export class ApplicationService {
@@ -14,6 +15,7 @@ export class ApplicationService {
   constructor(
     @InjectModel(Application.name) private applicationModel: Model<Application>,
     @InjectModel(User.name) private userModel: Model<User>,
+    private jobService: JobService, // Inject the JobService
   ) {
     if (!process.env.OPENAI_API_KEY) {
       throw new Error('Missing required environment variable: OPENAI_API_KEY');
@@ -71,6 +73,16 @@ export class ApplicationService {
     const appliedJobs = await this.applicationModel
       .countDocuments({ uid })
       .exec();
+    return totalJobs - appliedJobs;
+  }
+  ƒ;
+  async countAppliedJobsByUser(uid: string): Promise<number> {
+    return this.applicationModel.countDocuments({ uid }).exec();
+  }
+
+  async countUnappliedJobsByUser(uid: string): Promise<number> {
+    const totalJobs = await this.jobService.countAllJobs();
+    const appliedJobs = await this.countAppliedJobsByUser(uid);
     return totalJobs - appliedJobs;
   }
 

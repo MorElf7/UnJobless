@@ -162,6 +162,21 @@ export class ApplicationController {
     return this.applicationService.delete(uid);
   }
 
+  // ApplicationController.ts
+  @Get('unapplied')
+  @ApiOperation({ summary: 'Get count of unapplied jobs by this user' })
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard)
+  @ApiResponse({
+    status: 200,
+    description: 'Number of unapplied jobs',
+    type: Number,
+  })
+  async getUnappliedJobCount(@Req() req: any): Promise<number> {
+    const uid = req.user.id;
+    return this.applicationService.countUnappliedJobsByUser(uid);
+  }
+
   @Post('autofill')
   @ApiOperation({ summary: 'Autofill Application' })
   @ApiBearerAuth('access-token')
