@@ -55,17 +55,19 @@ export const DataTable = <T extends object>({
 
   return (
     <div className="my-4">
-      <div className="flex items-center mb-4">
-        <div className="flex items-center">
-          <SearchIcon className="w-6 h-6 text-gray-600" />
-          <input
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            placeholder={`${filteredData.length} records...`}
-            className="ml-2 px-2 py-1 border rounded-md focus:outline-green"
-          />
-        </div>
-      </div>
+      {data.length > 5 &&
+        <div className="flex items-center mb-4">
+          <div className="flex items-center">
+            <SearchIcon className="w-6 h-6 text-gray-600" />
+            <input
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              placeholder={`${filteredData.length} records...`}
+              style={{ width: '64rem' }}
+              className="ml-2 px-2 py-1 border rounded-md focus:outline-green"
+            />
+          </div>
+        </div>}
       <div className="overflow-hidden">
         <table className="w-full border-separate border-spacing-0">
           <thead className="bg-gray-50">
@@ -95,9 +97,6 @@ export const DataTable = <T extends object>({
                       {i === 0 ? (
                         <>
                           <div className="flex items-center">
-                            {row.original && 'companyIcon' in row.original && 'company' in row.original &&
-                              <img src={row.original.companyIcon as string} alt={row.original.company as string} className="w-9 h-9 mr-2" />
-                            }
                             <div className="ml-3">
                               <div className="mb-1">
                                 <span>{row.original && 'position' in row.original && `${row.original.position}`}</span>
@@ -127,11 +126,9 @@ export const DataTable = <T extends object>({
               </>
             ))}
           </tbody>
-
-
         </table>
       </div>
-      <div className="flex justify-between mt-10 focus:outline-maroon">
+      {data.length > 5 && <div className="flex justify-between mt-10 focus:outline-maroon">
         <div>
           <span>
             Page{" "}
@@ -212,7 +209,7 @@ export const DataTable = <T extends object>({
             />
           </PageButton>
         </nav>
-      </div>
+      </div>}
     </div>
   );
 };

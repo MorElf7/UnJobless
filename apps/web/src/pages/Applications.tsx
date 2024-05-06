@@ -6,7 +6,7 @@ const Applications = () => {
             <div className="pb-2">
                 <span className="text-gray-600 font-medium">Recently Applied</span>
             </div>
-            <JobList />
+            <JobList num_jobs={100} />
         </div>
     );
 };

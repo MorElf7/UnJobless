@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import apiService from '../app/apiService';
 import { DataTable } from './DataTable';
 
 interface Job {
-  id: number;
   position: string;
   company: string;
-  companyIcon?: string;
   location: string;
   salary: number;
   appliedDate: string;
@@ -13,18 +12,21 @@ interface Job {
   url: string;
 }
 
-const JobList: React.FC = () => {
-  const jobs: Job[] = Array.from({ length: 100 }).map((_, i) => ({
-    id: i,
-    position: `Position ${i}`,
-    company: `Company ${i}`,
-    companyIcon: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Amazon_icon.svg",
-    location: `City ${i}, State ${i}`,
-    salary: (i + 1) * 10000,
-    appliedDate: "May 15, 2024",
-    status: "Opening",
-    url: "https://umassdining.com/student-jobs",
-  }));
+interface JobListProps {
+  num_jobs: number; // Define the prop type for limit
+}
+
+const JobList: React.FC<JobListProps> = ({ num_jobs }) => { // Receive the limit prop
+  const [jobs, setJobs] = useState<Job[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await apiService.get("/jobs", { params: { limit: num_jobs } });
+      setJobs(response.data.data.jobs);
+    };
+
+    fetchData();
+  }, []);
 
   const columns = [
     {
@@ -34,7 +36,6 @@ const JobList: React.FC = () => {
         <>
           <div>{data.position}</div>
           <div>{data.company}</div>
-          <div>{data.companyIcon}</div>
           <div>{data.location}</div>
           <div>{data.salary}</div>
         </>

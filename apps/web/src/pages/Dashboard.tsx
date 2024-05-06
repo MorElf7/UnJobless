@@ -13,7 +13,7 @@ const Dashboard = () => {
       <div className="section-title pt-4">
         <span className="text-gray-600 font-medium">Recently Applied</span>
       </div>
-      <JobList />
+      <JobList num_jobs={5} />
     </div>
   );
 };
