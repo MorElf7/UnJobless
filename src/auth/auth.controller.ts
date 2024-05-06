@@ -93,52 +93,6 @@ export class AuthController {
       },
     },
   })
-  // @ApiBody({
-  //   schema: {
-  //     type: 'object',
-  //     properties: {
-  //       uid: { type: 'string' },
-  //       email: { type: 'string' },
-  //       password: { type: 'string' },
-  //       firstName: { type: 'string' },
-  //       lastName: { type: 'string' },
-  //       contact: { type: 'string' },
-  //       resume: { type: 'string' },
-  //       links: { type: 'string' },
-  //       experience: {
-  //         type: 'array',
-  //         items: {
-  //           type: 'object',
-  //           properties: {
-  //             title: { type: 'string' },
-  //             description: { type: 'string' },
-  //             startDate: { type: 'string', format: 'date' },
-  //             endDate: { type: 'string', format: 'date' },
-  //             location: { type: 'string' },
-  //           },
-  //         },
-  //       },
-  //       education: {
-  //         type: 'array',
-  //         items: {
-  //           type: 'object',
-  //           properties: {
-  //             title: { type: 'string' },
-  //             description: { type: 'string' },
-  //             startDate: { type: 'string', format: 'date' },
-  //             endDate: { type: 'string', format: 'date' },
-  //             location: { type: 'string' },
-  //           },
-  //         },
-  //       },
-  //       skills: {
-  //         type: 'array',
-  //         items: { type: 'string' },
-  //       },
-  //       equalOpportunity: { type: 'boolean' },
-  //     },
-  //   },
-  // })
   signUp(@Body() createUserDto: CreateUserDto) {
     return this.authService.signUp(createUserDto);
   }
@@ -187,6 +141,21 @@ export class AuthController {
     const uid = req.user.id;
     return this.authService.findOneUserById(uid);
     // return req.user;
+  }
+
+  //update user
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('access-token')
+  @Post('update-profile')
+  @ApiConsumes('application/json')
+  @ApiOperation({ summary: 'Update User Profile' })
+  @ApiResponse({
+    status: 200,
+    description: 'User profile updated',
+  })
+  async updateUser(@Request() req, @Body() updateUserDto: CreateUserDto) {
+    const uid = req.user.id;
+    return this.authService.updateUser(uid, updateUserDto);
   }
 
   // @UseGuards(AuthGuard)

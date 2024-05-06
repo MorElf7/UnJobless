@@ -104,4 +104,17 @@ export class AuthService {
   async findAllUsers(): Promise<User[]> {
     return this.userModel.find({}, { password: 0 }).exec();
   }
+
+  //update user
+  async updateUser(uid: string, updateUserDto: CreateUserDto): Promise<User> {
+    const user = await this.userModel.findOneAndUpdate(
+      { _id: uid },
+      updateUserDto,
+      { new: true },
+    );
+    if (!user) {
+      throw new NotFoundException(`User with id ${uid} not found`);
+    }
+    return user;
+  }
 }
