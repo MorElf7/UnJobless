@@ -74,7 +74,6 @@ export class ApplicationService {
     return totalJobs - appliedJobs;
   }
 
-
   async autofill(question: string, profile: string): Promise<string> {
     try {
       console.log(question);
