@@ -5,10 +5,14 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Put,
   Request,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
+import { diskStorage } from 'multer';
 import { AuthService } from './auth.service';
 import {
   ApiBearerAuth,
@@ -19,6 +23,10 @@ import {
 } from '@nestjs/swagger';
 import { Public } from './constants';
 import { CreateUserDto } from 'src/user/user.dto';
+import {
+  FileFieldsInterceptor,
+  // FileInterceptor,
+} from '@nestjs/platform-express';
 
 @Controller('')
 export class AuthController {
@@ -27,12 +35,31 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED) // Use CREATED status code for successful registration
   @Public()
   @Post('sign-up')
-  @ApiConsumes('application/json')
+  @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'User registration' })
   @ApiResponse({
     status: 201,
     description: 'User successfully registered and JWT token returned',
   })
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        { name: 'resume', maxCount: 1 },
+        // { name: 'coverLetter', maxCount: 1 },
+      ],
+      {
+        storage: diskStorage({
+          destination: './uploads',
+          filename: (req, file, callback) => {
+            const uniqueSuffix =
+              Date.now() + '-' + Math.round(Math.random() * 1e9);
+            const filename = `${uniqueSuffix}-${file.originalname}`;
+            callback(null, filename);
+          },
+        }),
+      },
+    ),
+  )
   @ApiBody({
     schema: {
       type: 'object',
@@ -49,10 +76,12 @@ export class AuthController {
         city: { type: 'string' },
         state: { type: 'string' },
         zip_code: { type: 'string' },
-        resumeUrl: { type: 'string' },
-        resumeFileName: { type: 'string' },
-        coverLetterUrl: { type: 'string' },
-        coverLetterFileName: { type: 'string' },
+        resume: { type: 'string', format: 'binary' },
+        // coverLetter: { type: 'string', format: 'binary' },
+        // resumeUrl: { type: 'string' },
+        // resumeFileName: { type: 'string' },
+        // coverLetterUrl: { type: 'string' },
+        // coverLetterFileName: { type: 'string' },
         education: {
           type: 'array',
           items: {
@@ -93,7 +122,17 @@ export class AuthController {
       },
     },
   })
-  signUp(@Body() createUserDto: CreateUserDto) {
+  signUp(@UploadedFiles() files, @Body() createUserDto: CreateUserDto) {
+    console.log(createUserDto);
+    console.log(files);
+    const resumeFile = files.resume[0];
+    // const coverLetterFile = files.coverLetter[0];
+
+    createUserDto.resumeUrl = `/uploads/${resumeFile.filename}`;
+    createUserDto.resumeFileName = resumeFile.originalname;
+    // createUserDto.coverLetterUrl = `/uploads/${coverLetterFile.filename}`;
+    // createUserDto.coverLetterFileName = coverLetterFile.originalname;
+
     return this.authService.signUp(createUserDto);
   }
 
@@ -143,26 +182,16 @@ export class AuthController {
     // return req.user;
   }
 
-  //update user
   @UseGuards(AuthGuard)
   @ApiBearerAuth('access-token')
-  @Post('update-profile')
+  @Put('update')
   @ApiConsumes('application/json')
-  @ApiOperation({ summary: 'Update User Profile' })
   @ApiResponse({
     status: 200,
-    description: 'User profile updated',
+    description: 'User updated',
   })
   async updateUser(@Request() req, @Body() updateUserDto: CreateUserDto) {
     const uid = req.user.id;
     return this.authService.updateUser(uid, updateUserDto);
   }
-
-  // @UseGuards(AuthGuard)
-  // @ApiBearerAuth('access-token')
-  // @Get('logout')
-  // async logout(@Request() req) {
-  //   req.logout();
-  //   return 'Logged out';
-  // }
 }

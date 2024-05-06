@@ -31,10 +31,10 @@ export class Job {
   @Prop({ default: '' })
   description: string;
 
-  @Prop({ default: '' })
+  @Prop({ default: 'Remote' })
   address: string;
 
-  @Prop({ default: '' })
+  @Prop({ default: 'Negotiable' })
   salary: string;
 }
 

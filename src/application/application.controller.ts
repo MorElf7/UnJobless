@@ -26,8 +26,8 @@ import { CreateApplicationDto, UpdateApplicationDto } from './application.dto';
 import { Public } from 'src/auth/constants';
 import { AuthGuard } from 'src/auth/auth.guard';
 
-@ApiTags('application')
-@Controller('application')
+@ApiTags('applications')
+@Controller('applications')
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
@@ -80,7 +80,7 @@ export class ApplicationController {
   }
 
   @Get('me')
-  @ApiOperation({ summary: 'Get Application of this user' })
+  @ApiOperation({ summary: 'Get all applications of this user' })
   @ApiBearerAuth('access-token')
   @ApiConsumes('application/json')
   @UseGuards(AuthGuard)
@@ -89,6 +89,7 @@ export class ApplicationController {
     description: 'Applications by this user',
     type: Application,
   })
+  // add parameters to filter by status
   async findOne(@Req() req: any): Promise<Application> {
     const uid = req.user.id;
     return this.applicationService.findOne(uid);
