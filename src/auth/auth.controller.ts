@@ -27,10 +27,14 @@ import {
   FileFieldsInterceptor,
   // FileInterceptor,
 } from '@nestjs/platform-express';
+import { S3Service } from './aws.service';
 
 @Controller('')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private readonly s3Service: S3Service,
+    private authService: AuthService,
+  ) {}
 
   @HttpCode(HttpStatus.CREATED) // Use CREATED status code for successful registration
   @Public()
@@ -122,14 +126,19 @@ export class AuthController {
       },
     },
   })
-  signUp(@UploadedFiles() files, @Body() createUserDto: CreateUserDto) {
-    console.log(createUserDto);
-    console.log(files);
-    const resumeFile = files.resume[0];
+  async signUp(@UploadedFiles() files, @Body() createUserDto: CreateUserDto) {
+    // console.log(createUserDto);
+    // console.log(files);
+    // const resumeFile = files.resume[0];
     // const coverLetterFile = files.coverLetter[0];
+    if (files.resume) {
+      const resumeUrl = await this.s3Service.uploadFile(files.resume[0]);
+      createUserDto.resumeUrl = resumeUrl;
+      createUserDto.resumeFileName = files.resume[0].originalname;
+    }
 
-    createUserDto.resumeUrl = `/uploads/${resumeFile.filename}`;
-    createUserDto.resumeFileName = resumeFile.originalname;
+    // createUserDto.resumeUrl = `/uploads/${resumeFile.filename}`;
+    // createUserDto.resumeFileName = resumeFile.originalname;
     // createUserDto.coverLetterUrl = `/uploads/${coverLetterFile.filename}`;
     // createUserDto.coverLetterFileName = coverLetterFile.originalname;
 
@@ -155,7 +164,7 @@ export class AuthController {
       },
     },
   })
-  signIn(@Body() signInDto: Record<string, string>) {
+  async signIn(@Body() signInDto: Record<string, string>) {
     return this.authService.signIn(signInDto.email, signInDto.password);
   }
 
@@ -175,7 +184,7 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('access-token')
   @Get('profile')
-  getProfile(@Request() req) {
+  async getProfile(@Request() req) {
     // return everything from this user
     const uid = req.user.id;
     return this.authService.findOneUserById(uid);

@@ -10,6 +10,7 @@ import { User, UserSchema } from '../schemas/user.schema';
 import { Application, ApplicationSchema } from '../schemas/application.schema';
 import { UserModule } from 'src/user/user.module';
 import { ApplicationModule } from 'src/application/application.module';
+import { S3Service } from './aws.service';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ApplicationModule } from 'src/application/application.module';
   ],
   providers: [
     AuthService,
+    S3Service,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
