@@ -178,8 +178,88 @@ export class AuthController {
     status: 200,
     description: 'User updated',
   })
-  async updateUser(@Request() req, @Body() updateUserDto: CreateUserDto) {
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'resume', maxCount: 1 },
+      { name: 'coverLetter', maxCount: 1 },
+    ]),
+  )
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        first_name: { type: 'string' },
+        last_name: { type: 'string' },
+        email: { type: 'string' },
+        phone: { type: 'string' },
+        password: { type: 'string' },
+        linkedin: { type: 'string' },
+        website: { type: 'string' },
+        github: { type: 'string' },
+        street_address: { type: 'string' },
+        city: { type: 'string' },
+        state: { type: 'string' },
+        zip_code: { type: 'string' },
+        resume: { type: 'string', format: 'binary' },
+        coverLetter: { type: 'string', format: 'binary' },
+        education: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              school: { type: 'string' },
+              major: { type: 'string' },
+              degree: { type: 'string' },
+              gpa: { type: 'number' },
+              startDate: { type: 'string', format: 'date' },
+              endDate: { type: 'string', format: 'date' },
+              logo: { type: 'string' },
+            },
+          },
+        },
+        experience: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              position: { type: 'string' },
+              company: { type: 'string' },
+              location: { type: 'string' },
+              current: { type: 'boolean' },
+              description: { type: 'string' },
+              startDate: { type: 'string', format: 'date' },
+              endDate: { type: 'string', format: 'date' },
+              logo: { type: 'string' },
+            },
+          },
+        },
+        sponsorship: { type: 'string' },
+        legally_authorized: { type: 'string' },
+        gender: { type: 'string' },
+        race: { type: 'string' },
+        veteran: { type: 'string' },
+        disability: { type: 'string' },
+      },
+    },
+  })
+  async updateUser(
+    @Request() req,
+    @UploadedFiles() files,
+    @Body() updateUserDto: CreateUserDto,
+  ) {
     const uid = req.user.id;
+    if (files.resume) {
+      const resumeUrl = await this.s3Service.uploadFile(files.resume[0]);
+      updateUserDto.resumeUrl = resumeUrl;
+      updateUserDto.resumeFileName = files.resume[0].originalname;
+    }
+    if (files.coverLetter) {
+      const coverLetterUrl = await this.s3Service.uploadFile(
+        files.coverLetter[0],
+      );
+      updateUserDto.coverLetterUrl = coverLetterUrl;
+      updateUserDto.coverLetterFileName = files.coverLetter[0].originalname;
+    }
     return this.authService.updateUser(uid, updateUserDto);
   }
 }
