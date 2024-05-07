@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import apiService from '../app/apiService';
+import apiService from '../service/apiService';
 import { AppTable } from './AppTable';
 
 interface Application {

@@ -3,7 +3,6 @@ import React, { FC, ButtonHTMLAttributes } from 'react';
 function classNames(...classes: (string | undefined)[]): string {
     return classes.filter(Boolean).join(" ");
 }
-
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     children: React.ReactNode;
     className?: string;
