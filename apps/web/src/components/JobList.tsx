@@ -1,25 +1,55 @@
-function JobList() {
-    const companies = ["Amazon", "Facebook", "Meta", "Microsoft", "UMass Amherst"];
-    const positions = ["Software Engineer", "Software Engineer", "Software Engineer", "Software Engineer", "Dish Washer"];
+import React, { useEffect, useState } from 'react';
+import apiService from '../service/apiService';
+import { JobTable } from './JobTable';
 
-    return (
-        <div className="flex flex-col items-center justify-center my-4">
-            {companies.map((company, id) => (
-                <div className="flex items-center justify-between w-full max-w-4xl bg-white p-5 my-5 rounded-lg border-2 border-green-500">
-                    <div className="flex items-center">
-                        <div className="h-16 w-16 bg-white rounded-full overflow-hidden shadow-lg">
-                            <img src="#" alt="" className="w-full h-full object-cover" />
-                        </div>
-                        <div className="ml-5">
-                            <span className="block font-semibold text-lg">{company}</span>
-                            <p className="text-sm">{positions[id]}</p>
-                        </div>
-                    </div>
-                    <a href="#" className="px-4 py-2 rounded-full bg-green-500 text-white transition duration-300 ease-in-out hover:bg-green-600">Apply</a>
-                </div>
-            ))}
-        </div>
-    );
+interface Job {
+  title: string;
+  company: string;
+  link: string;
+  image: string;
+  address: string;
+  salary: number;
+  datePosted: string;
 }
+
+interface JobListProps {
+  limit?: number | null;
+}
+
+const JobList: React.FC<JobListProps> = ({ limit }) => {
+  const [jobs, setJobs] = useState<Job[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await apiService.get("/jobs");
+      const fetchedJobs = response.data
+      const slicedJobs = limit !== null ? fetchedJobs.slice(0, limit) : fetchedJobs;
+      setJobs(slicedJobs);
+    };
+
+    fetchData();
+  }, []);
+
+
+  const columns = [
+    {
+      accessorKey: 'name',
+      header: 'Job',
+      render: (data: Job) => (
+        <>
+          <div>{data.title}</div>
+          <div>{data.company}</div>
+          <div>{data.address}</div>
+          <div>{data.salary}</div>
+        </>
+      )
+    },
+    { accessorKey: 'datePosted', header: 'Date Applied' },
+    // { accessorKey: 'status', header: 'Status' },
+    { accessorKey: 'link', header: 'Action' },
+  ];
+
+  return <JobTable columns={columns} data={jobs} />;
+};
 
 export default JobList;
