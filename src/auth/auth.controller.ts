@@ -173,7 +173,7 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('access-token')
   @Put('profile')
-  @ApiConsumes('application/json')
+  @ApiConsumes('multipart/form-data')
   @ApiResponse({
     status: 200,
     description: 'User updated',
