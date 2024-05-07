@@ -1,32 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import apiService from '../app/apiService';
-import { DataTable } from './DataTable';
+import { JobTable } from './JobTable';
 
 interface Job {
-  position: string;
+  title: string;
   company: string;
-  location: string;
+  link: string;
+  image: string;
+  address: string;
   salary: number;
-  appliedDate: string;
-  status: "Opening" | "Closed";
-  url: string;
+  datePosted: string;
 }
 
 interface JobListProps {
-  num_jobs: number; // Define the prop type for limit
+  limit?: number | null;
 }
 
-const JobList: React.FC<JobListProps> = ({ num_jobs }) => { // Receive the limit prop
+const JobList: React.FC<JobListProps> = ({ limit }) => {
   const [jobs, setJobs] = useState<Job[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await apiService.get("/jobs", { params: { limit: num_jobs } });
-      setJobs(response.data.data.jobs);
+      const response = await apiService.get("/jobs");
+      const fetchedJobs = response.data
+      const slicedJobs = limit !== null ? fetchedJobs.slice(0, limit) : fetchedJobs;
+      setJobs(slicedJobs);
     };
 
     fetchData();
   }, []);
+
 
   const columns = [
     {
@@ -34,19 +37,19 @@ const JobList: React.FC<JobListProps> = ({ num_jobs }) => { // Receive the limit
       header: 'Job',
       render: (data: Job) => (
         <>
-          <div>{data.position}</div>
+          <div>{data.title}</div>
           <div>{data.company}</div>
-          <div>{data.location}</div>
+          <div>{data.address}</div>
           <div>{data.salary}</div>
         </>
       )
     },
-    { accessorKey: 'appliedDate', header: 'Date Applied' },
-    { accessorKey: 'status', header: 'Status' },
-    { accessorKey: 'url', header: 'Action' },
+    { accessorKey: 'datePosted', header: 'Date Applied' },
+    // { accessorKey: 'status', header: 'Status' },
+    { accessorKey: 'link', header: 'Action' },
   ];
 
-  return <DataTable columns={columns} data={jobs} />;
+  return <JobTable columns={columns} data={jobs} />;
 };
 
 export default JobList;

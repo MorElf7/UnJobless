@@ -1,4 +1,4 @@
-import JobList from "../components/JobList";
+import AppList from "../components/AppList";
 
 const Applications = () => {
     return (
@@ -6,7 +6,8 @@ const Applications = () => {
             <div className="pb-2">
                 <span className="text-gray-600 font-medium">Recently Applied</span>
             </div>
-            <JobList num_jobs={100} />
+            <AppList />
+            {/* <JobList num_jobs={100} /> */}
         </div>
     );
 };
