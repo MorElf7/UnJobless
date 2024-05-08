@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import apiService from '../service/apiService';
+import apiService from '../services/apiService';
 import { JobTable } from './JobTable';
 
 interface Job {
