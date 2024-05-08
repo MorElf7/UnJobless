@@ -4,24 +4,18 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
-    "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "build:ext": "turbo run build --filter extension-ui",
-    "dev:ext": "turbo run build --filter extension-ui",
-    "dev:api": "turbo run dev --filter api"
+    "build:ext": "turbo run build --filter extension",
+    "dev:ext": "turbo run dev --filter extension",
+    "build:web": "turbo run build --filter web",
+    "dev:web": "turbo run dev --filter web"
   },
   "devDependencies": {
-    "@repo/eslint-config": "*",
-    "@repo/typescript-config": "*",
     "prettier": "^3.2.5",
     "turbo": "^1.13.2"
   },
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "pnpm@8.9.2",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+  "packageManager": "pnpm@8.9.2"
 }
