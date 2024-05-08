@@ -1,30 +1,35 @@
-import React from 'react';
-import { DataTable } from './DataTable';
+import React, { useEffect, useState } from 'react';
+import { JobTable } from './JobTable';
+import { fetchJobs } from '../services/jobService';
 
 interface Job {
-  id: number;
-  position: string;
+  title: string;
   company: string;
-  companyIcon?: string;
-  location: string;
-  salary: number;
-  appliedDate: string;
-  status: "Opening" | "Closed";
-  url: string;
+  link: string;
+  image: string;
+  address: string;
+  salary: string;
+  datePosted: string;
+  _id: string;
 }
 
-const JobList: React.FC = () => {
-  const jobs: Job[] = Array.from({ length: 100 }).map((_, i) => ({
-    id: i,
-    position: `Position ${i}`,
-    company: `Company ${i}`,
-    companyIcon: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Amazon_icon.svg",
-    location: `City ${i}, State ${i}`,
-    salary: (i + 1) * 10000,
-    appliedDate: "May 15, 2024",
-    status: "Opening",
-    url: "https://umassdining.com/student-jobs",
-  }));
+interface JobListProps {
+  limit?: number | null;
+}
+
+const JobList: React.FC<JobListProps> = ({ limit }) => {
+  const [jobs, setJobs] = useState<Job[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const fetchedJobs = await fetchJobs();
+      const slicedJobs = limit !== null ? fetchedJobs.slice(0, limit) : fetchedJobs;
+      setJobs(slicedJobs);
+    };
+
+    fetchData();
+  }, []);
+
 
   const columns = [
     {
@@ -32,20 +37,18 @@ const JobList: React.FC = () => {
       header: 'Job',
       render: (data: Job) => (
         <>
-          <div>{data.position}</div>
+          <div>{data.title}</div>
           <div>{data.company}</div>
-          <div>{data.companyIcon}</div>
-          <div>{data.location}</div>
+          <div>{data.address}</div>
           <div>{data.salary}</div>
         </>
       )
     },
-    { accessorKey: 'appliedDate', header: 'Date Applied' },
-    { accessorKey: 'status', header: 'Status' },
-    { accessorKey: 'url', header: 'Action' },
+    { accessorKey: 'datePosted', header: 'Date Posted' },
+    { accessorKey: 'link', header: 'Action' },
   ];
 
-  return <DataTable columns={columns} data={jobs} />;
+  return <JobTable columns={columns} data={jobs} />;
 };
 
 export default JobList;

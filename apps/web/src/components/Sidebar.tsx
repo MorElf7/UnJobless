@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ArrowLeftToLine, ArrowRightToLine, Home, BriefcaseBusiness, Send, User, LogOut } from "lucide-react";
-
+import { useAuth } from "../contexts/AuthContext";
+import { fetchSideBarData } from "../services/profileService"; // Ensure this is correctly imported
 
 interface SidebarContextType {
   expanded: boolean;
@@ -32,12 +33,25 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ icon, text, link }) => {
 
 const Sidebar: React.FC = () => {
   const [expanded, setExpanded] = useState(true);
+  const { logout } = useAuth();
+  const [user, setUser] = useState({ username: '', email: '' });
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetchSideBarData(token)
+        .then(profile => {
+          setUser({ username: profile.first_name + profile.last_name, email: profile.email });
+        })
+        .catch(error => console.error("Error fetching profile:", error));
+    }
+  }, []);
 
   return (
     <aside className="h-screen sticky top-0 left-0">
       <nav className="h-full flex flex-col bg-white border-r border-gray-300 shadow-sm">
         <div className="p-4 flex justify-between items-center">
-          <img src={process.env.PUBLIC_URL + `${expanded ? "logo.png" : "icon.png"}`} className={"overflow-hidden transition-all h-10"} alt="Logo" />
+          <img src={process.env.PUBLIC_URL + `${expanded ? "/logo.png" : "/icon.png"}`} className="overflow-hidden transition-all h-10" alt="Logo" />
         </div>
         <SidebarContext.Provider value={{ expanded }}>
           <ul className="flex-1 px-3">
@@ -57,16 +71,16 @@ const Sidebar: React.FC = () => {
         </div>
         <div className="border-t flex p-3">
           <Link to="/profile">
-            <img src={process.env.PUBLIC_URL + "user.jpg"} className="w-10 h-10 rounded-md" alt="Profile" />
+            <img src={process.env.PUBLIC_URL + "/user.jpg"} className="w-10 h-10 rounded-md" alt="Profile" />
           </Link>
           <div className={`flex justify-between items-center overflow-hidden transition-all ${expanded ? "w-48 ml-3" : "w-0"} `}>
             <Link to="/profile" className="leading-4">
-              <h4 className="font-semibold">Real Name</h4>
-              <span className="text-xs text-gray-600">realname@example.com</span>
+              <h4 className="font-semibold">{user.username}</h4>
+              <span className="text-xs text-gray-600">{user.email}</span>
             </Link>
-            <Link to="/">
+            <button onClick={logout}>
               <LogOut size={20} strokeWidth={2} />
-            </Link>
+            </button>
           </div>
         </div>
       </nav>
