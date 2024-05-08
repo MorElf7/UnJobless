@@ -17,6 +17,16 @@ import {
 } from "@heroicons/react/solid";
 import { PageButton } from "./PageButton";
 
+interface Job {
+  title: string;
+  company: string;
+  link: string;
+  image: string;
+  address: string;
+  salary: string;
+  datePosted: string;
+}
+
 interface DataTableProps<T> {
   columns: ColumnDef<T>[];
   data: T[];
@@ -92,52 +102,62 @@ export const JobTable = <T extends object>({
               <>
                 <tr className="h-3"></tr>
                 <tr key={row.id} className="group cursor-pointer">
-                  {row.getVisibleCells().map((cell, i) => (
-                    <td key={cell.id} className={`px-6 py-4 whitespace-nowrap first:rounded-l-lg last:rounded-r-lg first:border-l-2 last:border-r-2 border-2 border-r-0 border-l-0 border-gray-200 group-hover:border-green-500`}>
-                      {i === 0 &&
-                        <>
-                          <div className="flex items-center">
-                            {row.original && 'image' in row.original && 'company' in row.original &&
-                              <img src={row.original.image as string} alt={row.original.company as string} className="w-9 h-9 mr-2" />
-                            }
-                            <div className="ml-3">
-                              <div className="mb-1">
-                                <span>{row.original && 'title' in row.original && `${row.original.title}`}</span>
-                              </div>
-                              <div className="flex items-center">
-                                <LocationMarkerIcon className="h-3 w-3 text-gray-400 mr-1" />
-                                <span className="text-xs text-gray-700 mr-4">{row.original && 'address' in row.original && `${row.original.address}`}</span>
-                                <CurrencyDollarIcon className="h-3 w-3 text-gray-400 mr-1" />
-                                <span className="text-xs text-gray-700">{row.original && 'salary' in row.original && typeof row.original.salary === 'string' && `${row.original.salary.substring(0, row.original.salary.length - 103)}`}</span>
+                  {row.getVisibleCells().map((cell, i) => {
+                    const original = row.original as Job;
+                    return (
+                      <td key={cell.id} className={`px-6 py-4 whitespace-nowrap first:rounded-l-lg last:rounded-r-lg first:border-l-2 last:border-r-2 border-2 border-r-0 border-l-0 border-gray-200 group-hover:border-green-500`}>
+                        {i === 0 &&
+                          <>
+                            <div className="flex items-center">
+                              <img src={original.image} alt={original.company} className="w-9 h-9 mr-2" />
+                              <div className="ml-3">
+                                <div className="mb-1">
+                                  <span>{original.title}</span>
+                                </div>
+                                <div className="flex items-center">
+                                  <LocationMarkerIcon className="h-3 w-3 text-gray-400 mr-1" />
+                                  {original.address && /^\s*$/.test(original.address) === false ? (
+                                    <span className="text-xs text-gray-700 mr-4">{original.address}</span>
+                                  ) : (
+                                    <span className="text-xs text-gray-700 mr-4">Remote</span>
+                                  )}
+                                  <CurrencyDollarIcon className="h-3 w-3 text-gray-400 mr-1" />
+                                  {original.salary && /^\s*$/.test(original.salary) === false ? (
+                                    <span className="text-xs text-gray-700">{original.salary.substring(0, original.salary.length - 103)}</span>
+                                  ) : (
+                                    <span className="text-xs text-gray-700">Negotiable</span>
+                                  )}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </>
-                      }
-                      {i === 1 && 'datePosted' in row.original && typeof row.original.datePosted === 'string' && (
-                        (() => {
-                          row.original.datePosted = new Date(row.original.datePosted).toLocaleDateString();
-                          return null;
-                        })()
-                      )}
-                      {i === 2 && 'link' in row.original ? (
-                        <a href={row.original.link as string} target="_blank" rel="noopener noreferrer">
-                          <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Apply</button>
-                        </a>
-                      ) : (
-                        // Render other cells here
-                        <>{flexRender(cell.column.columnDef.cell, cell.getContext())}</>
-                      )
-                      }
-                    </td>
-                  ))}
+                          </>
+                        }
+                        {i === 1 && (
+                          (() => {
+                            original.datePosted = new Date(original.datePosted).toLocaleDateString();
+                            return null;
+                          })()
+                        )}
+                        {i === 2 ? (
+                          <a href={original.link} target="_blank" rel="noopener noreferrer">
+                            <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Apply</button>
+                          </a>
+                        ) : (
+                          // Render other cells here
+                          <>{flexRender(cell.column.columnDef.cell, cell.getContext())}</>
+                        )
+                        }
+                      </td>
+                    );
+                  })}
                 </tr>
               </>
             ))}
           </tbody>
         </table>
       </div>
-      {data.length > 5 &&
+      {
+        data.length > 5 &&
         <div className="flex justify-between mt-10 focus:outline-maroon">
           <div>
             <span>
@@ -221,6 +241,6 @@ export const JobTable = <T extends object>({
           </nav>
         </div>
       }
-    </div>
+    </div >
   );
 };
