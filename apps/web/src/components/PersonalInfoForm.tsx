@@ -1,4 +1,3 @@
-// PersonalInfoForm.tsx
 import React from 'react';
 
 interface Props {

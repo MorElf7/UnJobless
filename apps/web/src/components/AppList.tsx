@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import apiService from '../services/apiService';
 import { AppTable } from './AppTable';
-
+import { fetchApps } from '../services/appService';
 interface Application {
   jid: {
     title: string;
@@ -9,7 +8,7 @@ interface Application {
     link: string;
     image: string;
     address: string;
-    salary: number;
+    salary: string;
   },
   accepted: boolean;
   status: "Applied" | "Rejected";
@@ -22,18 +21,17 @@ interface AppListProps {
 
 const AppList: React.FC<AppListProps> = ({ limit }) => {
   const [apps, setApps] = useState<Application[]>([]);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await apiService.get("/applications/me");
-      const fetchedApps = response.data
+      const fetchedApps = await fetchApps(token as string);
       const slicedApps = limit !== null ? fetchedApps.slice(0, limit) : fetchedApps;
       setApps(slicedApps);
     };
 
     fetchData();
   }, []);
-
 
   const columns = [
     {
@@ -48,7 +46,7 @@ const AppList: React.FC<AppListProps> = ({ limit }) => {
         </>
       )
     },
-    { accessorKey: 'dateApplied', header: 'Date Applied' },
+    { accessorKey: 'appliedDate', header: 'Date Applied' },
     { accessorKey: 'status', header: 'Status' },
     { accessorKey: null, header: 'Action' },
   ];

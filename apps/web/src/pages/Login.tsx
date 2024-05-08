@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-//import { useNavigate } from 'react-router-dom';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import MultiStepForm from '../components/MultistepForm';  
 import { useAuth } from '../contexts/AuthContext'; 
@@ -12,14 +11,13 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    //const navigate = useNavigate();
     const { login } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
         setError('');
-
+    
         if (isNewUser && !showFullRegistration) {
             setShowFullRegistration(true);
             setLoading(false);
@@ -28,8 +26,8 @@ const Login = () => {
                 await login(email, password);
             } catch (err) {
                 console.error(err);
-                setError('Failed to login. Please check your credentials.');
-                setLoading(false);
+                setError('Failed to login. Please check your credentials.');  
+                setLoading(false);  
             }
         }
     };

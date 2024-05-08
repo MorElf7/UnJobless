@@ -4,7 +4,7 @@ import FileUploadForm from "./FileUploadForm";
 import EducationForm from "./EducationForm";
 import ExperienceForm from "./ExperienceForm";
 import DemographicsForm from "./DemographicsForm";
-import { FormData, EducationEntry, ExperienceEntry } from "./types";
+import { FormData, EducationEntry, ExperienceEntry } from "../types/types";
 
 const MultiStepForm: React.FC = () => {
   const [step, setStep] = useState(1);

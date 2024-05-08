@@ -1,7 +1,6 @@
 import axios from 'axios';
-//import { sendMessageToExtension } from './chromeMessaging';
 
-const API_URL = 'https://cs520-backend-kp1wd5z6t-kientos-projects.vercel.app';
+const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 interface LoginResponse {
   access_token: string;
@@ -13,7 +12,6 @@ export const login = async (email: string, password: string): Promise<LoginRespo
     const data = response.data;
     if (data.access_token) {
       localStorage.setItem('token', data.access_token);
-      //sendMessageToExtension(data.access_token);  // Send the token to the extension
     }
     return data;
   } catch (error) {

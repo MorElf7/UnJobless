@@ -1,14 +1,7 @@
-import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/Sidebar";
 
 function MainLayout() {
-  // const [collapse, setCollapse] = useState(false);
-
-  // const handleCollapse = (collapse: boolean) => {
-  //   setCollapse(collapse);
-  // };
-
   return (
     <div className="flex min-h-screen bg-white">
       <Navbar />

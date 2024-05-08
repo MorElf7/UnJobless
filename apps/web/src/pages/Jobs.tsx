@@ -7,7 +7,6 @@ const Jobs = () => {
                 <span className="text-gray-600 font-medium">Your Opportunities</span>
             </div>
             <JobList />
-            {/* <JobList num_jobs={100} /> */}
         </div>
     );
 };

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import apiService from '../services/apiService';
 import { JobTable } from './JobTable';
+import { fetchJobs } from '../services/jobService';
 
 interface Job {
   title: string;
@@ -8,8 +8,9 @@ interface Job {
   link: string;
   image: string;
   address: string;
-  salary: number;
+  salary: string;
   datePosted: string;
+  _id: string;
 }
 
 interface JobListProps {
@@ -21,8 +22,7 @@ const JobList: React.FC<JobListProps> = ({ limit }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await apiService.get("/jobs");
-      const fetchedJobs = response.data
+      const fetchedJobs = await fetchJobs();
       const slicedJobs = limit !== null ? fetchedJobs.slice(0, limit) : fetchedJobs;
       setJobs(slicedJobs);
     };
@@ -44,8 +44,7 @@ const JobList: React.FC<JobListProps> = ({ limit }) => {
         </>
       )
     },
-    { accessorKey: 'datePosted', header: 'Date Applied' },
-    // { accessorKey: 'status', header: 'Status' },
+    { accessorKey: 'datePosted', header: 'Date Posted' },
     { accessorKey: 'link', header: 'Action' },
   ];
 
