@@ -10,6 +10,7 @@ interface Job {
   address: string;
   salary: string;
   datePosted: string;
+  _id: string;
 }
 
 interface JobListProps {
@@ -18,7 +19,6 @@ interface JobListProps {
 
 const JobList: React.FC<JobListProps> = ({ limit }) => {
   const [jobs, setJobs] = useState<Job[]>([]);
-  // const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchData = async () => {

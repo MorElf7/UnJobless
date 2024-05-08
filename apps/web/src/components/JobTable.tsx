@@ -16,6 +16,7 @@ import {
   ChevronDoubleRightIcon,
 } from "@heroicons/react/solid";
 import { PageButton } from "./PageButton";
+import { PostMessageData } from "../types/message";
 
 interface Job {
   title: string;
@@ -25,6 +26,7 @@ interface Job {
   address: string;
   salary: string;
   datePosted: string;
+  _id: string;
 }
 
 interface DataTableProps<T> {
@@ -48,6 +50,10 @@ export const JobTable = <T extends object>({
       ),
     [data, filter]
   );
+
+  const handleApplyClick = (jobId: string) => {
+    window.postMessage({ type: "jid", data: jobId } as PostMessageData, "*");
+  };
 
   const table = useReactTable({
     data: filteredData,
@@ -139,7 +145,7 @@ export const JobTable = <T extends object>({
                           })()
                         )}
                         {i === 2 ? (
-                          <a href={original.link} target="_blank" rel="noopener noreferrer">
+                          <a href={original.link} onClick={() => handleApplyClick(original._id)} target="_blank" rel="noopener noreferrer">
                             <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Apply</button>
                           </a>
                         ) : (

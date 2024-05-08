@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login as loginService, fetchProfile } from '../services/authService';
+import { PostMessageData } from '../types/message';
 
 interface AuthContextType {
   user: any;
@@ -20,11 +21,13 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
       if (data.access_token) {
         localStorage.setItem('token', data.access_token);
         const userProfile = await fetchProfile(data.access_token);
-        setUser(userProfile);  // First update the user
-        navigate('/dashboard'); // Then navigate
+        setUser(userProfile);
+        navigate('/dashboard');
+        window.postMessage({ type: "token", data: data.access_token } as PostMessageData, "*");
       }
     } catch (error) {
       console.error("Login failed:", error);
+      throw error;  
     }
   };
 

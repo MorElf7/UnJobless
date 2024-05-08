@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { FormData } from './types';
+import { FormData } from '../types/types';
 
 interface Props {
     nextStep: () => void;
@@ -15,13 +15,14 @@ const FileUploadForm: React.FC<Props> = ({ nextStep, prevStep, setFileData, form
     const coverLetterInputRef = useRef<HTMLInputElement>(null);
 
     const dataTransfer = new DataTransfer();
+    
     useEffect(() => {
         if (resumeInputRef.current && resumeFile) {
             dataTransfer.items.add(resumeFile);
             resumeInputRef.current.files = dataTransfer.files;
             dataTransfer.items.clear();
         }
-    }, [dataTransfer, resumeFile, resumeInputRef.current]);
+    }, [dataTransfer, resumeFile]);
 
     useEffect(() => {
         if (coverLetterInputRef.current && coverLetterFile) {
@@ -29,7 +30,7 @@ const FileUploadForm: React.FC<Props> = ({ nextStep, prevStep, setFileData, form
             coverLetterInputRef.current.files = dataTransfer.files;
             dataTransfer.items.clear();
         }
-    }, [dataTransfer, coverLetterFile, coverLetterInputRef.current]);
+    }, [dataTransfer, coverLetterFile]);
 
     const handleFileChange = (fileType: 'resumeFile' | 'coverLetterFile') => (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files ? e.target.files[0] : null;

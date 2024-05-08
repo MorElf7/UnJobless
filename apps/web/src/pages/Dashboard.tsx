@@ -23,7 +23,6 @@ const Dashboard = () => {
       {activeCategory === 0 && <AppList />}
       {activeCategory === 1 && <JobList limit={5} />}
       {activeCategory === 2 && <AppList />}
-      {/* <JobList num_jobs={5} /> */}
     </div>
   );
 };

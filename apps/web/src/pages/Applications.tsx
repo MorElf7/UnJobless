@@ -7,7 +7,6 @@ const Applications = () => {
                 <span className="text-gray-600 font-medium">Recently Applied</span>
             </div>
             <AppList />
-            {/* <JobList num_jobs={100} /> */}
         </div>
     );
 };
