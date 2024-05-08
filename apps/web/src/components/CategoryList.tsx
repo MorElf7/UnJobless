@@ -1,4 +1,4 @@
-import { BriefcaseIcon, BookmarkIcon, ExclamationCircleIcon } from '@heroicons/react/solid';
+import { BriefcaseIcon, BookmarkIcon, ExclamationCircleIcon } from '@heroicons/react/20/solid';
 
 type CategorySelectHandler = (category: number) => void;
 interface CategoryListProps {

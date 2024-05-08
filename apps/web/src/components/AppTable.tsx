@@ -7,14 +7,14 @@ import {
     flexRender,
 } from "@tanstack/react-table";
 import {
-    SearchIcon,
-    LocationMarkerIcon,
+    MagnifyingGlassIcon,
+    MapPinIcon,
     CurrencyDollarIcon,
     ChevronDoubleLeftIcon,
     ChevronLeftIcon,
     ChevronRightIcon,
     ChevronDoubleRightIcon,
-} from "@heroicons/react/solid";
+} from "@heroicons/react/20/solid";
 import { PageButton } from "./PageButton";
 
 
@@ -75,7 +75,7 @@ export const AppTable = <T extends object>({
             {data.length > 5 &&
                 <div className="flex items-center mb-4">
                     <div className="flex items-center">
-                        <SearchIcon className="w-6 h-6 text-gray-600" />
+                        <MagnifyingGlassIcon className="w-6 h-6 text-gray-600" />
                         <input
                             value={filter}
                             onChange={(e) => setFilter(e.target.value)}
@@ -122,7 +122,7 @@ export const AppTable = <T extends object>({
                                                                     <span>{original.jid.title}</span>
                                                                 </div>
                                                                 <div className="flex items-center">
-                                                                    <LocationMarkerIcon className="h-3 w-3 text-gray-400 mr-1" />
+                                                                    <MapPinIcon className="h-3 w-3 text-gray-400 mr-1" />
                                                                     <span className="text-xs text-gray-700 mr-4">{original.jid.address}</span>
                                                                     <CurrencyDollarIcon className="h-3 w-3 text-gray-400 mr-1" />
                                                                     <span className="text-xs text-gray-700">{original.jid.salary.substring(0, original.jid.salary.length - 103)}</span>
