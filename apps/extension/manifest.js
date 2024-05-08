@@ -13,14 +13,10 @@ const manifest = {
    * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Internationalization
    */
   name: '__MSG_extensionName__',
+  key: 'fenloblpljnlongiclhfcpjboniablen',
   version: packageJson.version,
   description: '__MSG_extensionDescription__',
-  permissions: [
-    "storage", 
-    "tabs", 
-    "activeTab", 
-    "background"
-  ],
+  permissions: ['storage', 'tabs', 'activeTab', 'background'],
   // side_panel: {
   //   default_path: 'src/pages/sidepanel/index.html',
   // },
@@ -54,17 +50,14 @@ const manifest = {
   devtools_page: 'src/pages/devtools/index.html',
   web_accessible_resources: [
     {
-      resources: [
-        'assets/js/*.js', 
-        'assets/css/*.css', 
-        'icon-128.png', 
-        'icon-34.png', 
-        'logo.svg',
-        'logo_white.svg',
-      ],
+      resources: ['assets/js/*.js', 'assets/css/*.css', 'icon-128.png', 'icon-34.png', 'logo.svg', 'logo_white.svg'],
       matches: ['*://*/*'],
     },
   ],
+  // externally_connectable: {
+  //   // id: 'fenloblpljnlongiclhfcpjboniablen',
+  //   matches: ['*localhost:3000*'],
+  // },
 };
 
 export default manifest;
