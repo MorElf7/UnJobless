@@ -15,8 +15,8 @@ export class Application {
   @Prop({ default: Date.now })
   appliedDate: Date;
 
-  @Prop({ default: false })
-  accepted: boolean;
+  @Prop({ enum: ['applied', 'accepted', 'rejected'], default: 'applied' })
+  status: string;
 
   @Prop()
   notes: string;

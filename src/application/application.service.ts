@@ -45,12 +45,12 @@ export class ApplicationService {
   // Add page_size in applications
   async findAllFromUser(
     uid: string,
-    accepted: boolean,
+    status: string,
     page: number,
     pageSize: number,
   ): Promise<Application[]> {
     return this.applicationModel
-      .find({ uid, accepted })
+      .find({ uid, status })
       .sort({ appliedDate: -1 })
       .skip((page - 1) * pageSize)
       .limit(pageSize)

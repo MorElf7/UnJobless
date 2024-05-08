@@ -45,7 +45,7 @@ export class ApplicationController {
     schema: {
       properties: {
         jid: { type: 'string' },
-        accepted: { type: 'boolean' },
+        status: { type: 'string' },
         // resume: { type: 'string' },
         notes: { type: 'string' },
       },
@@ -91,8 +91,8 @@ export class ApplicationController {
     type: Application,
   })
   @ApiQuery({
-    name: 'accepted',
-    type: Boolean,
+    name: 'status',
+    type: String,
     required: false,
   })
   @ApiQuery({
@@ -112,17 +112,12 @@ export class ApplicationController {
   // Add page_size in applications
   async findOne(
     @Req() req: any,
-    @Query('accepted') accepted?: boolean,
+    @Query('status') status?: string,
     @Query('page') page: number = 1,
     @Query('page_size') pageSize: number = 10,
   ): Promise<Application[]> {
     const uid = req.user.id;
-    return this.applicationService.findAllFromUser(
-      uid,
-      accepted,
-      page,
-      pageSize,
-    );
+    return this.applicationService.findAllFromUser(uid, status, page, pageSize);
   }
 
   @Put(':uid')
@@ -137,7 +132,7 @@ export class ApplicationController {
   @ApiBody({
     schema: {
       properties: {
-        accepted: { type: 'boolean' },
+        status: { type: 'string' },
         // resume: { type: 'string' },
         notes: { type: 'string' },
       },

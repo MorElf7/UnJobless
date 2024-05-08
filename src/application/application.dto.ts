@@ -3,7 +3,7 @@ import {
   IsOptional,
   IsString,
   IsMongoId,
-  IsBoolean,
+  // IsBoolean,
 } from 'class-validator';
 
 export class CreateApplicationDto {
@@ -16,8 +16,8 @@ export class CreateApplicationDto {
   @IsDateString()
   readonly appliedDate: Date;
 
-  @IsBoolean()
-  readonly applied: boolean;
+  @IsString()
+  readonly status: string;
 
   @IsOptional()
   @IsString()
@@ -36,9 +36,9 @@ export class UpdateApplicationDto {
   @IsString()
   readonly status?: string;
 
-  @IsOptional()
-  @IsBoolean()
-  readonly applied: boolean;
+  // @IsOptional()
+  // @IsString()
+  // readonly applied: boolean;
 
   // @IsOptional()
   // @IsString()
