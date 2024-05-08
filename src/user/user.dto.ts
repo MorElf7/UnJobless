@@ -1,26 +1,14 @@
 // import { Type } from '@nestjs/common';
-// import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsString,
-  IsOptional,
-  IsBoolean,
-  IsArray,
-  ValidateNested,
-  IsDate,
-  IsNumber,
-} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsOptional } from 'class-validator';
 // import { Type } from 'class-transformer';
 
-class AchievementDto {
-  @IsDate()
+export class EducationDto {
   startDate: Date;
 
   @IsOptional()
-  @IsDate()
-  endDate?: Date;
-}
+  endDate: Date;
 
-class EducationDto extends AchievementDto {
   @IsString()
   school: string;
 
@@ -30,11 +18,18 @@ class EducationDto extends AchievementDto {
   @IsString()
   degree: string;
 
-  @IsNumber()
   gpa: number;
+
+  @IsString()
+  logo: string;
 }
 
-class ExperienceDto extends AchievementDto {
+export class ExperienceDto {
+  startDate: Date;
+
+  @IsOptional()
+  endDate: Date;
+
   @IsString()
   position: string;
 
@@ -44,11 +39,13 @@ class ExperienceDto extends AchievementDto {
   @IsString()
   location: string;
 
-  @IsBoolean()
   current: boolean;
 
   @IsString()
   description: string;
+
+  @IsString()
+  logo: string;
 }
 
 export class CreateUserDto {
@@ -103,15 +100,21 @@ export class CreateUserDto {
   @IsString()
   coverLetterFileName: string;
 
-  @IsArray()
-  @ValidateNested({ each: true })
-  // @Type(() => EducationDto)
+  @ApiProperty({ type: [EducationDto] })
   education: EducationDto[];
 
-  @IsArray()
-  @ValidateNested({ each: true })
-  // @Type(() => ExperienceDto)
+  @ApiProperty({ type: [ExperienceDto] })
   experience: ExperienceDto[];
+
+  // @IsArray()
+  // @ValidateNested({ each: true })
+  // // @Type(() => EducationDto)
+  // education: EducationDto[];
+
+  // @IsArray()
+  // @ValidateNested({ each: true })
+  // // @Type(() => ExperienceDto)
+  // experience: ExperienceDto[];
 
   @IsString()
   sponsorship: string;

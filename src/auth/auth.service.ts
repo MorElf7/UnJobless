@@ -100,6 +100,7 @@ export class AuthService {
     }
     return user;
   }
+
   async findAllUsers(): Promise<User[]> {
     return this.userModel.find({}, { password: 0 }).exec();
   }

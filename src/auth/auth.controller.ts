@@ -27,6 +27,7 @@ import {
   // FileInterceptor,
 } from '@nestjs/platform-express';
 import { S3Service } from './aws.service';
+import { User } from 'src/schemas/user.schema';
 
 @Controller('')
 export class AuthController {
@@ -109,6 +110,10 @@ export class AuthController {
     },
   })
   async signUp(@UploadedFiles() files, @Body() createUserDto: CreateUserDto) {
+    //@ts-expect-error expect errors
+    createUserDto.education = JSON.parse(createUserDto.education);
+    //@ts-expect-error expect errors
+    createUserDto.experience = JSON.parse(createUserDto.experience);
     if (files.resume) {
       const resumeUrl = await this.s3Service.uploadFile(files.resume[0]);
       createUserDto.resumeUrl = resumeUrl;
@@ -156,7 +161,7 @@ export class AuthController {
     status: 200,
     description: 'List of users',
   })
-  async findAll(): Promise<CreateUserDto[]> {
+  async findAll(): Promise<User[]> {
     return this.authService.findAllUsers();
   }
 
@@ -248,6 +253,10 @@ export class AuthController {
     @Body() updateUserDto: CreateUserDto,
   ) {
     const uid = req.user.id;
+    //@ts-expect-error expect errors
+    createUserDto.education = JSON.parse(createUserDto.education);
+    //@ts-expect-error expect errors
+    createUserDto.experience = JSON.parse(createUserDto.experience);
     if (files.resume) {
       const resumeUrl = await this.s3Service.uploadFile(files.resume[0]);
       updateUserDto.resumeUrl = resumeUrl;

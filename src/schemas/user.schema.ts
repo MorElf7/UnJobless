@@ -3,6 +3,53 @@ import { HydratedDocument } from 'mongoose';
 
 export type UserDocument = HydratedDocument<User>;
 
+class Achievement {
+  @Prop({ required: true })
+  startDate: Date;
+
+  @Prop()
+  endDate?: Date;
+}
+
+@Schema()
+class Education extends Achievement {
+  @Prop({ required: true })
+  school: string;
+
+  @Prop({ required: true })
+  major: string;
+
+  @Prop({ required: true })
+  degree: string;
+
+  @Prop()
+  gpa: number;
+
+  @Prop()
+  logo: string;
+}
+
+@Schema()
+class Experience extends Achievement {
+  @Prop({ required: true })
+  position: string;
+
+  @Prop({ required: true })
+  company: string;
+
+  @Prop()
+  location: string;
+
+  @Prop()
+  current: boolean;
+
+  @Prop()
+  description: string;
+
+  @Prop()
+  logo: string;
+}
+
 @Schema()
 export class User {
   @Prop({ required: true })
@@ -53,10 +100,10 @@ export class User {
   @Prop()
   coverLetterFileName: string;
 
-  @Prop({ type: [{ type: Object }] })
+  @Prop({ type: [Education], default: [] })
   education: Education[];
 
-  @Prop({ type: [{ type: Object }] })
+  @Prop({ type: [Experience], default: [] })
   experience: Experience[];
 
   @Prop({ default: 'No' })
@@ -79,25 +126,3 @@ export class User {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
-
-type Achievement = {
-  startDate: Date;
-  endDate?: Date;
-};
-
-type Education = Achievement & {
-  school: string;
-  major: string;
-  degree: string;
-  gpa: number;
-  logo: string;
-};
-
-type Experience = Achievement & {
-  position: string;
-  company: string;
-  location: string;
-  current: boolean;
-  description: string;
-  logo: string;
-};
