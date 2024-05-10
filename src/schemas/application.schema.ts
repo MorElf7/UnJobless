@@ -21,9 +21,6 @@ export class Application {
   @Prop()
   notes: string;
 
-  @Prop()
-  resume: string;
-
   @Prop({ default: Date.now })
   updatedAt: Date;
 }

@@ -120,7 +120,7 @@ export class ApplicationController {
     return this.applicationService.findAllFromUser(uid, status, page, pageSize);
   }
 
-  @Put(':uid')
+  @Put(':id')
   @ApiOperation({ summary: 'Update Application' })
   @ApiBearerAuth('access-token')
   @ApiConsumes('application/json')
@@ -139,13 +139,13 @@ export class ApplicationController {
     },
   })
   async update(
-    @Param('uid') uid: string,
+    @Param('id') id: string,
     @Body() updateApplicationDto: UpdateApplicationDto,
   ): Promise<Application> {
-    return this.applicationService.update(uid, updateApplicationDto);
+    return this.applicationService.update(id, updateApplicationDto);
   }
 
-  @Delete(':uid')
+  @Delete(':id')
   @ApiOperation({ summary: 'Delete Application' })
   @ApiBearerAuth('access-token')
   @ApiConsumes('application/json')
@@ -153,8 +153,8 @@ export class ApplicationController {
     status: 200,
     description: 'The application has been successfully deleted.',
   })
-  async delete(@Param('uid') uid: string): Promise<Application> {
-    return this.applicationService.delete(uid);
+  async delete(@Param('id') id: string): Promise<Application> {
+    return this.applicationService.delete(id);
   }
 
   // ApplicationController.ts

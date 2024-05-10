@@ -117,12 +117,12 @@ export class ApplicationService {
 
   // Update an application by UID
   async update(
-    uid: string,
+    id: string,
     updateApplicationDto: UpdateApplicationDto,
   ): Promise<Application> {
     return this.applicationModel
       .findOneAndUpdate(
-        { uid: uid },
+        { id },
         { $set: updateApplicationDto },
         { new: true }, // This option returns the modified document to the then() function, rather than the original.
       )
@@ -130,7 +130,7 @@ export class ApplicationService {
   }
 
   // Delete an application by UID
-  async delete(uid: string): Promise<Application> {
-    return this.applicationModel.findOneAndDelete({ uid: uid }).exec();
+  async delete(id: string): Promise<Application> {
+    return this.applicationModel.findOneAndDelete({ id }).exec();
   }
 }
