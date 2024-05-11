@@ -112,12 +112,12 @@ export class ApplicationController {
   // Add page_size in applications
   async findOne(
     @Req() req: any,
-    @Query('status') status: string = 'applied',
     @Query('page') page: number = 1,
     @Query('page_size') pageSize: number = 10,
+    @Query('status') status?: string,
   ): Promise<Application[]> {
     const uid = req.user.id;
-    return this.applicationService.findAllFromUser(uid, status, page, pageSize);
+    return this.applicationService.findAllFromUser(uid, page, pageSize, status);
   }
 
   @Put(':id')

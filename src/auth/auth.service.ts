@@ -13,7 +13,7 @@ import {
   Application,
   ApplicationDocument,
 } from 'src/schemas/application.schema';
-import { CreateUserDto } from 'src/user/user.dto';
+import { CreateUserDto, UpdateUserDto } from 'src/user/user.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -106,7 +106,7 @@ export class AuthService {
   }
 
   //update user
-  async updateUser(uid: string, updateUserDto: CreateUserDto): Promise<User> {
+  async updateUser(uid: string, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.userModel.findOneAndUpdate(
       { _id: uid },
       updateUserDto,

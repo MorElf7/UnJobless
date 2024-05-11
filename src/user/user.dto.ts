@@ -95,9 +95,11 @@ export class CreateUserDto {
   resumeFileName: string;
 
   @IsString()
+  @IsOptional()
   coverLetterUrl: string;
 
   @IsString()
+  @IsOptional()
   coverLetterFileName: string;
 
   @ApiProperty({ type: [EducationDto] })
@@ -105,16 +107,6 @@ export class CreateUserDto {
 
   @ApiProperty({ type: [ExperienceDto] })
   experience: ExperienceDto[];
-
-  // @IsArray()
-  // @ValidateNested({ each: true })
-  // // @Type(() => EducationDto)
-  // education: EducationDto[];
-
-  // @IsArray()
-  // @ValidateNested({ each: true })
-  // // @Type(() => ExperienceDto)
-  // experience: ExperienceDto[];
 
   @IsString()
   sponsorship: string;
@@ -134,3 +126,130 @@ export class CreateUserDto {
   @IsString()
   disability: string;
 }
+
+export interface UpdateUserDto {
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  phone?: string;
+  password?: string;
+  linkedin?: string;
+  website?: string;
+  github?: string;
+  street_address?: string;
+  city?: string;
+  state?: string;
+  zip_code?: string;
+  resumeUrl?: string;
+  resumeFileName?: string;
+  coverLetterUrl?: string;
+  coverLetterFileName?: string;
+  education?: EducationDto[];
+  experience?: ExperienceDto[];
+  sponsorship?: string;
+  legally_authorized?: string;
+  gender?: string;
+  race?: string;
+  veteran?: string;
+  disability?: string;
+}
+
+// Define Education and Experience types similarly, ensuring all their properties are also optional.
+
+// export class UpdateUserDto {
+//   @IsString()
+//   @IsOptional()
+//   email: string;
+
+//   @IsString()
+//   @IsOptional()
+//   password: string;
+
+//   @IsString()
+//   @IsOptional()
+//   first_name: string;
+
+//   @IsString()
+//   @IsOptional()
+//   last_name: string;
+
+//   @IsString()
+//   @IsOptional()
+//   phone: string;
+
+//   @IsOptional()
+//   @IsString()
+//   linkedin: string;
+
+//   @IsOptional()
+//   @IsString()
+//   website: string;
+
+//   @IsOptional()
+//   @IsString()
+//   github: string;
+
+//   @IsOptional()
+//   @IsString()
+//   street_address: string;
+
+//   @IsOptional()
+//   @IsString()
+//   city: string;
+
+//   @IsOptional()
+//   @IsString()
+//   state: string;
+
+//   @IsOptional()
+//   @IsString()
+//   zip_code: string;
+
+//   @IsOptional()
+//   @IsString()
+//   resumeUrl: string;
+
+//   @IsOptional()
+//   @IsString()
+//   resumeFileName: string;
+
+//   @IsString()
+//   @IsOptional()
+//   coverLetterUrl: string;
+
+//   @IsString()
+//   @IsOptional()
+//   coverLetterFileName: string;
+
+//   @IsOptional()
+//   @ApiProperty({ type: [EducationDto] })
+//   education: EducationDto[];
+
+//   @IsOptional()
+//   @ApiProperty({ type: [ExperienceDto] })
+//   experience: ExperienceDto[];
+
+//   @IsOptional()
+//   @IsString()
+//   sponsorship: string;
+
+//   @IsOptional()
+//   @IsString()
+//   legally_authorized: string;
+
+//   @IsOptional()
+//   @IsString()
+//   gender: string;
+
+//   @IsOptional()
+//   @IsString()
+//   race: string;
+
+//   @IsOptional()
+//   @IsString()
+//   veteran: string;
+
+//   @IsOptional()
+//   @IsString()
+//   disability: string;
+// }

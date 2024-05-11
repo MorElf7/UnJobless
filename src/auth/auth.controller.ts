@@ -21,7 +21,7 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 import { Public } from './constants';
-import { CreateUserDto } from 'src/user/user.dto';
+import { CreateUserDto, UpdateUserDto } from 'src/user/user.dto';
 import {
   FileFieldsInterceptor,
   // FileInterceptor,
@@ -110,10 +110,18 @@ export class AuthController {
     },
   })
   async signUp(@UploadedFiles() files, @Body() createUserDto: CreateUserDto) {
-    //@ts-expect-error expect errors
-    createUserDto.education = JSON.parse(createUserDto.education);
-    //@ts-expect-error expect errors
-    createUserDto.experience = JSON.parse(createUserDto.experience);
+    if (createUserDto.education) {
+      //@ts-expect-error expect errors
+      createUserDto.education = JSON.parse(createUserDto.education);
+    } else {
+      createUserDto.education = [];
+    }
+    if (createUserDto.experience) {
+      //@ts-expect-error expect errors
+      createUserDto.experience = JSON.parse(createUserDto.experience);
+    } else {
+      createUserDto.experience = [];
+    }
     if (files.resume) {
       const resumeUrl = await this.s3Service.uploadFile(files.resume[0]);
       createUserDto.resumeUrl = resumeUrl;
@@ -221,6 +229,7 @@ export class AuthController {
               logo: { type: 'string' },
             },
           },
+          required: [],
         },
         experience: {
           type: 'array',
@@ -237,6 +246,7 @@ export class AuthController {
               logo: { type: 'string' },
             },
           },
+          required: [],
         },
         sponsorship: { type: 'string' },
         legally_authorized: { type: 'string' },
@@ -245,18 +255,27 @@ export class AuthController {
         veteran: { type: 'string' },
         disability: { type: 'string' },
       },
+      required: [],
     },
   })
   async updateUser(
     @Request() req,
     @UploadedFiles() files,
-    @Body() updateUserDto: CreateUserDto,
+    @Body() updateUserDto: UpdateUserDto,
   ) {
     const uid = req.user.id;
-    //@ts-expect-error expect errors
-    createUserDto.education = JSON.parse(createUserDto.education);
-    //@ts-expect-error expect errors
-    createUserDto.experience = JSON.parse(createUserDto.experience);
+    if (updateUserDto.education) {
+      //@ts-expect-error expect errors
+      updateUserDto.education = JSON.parse(updateUserDto.education);
+    } else {
+      updateUserDto.education = [];
+    }
+    if (updateUserDto.experience) {
+      //@ts-expect-error expect errors
+      updateUserDto.experience = JSON.parse(updateUserDto.experience);
+    } else {
+      updateUserDto.education = [];
+    }
     if (files.resume) {
       const resumeUrl = await this.s3Service.uploadFile(files.resume[0]);
       updateUserDto.resumeUrl = resumeUrl;

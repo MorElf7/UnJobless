@@ -45,12 +45,13 @@ export class ApplicationService {
   // Add page_size in applications
   async findAllFromUser(
     uid: string,
-    status: string,
     page: number,
     pageSize: number,
+    status?: string,
   ): Promise<Application[]> {
+    const query = status ? { uid, status } : { uid };
     return this.applicationModel
-      .find({ uid, status })
+      .find(query)
       .sort({ appliedDate: -1 })
       .skip((page - 1) * pageSize)
       .limit(pageSize)
@@ -120,9 +121,10 @@ export class ApplicationService {
     id: string,
     updateApplicationDto: UpdateApplicationDto,
   ): Promise<Application> {
+    console.log(updateApplicationDto);
     return this.applicationModel
       .findOneAndUpdate(
-        { id },
+        { _id: id },
         { $set: updateApplicationDto },
         { new: true }, // This option returns the modified document to the then() function, rather than the original.
       )
@@ -131,6 +133,6 @@ export class ApplicationService {
 
   // Delete an application by UID
   async delete(id: string): Promise<Application> {
-    return this.applicationModel.findOneAndDelete({ id }).exec();
+    return this.applicationModel.findOneAndDelete({ _id: id }).exec();
   }
 }
