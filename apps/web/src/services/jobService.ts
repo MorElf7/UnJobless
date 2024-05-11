@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -8,7 +8,7 @@ export const fetchJobs = async () => {
     console.log(response.data);
     return response.data;
   } catch (error) {
-    console.error('Failed to fetch jobs:', error);
+    console.error("Failed to fetch jobs:", error);
     throw error;
   }
 };

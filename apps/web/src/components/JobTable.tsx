@@ -71,7 +71,7 @@ export const JobTable = <T extends object>({
 
   return (
     <div className="my-4">
-      {data.length > 5 &&
+      {data.length > 5 && (
         <div className="flex items-center mb-4">
           <div className="flex items-center">
             <MagnifyingGlassIcon className="w-6 h-6 text-gray-600" />
@@ -83,7 +83,7 @@ export const JobTable = <T extends object>({
             />
           </div>
         </div>
-      }
+      )}
       <div className="overflow-hidden">
         <table className="w-full border-separate border-spacing-0">
           <thead className="bg-gray-50">
@@ -111,48 +111,79 @@ export const JobTable = <T extends object>({
                   {row.getVisibleCells().map((cell, i) => {
                     const original = row.original as Job;
                     return (
-                      <td key={cell.id} className={`px-6 py-4 whitespace-nowrap first:rounded-l-lg last:rounded-r-lg first:border-l-2 last:border-r-2 border-2 border-r-0 border-l-0 border-gray-200 group-hover:border-green-500`}>
-                        {i === 0 &&
+                      <td
+                        key={cell.id}
+                        className={`px-6 py-4 whitespace-nowrap first:rounded-l-lg last:rounded-r-lg first:border-l-2 last:border-r-2 border-2 border-r-0 border-l-0 border-gray-200 group-hover:border-green-500`}
+                      >
+                        {i === 0 && (
                           <>
                             <div className="flex items-center">
-                              <img src={original.image} alt={original.company} className="w-9 h-9 mr-2" />
+                              <img
+                                src={original.image}
+                                alt={original.company}
+                                className="w-9 h-9 mr-2"
+                              />
                               <div className="ml-3">
                                 <div className="mb-1">
                                   <span>{original.title}</span>
                                 </div>
                                 <div className="flex items-center">
                                   <MapPinIcon className="h-3 w-3 text-gray-400 mr-1" />
-                                  {original.address && /^\s*$/.test(original.address) === false ? (
-                                    <span className="text-xs text-gray-700 mr-4">{original.address}</span>
+                                  {original.address &&
+                                  /^\s*$/.test(original.address) === false ? (
+                                    <span className="text-xs text-gray-700 mr-4">
+                                      {original.address}
+                                    </span>
                                   ) : (
-                                    <span className="text-xs text-gray-700 mr-4">Remote</span>
+                                    <span className="text-xs text-gray-700 mr-4">
+                                      Remote
+                                    </span>
                                   )}
                                   <CurrencyDollarIcon className="h-3 w-3 text-gray-400 mr-1" />
-                                  {original.salary && /^\s*$/.test(original.salary) === false ? (
-                                    <span className="text-xs text-gray-700">{original.salary.substring(0, original.salary.length - 103)}</span>
+                                  {original.salary &&
+                                  /^\s*$/.test(original.salary) === false ? (
+                                    <span className="text-xs text-gray-700">
+                                      {original.salary.substring(
+                                        0,
+                                        original.salary.length - 103
+                                      )}
+                                    </span>
                                   ) : (
-                                    <span className="text-xs text-gray-700">Negotiable</span>
+                                    <span className="text-xs text-gray-700">
+                                      Negotiable
+                                    </span>
                                   )}
                                 </div>
                               </div>
                             </div>
                           </>
-                        }
-                        {i === 1 && (
-                          (() => {
-                            original.datePosted = new Date(original.datePosted).toLocaleDateString();
-                            return null;
-                          })()
                         )}
+                        {i === 1 &&
+                          (() => {
+                            original.datePosted = new Date(
+                              original.datePosted
+                            ).toLocaleDateString();
+                            return null;
+                          })()}
                         {i === 2 ? (
-                          <a href={original.link} onClick={() => handleApplyClick(original._id)} target="_blank" rel="noopener noreferrer">
-                            <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Apply</button>
+                          <a
+                            href={original.link}
+                            onClick={() => handleApplyClick(original._id)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                              Apply
+                            </button>
                           </a>
                         ) : (
-                          // Render other cells here
-                          <>{flexRender(cell.column.columnDef.cell, cell.getContext())}</>
-                        )
-                        }
+                          <>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </>
+                        )}
                       </td>
                     );
                   })}
@@ -162,8 +193,7 @@ export const JobTable = <T extends object>({
           </tbody>
         </table>
       </div>
-      {
-        data.length > 5 &&
+      {data.length > 5 && (
         <div className="flex justify-between mt-10 focus:outline-maroon">
           <div>
             <span>
@@ -220,7 +250,10 @@ export const JobTable = <T extends object>({
             </PageButton>
             <PageButton
               onClick={() =>
-                setPagination((old) => ({ ...old, pageIndex: old.pageIndex + 1 }))
+                setPagination((old) => ({
+                  ...old,
+                  pageIndex: old.pageIndex + 1,
+                }))
               }
               disabled={pagination.pageIndex >= table.getPageCount() - 1}
             >
@@ -246,7 +279,7 @@ export const JobTable = <T extends object>({
             </PageButton>
           </nav>
         </div>
-      }
-    </div >
+      )}
+    </div>
   );
 };

@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { fetchProfile } from "../services/profileService";
 import { fetchSchools, fetchCompanies } from "../services/locationService";
-import { EducationEntry, ExperienceEntry } from "../types/types";
+import { EducationEntry, ExperienceEntry, Option } from "../types/types";
 import { updateProfile } from "../services/profileService";
-
-interface Option {
-  name: string;
-  logo: string;
-}
 
 interface DropdownOptions {
   [key: number]: Option[];
@@ -69,7 +64,6 @@ export const Profile = () => {
   const prepareFormData = () => {
     const formData = new FormData();
 
-    // Append user data fields
     formData.append("first_name", profile.first_name);
     formData.append("last_name", profile.last_name);
     formData.append("email", profile.email);
@@ -86,6 +80,7 @@ export const Profile = () => {
     formData.append("gender", profile.gender || "");
     formData.append("veteran", profile.veteran || "");
     formData.append("disability", profile.disability || "");
+    formData.append("race", profile.race || "");
 
     if (resumeFile) {
       formData.append("resume", resumeFile);
@@ -99,6 +94,39 @@ export const Profile = () => {
     formData.append("experience", JSON.stringify(profile.experience));
 
     return formData;
+  };
+
+  const handleAddEducation = () => {
+    const newEducation = {
+      school: "",
+      major: "",
+      degree: "",
+      startDate: "",
+      endDate: "",
+      gpa: undefined,
+      logo: undefined,
+    };
+    setProfile((prevProfile) => ({
+      ...prevProfile,
+      education: [...prevProfile.education, newEducation],
+    }));
+  };
+
+  const handleAddExperience = () => {
+    const newExperience = {
+      position: "",
+      company: "",
+      location: "",
+      current: false,
+      description: "",
+      startDate: "",
+      endDate: "",
+      logo: undefined,
+    };
+    setProfile((prevProfile) => ({
+      ...prevProfile,
+      experience: [...prevProfile.experience, newExperience],
+    }));
   };
 
   const handleCheckboxChange = (
@@ -153,15 +181,9 @@ export const Profile = () => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = event.target;
-
-    if (name === "email" && !/\S+@\S+\.\S+/.test(value)) {
-      alert("Please enter a valid email address.");
-      return;
-    }
-
     setProfile((prevProfile) => ({
       ...prevProfile,
-      [event.target.name]: event.target.value,
+      [name]: value,
     }));
   };
 
@@ -273,7 +295,12 @@ export const Profile = () => {
       alert("Please fill in all required fields.");
       return; // Stop the save operation if any required field is missing
     }
-  
+
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
     // Existing education and experience validation
     for (let edu of profile.education) {
       if (!isValidEducation(edu)) {
@@ -287,21 +314,22 @@ export const Profile = () => {
         return;
       }
     }
-  
+
     const formData = prepareFormData();
     try {
       // print all entries of Form Data
       // First, cast the FormData object to an array
-        const formDataArray = Array.from(formData.entries());
-        // Then, loop through the array and print each key-value pair
-        for (let pair of formDataArray) {
-          console.log(pair[0], pair[1]);
-        }
-
-      const response = await updateProfile(formData, token as string);
-      console.log("Profile updated successfully:", response);
+      // const formDataArray = Array.from(formData.entries());
+      // // Then, loop through the array and print each key-value pair
+      // for (let pair of formDataArray) {
+      //   console.log(pair[0], pair[1]);
+      // }
+      const updatedProfileData = await updateProfile(formData, token as string);
+      // Remove the password field from updated profile data
+      // delete updatedProfileData.password;
+      // console.log("Updated profile data:", updatedProfileData)
+      setProfile(updatedProfileData);
       setEditMode(false);
-      alert("Profile updated successfully!");
     } catch (error) {
       console.error("Failed to update profile:", error);
       alert("Failed to update profile. Please try again.");
@@ -593,271 +621,289 @@ export const Profile = () => {
           </div>
           <div className="col-span-4 sm:col-span-9 bg-white shadow rounded-lg p-6">
             <h2 className="text-xl font-bold mt-6 mb-4">Education</h2>
-            {profile.education.map((edu, index) => (
-              <div key={index} className="pb-5">
-                <div key={index} className="pb-5 relative">
+            {profile.education.length === 0 ? (
+              <button
+                onClick={handleAddEducation}
+                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Add your first education!
+              </button>
+            ) : (
+              profile.education.map((edu, index) => (
+                <div key={index} className="pb-5">
+                  <div key={index} className="pb-5 relative">
+                    <input
+                      type="text"
+                      name="school"
+                      value={edu.school}
+                      onChange={(e) => {
+                        handleArrayChange("education", index, "school", e);
+                        handleSchoolSearch(e.target.value, index);
+                      }}
+                      className="mb-1 w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
+                      placeholder="School"
+                    />
+
+                    {schoolDropdowns[index] && (
+                      <ul className="absolute z-10 w-full bg-white shadow-lg max-h-60 overflow-y-auto border-gray-300 border rounded-md mt-1">
+                        {schoolDropdowns[index].map((school, schoolIndex) => (
+                          <li
+                            key={schoolIndex}
+                            className="p-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
+                            onClick={() => {
+                              const updatedArray = [...profile.education];
+                              updatedArray[index] = {
+                                ...updatedArray[index],
+                                school: school.name,
+                                logo: school.logo,
+                              };
+                              setProfile((prevProfile) => ({
+                                ...prevProfile,
+                                education: updatedArray,
+                              }));
+                              setSchoolDropdowns((prev) => ({
+                                ...prev,
+                                [index]: [],
+                              }));
+                            }}
+                          >
+                            {school.name}
+                            <img
+                              src={school.logo}
+                              alt={`${school.name} logo`}
+                              className="w-12 h-7 object-cover rounded-md"
+                            />
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
                   <input
                     type="text"
-                    name="school"
-                    value={edu.school}
-                    onChange={(e) => {
-                      handleArrayChange("education", index, "school", e);
-                      handleSchoolSearch(e.target.value, index);
-                    }}
+                    name="major"
+                    value={edu.major}
+                    onChange={(e) =>
+                      handleArrayChange("education", index, "major", e)
+                    }
                     className="mb-1 w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                    placeholder="School"
+                    placeholder="Major"
                   />
+                  <input
+                    type="text"
+                    name="degree"
+                    value={edu.degree}
+                    onChange={(e) =>
+                      handleArrayChange("education", index, "degree", e)
+                    }
+                    className="mb-1 w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
+                    placeholder="Degree"
+                  />
+                  <input
+                    type="text"
+                    name="gpa"
+                    value={edu.gpa?.toString()}
+                    onChange={(e) =>
+                      handleArrayChange("education", index, "gpa", e)
+                    }
+                    className="mb-1 w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
+                    placeholder="GPA"
+                  />
+                  <input
+                    type="date"
+                    name="startDate"
+                    value={formatDateForInput(edu.startDate)}
+                    onChange={(e) =>
+                      handleArrayChange("education", index, "startDate", e)
+                    }
+                    className="mb-1 w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
+                  />
+                  <input
+                    type="date"
+                    name="endDate"
+                    value={formatDateForInput(edu.endDate || "")}
+                    onChange={(e) =>
+                      handleArrayChange("education", index, "endDate", e)
+                    }
+                    className="mb-1 w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
+                  />
+                  <button
+                    onClick={() => removeFromArray("education", index)}
+                    className="bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
+                  >
+                    Remove
+                  </button>
+                  {index === profile.education.length - 1 && (
+                    <button
+                      onClick={() =>
+                        addToArray("education", {
+                          school: "",
+                          major: "",
+                          degree: "",
+                          startDate: "",
+                          endDate: "",
+                          gpa: undefined,
+                          logo: undefined,
+                        })
+                      }
+                      className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded"
+                    >
+                      Add
+                    </button>
+                  )}
+                </div>
+              ))
+            )}
 
-                  {schoolDropdowns[index] && (
+            <h2 className="text-xl font-bold mt-6 mb-4">Experience</h2>
+            {profile.experience.length === 0 ? (
+              <button
+                onClick={handleAddExperience}
+                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Add your first experience!
+              </button>
+            ) : (
+              profile.experience.map((exp, index) => (
+                <div key={index} className="pb-5 relative">
+                  <div className="flex items-center mb-1">
+                    <input
+                      type="checkbox"
+                      name="current"
+                      checked={exp.current}
+                      onChange={(e) =>
+                        handleCheckboxChange("experience", index, "current", e)
+                      }
+                      className="form-checkbox h-5 w-5 text-green-600"
+                    />
+                    <label
+                      className="ml-2 text-gray-700"
+                      htmlFor={`current-${index}`}
+                    >
+                      Current Job
+                    </label>
+                  </div>
+                  <input
+                    type="text"
+                    name="position"
+                    value={exp.position}
+                    onChange={(e) =>
+                      handleArrayChange("experience", index, "position", e)
+                    }
+                    className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
+                    placeholder="Position"
+                  />
+                  <input
+                    type="text"
+                    name="company"
+                    value={exp.company}
+                    onChange={(e) => {
+                      handleArrayChange("experience", index, "company", e);
+                      handleCompanySearch(e.target.value, index);
+                    }}
+                    className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
+                    placeholder="Company"
+                  />
+                  {companyDropdowns[index] && (
                     <ul className="absolute z-10 w-full bg-white shadow-lg max-h-60 overflow-y-auto border-gray-300 border rounded-md mt-1">
-                      {schoolDropdowns[index].map((school, schoolIndex) => (
+                      {companyDropdowns[index].map((company, companyIndex) => (
                         <li
-                          key={schoolIndex}
+                          key={companyIndex}
                           className="p-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
                           onClick={() => {
-                            const updatedArray = [...profile.education];
+                            const updatedArray = [...profile.experience];
                             updatedArray[index] = {
                               ...updatedArray[index],
-                              school: school.name,
-                              logo: school.logo,
+                              company: company.name,
+                              logo: company.logo,
                             };
                             setProfile((prevProfile) => ({
                               ...prevProfile,
-                              education: updatedArray,
+                              experience: updatedArray,
                             }));
-                            setSchoolDropdowns((prev) => ({
+                            setCompanyDropdowns((prev) => ({
                               ...prev,
                               [index]: [],
                             }));
                           }}
                         >
-                          {school.name}
+                          {company.name}
                           <img
-                            src={school.logo}
-                            alt={`${school.name} logo`}
+                            src={company.logo}
+                            alt={`${company.name} logo`}
                             className="w-12 h-7 object-cover rounded-md"
                           />
                         </li>
                       ))}
                     </ul>
                   )}
-                </div>
-                <input
-                  type="text"
-                  name="major"
-                  value={edu.major}
-                  onChange={(e) =>
-                    handleArrayChange("education", index, "major", e)
-                  }
-                  className="mb-1 w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                  placeholder="Major"
-                />
-                <input
-                  type="text"
-                  name="degree"
-                  value={edu.degree}
-                  onChange={(e) =>
-                    handleArrayChange("education", index, "degree", e)
-                  }
-                  className="mb-1 w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                  placeholder="Degree"
-                />
-                <input
-                  type="text"
-                  name="gpa"
-                  value={edu.gpa?.toString()}
-                  onChange={(e) =>
-                    handleArrayChange("education", index, "gpa", e)
-                  }
-                  className="mb-1 w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                  placeholder="GPA"
-                />
-                <input
-                  type="date"
-                  name="startDate"
-                  value={formatDateForInput(edu.startDate)}
-                  onChange={(e) =>
-                    handleArrayChange("education", index, "startDate", e)
-                  }
-                  className="mb-1 w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                />
-                <input
-                  type="date"
-                  name="endDate"
-                  value={formatDateForInput(edu.endDate || "")}
-                  onChange={(e) =>
-                    handleArrayChange("education", index, "endDate", e)
-                  }
-                  className="mb-1 w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                />
-                <button
-                  onClick={() => removeFromArray("education", index)}
-                  className="bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
-                >
-                  Remove
-                </button>
-                {index === profile.education.length - 1 && (
-                  <button
-                    onClick={() =>
-                      addToArray("education", {
-                        school: "",
-                        major: "",
-                        degree: "",
-                        startDate: "",
-                        endDate: "",
-                        gpa: undefined,
-                        logo: undefined,
-                      })
-                    }
-                    className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded"
-                  >
-                    Add
-                  </button>
-                )}
-              </div>
-            ))}
-
-            <h2 className="text-xl font-bold mt-6 mb-4">Experience</h2>
-            {profile.experience.map((exp, index) => (
-              <div key={index} className="pb-5 relative">
-                <div className="flex items-center mb-1">
-                  <input
-                    type="checkbox"
-                    name="current"
-                    checked={exp.current}
+                  <textarea
+                    name="description"
+                    value={exp.description}
                     onChange={(e) =>
-                      handleCheckboxChange("experience", index, "current", e)
+                      handleArrayChange("experience", index, "description", e)
                     }
-                    className="form-checkbox h-5 w-5 text-green-600"
+                    className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
+                    placeholder="Description"
+                    rows={3}
                   />
-                  <label
-                    className="ml-2 text-gray-700"
-                    htmlFor={`current-${index}`}
-                  >
-                    Current Job
-                  </label>
-                </div>
-                <input
-                  type="text"
-                  name="position"
-                  value={exp.position}
-                  onChange={(e) =>
-                    handleArrayChange("experience", index, "position", e)
-                  }
-                  className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                  placeholder="Position"
-                />
-                <input
-                  type="text"
-                  name="company"
-                  value={exp.company}
-                  onChange={(e) => {
-                    handleArrayChange("experience", index, "company", e);
-                    handleCompanySearch(e.target.value, index);
-                  }}
-                  className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                  placeholder="Company"
-                />
-                {companyDropdowns[index] && (
-                  <ul className="absolute z-10 w-full bg-white shadow-lg max-h-60 overflow-y-auto border-gray-300 border rounded-md mt-1">
-                    {companyDropdowns[index].map((company, companyIndex) => (
-                      <li
-                        key={companyIndex}
-                        className="p-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
-                        onClick={() => {
-                          const updatedArray = [...profile.experience];
-                          updatedArray[index] = {
-                            ...updatedArray[index],
-                            company: company.name,
-                            logo: company.logo,
-                          };
-                          setProfile((prevProfile) => ({
-                            ...prevProfile,
-                            experience: updatedArray,
-                          }));
-                          setCompanyDropdowns((prev) => ({
-                            ...prev,
-                            [index]: [],
-                          }));
-                        }}
-                      >
-                        {company.name}
-                        <img
-                          src={company.logo}
-                          alt={`${company.name} logo`}
-                          className="w-12 h-7 object-cover rounded-md"
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                <textarea
-                  name="description"
-                  value={exp.description}
-                  onChange={(e) =>
-                    handleArrayChange("experience", index, "description", e)
-                  }
-                  className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                  placeholder="Description"
-                  rows={3}
-                />
-                <input
-                  type="text"
-                  name="location"
-                  value={exp.location || ""}
-                  onChange={(e) =>
-                    handleArrayChange("experience", index, "location", e)
-                  }
-                  className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                  placeholder="Location"
-                />
-                <input
-                  type="date"
-                  name="startDate"
-                  value={formatDateForInput(exp.startDate)}
-                  onChange={(e) =>
-                    handleArrayChange("experience", index, "startDate", e)
-                  }
-                  className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                />
-                <input
-                  type="date"
-                  name="endDate"
-                  value={formatDateForInput(exp.endDate || "")}
-                  onChange={(e) =>
-                    handleArrayChange("experience", index, "endDate", e)
-                  }
-                  className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                />
-                <div className="flex justify-between mt-3">
-                  <button
-                    onClick={() => removeFromArray("experience", index)}
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
-                  >
-                    Remove
-                  </button>
-                  {index === profile.experience.length - 1 && (
+                  <input
+                    type="text"
+                    name="location"
+                    value={exp.location || ""}
+                    onChange={(e) =>
+                      handleArrayChange("experience", index, "location", e)
+                    }
+                    className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
+                    placeholder="Location"
+                  />
+                  <input
+                    type="date"
+                    name="startDate"
+                    value={formatDateForInput(exp.startDate)}
+                    onChange={(e) =>
+                      handleArrayChange("experience", index, "startDate", e)
+                    }
+                    className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
+                  />
+                  <input
+                    type="date"
+                    name="endDate"
+                    value={formatDateForInput(exp.endDate || "")}
+                    onChange={(e) =>
+                      handleArrayChange("experience", index, "endDate", e)
+                    }
+                    className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
+                  />
+                  <div className="flex justify-start mt-3">
                     <button
-                      onClick={() =>
-                        addToArray("experience", {
-                          position: "",
-                          company: "",
-                          location: "",
-                          current: false,
-                          description: "",
-                          startDate: "",
-                          endDate: "",
-                          logo: undefined,
-                        })
-                      }
-                      className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded"
+                      onClick={() => removeFromArray("experience", index)}
+                      className="bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
                     >
-                      Add
+                      Remove
                     </button>
-                  )}
+                    {index === profile.experience.length - 1 && (
+                      <button
+                        onClick={() =>
+                          addToArray("experience", {
+                            position: "",
+                            company: "",
+                            location: "",
+                            current: false,
+                            description: "",
+                            startDate: "",
+                            endDate: "",
+                            logo: undefined,
+                          })
+                        }
+                        className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded"
+                      >
+                        Add
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       ) : (

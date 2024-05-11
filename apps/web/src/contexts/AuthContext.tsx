@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { login as loginService, fetchProfile } from '../services/authService';
-import { PostMessageData } from '../types/message';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { login as loginService, fetchProfile } from "../services/authService";
+import { PostMessageData } from "../types/message";
 
 interface AuthContextType {
   user: any;
@@ -11,7 +11,9 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
@@ -19,27 +21,30 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
     try {
       const data = await loginService(email, password);
       if (data.access_token) {
-        localStorage.setItem('token', data.access_token);
+        localStorage.setItem("token", data.access_token);
         const userProfile = await fetchProfile(data.access_token);
         setUser(userProfile);
-        navigate('/dashboard');
-        window.postMessage({ type: "token", data: data.access_token } as PostMessageData, "*");
+        navigate("/dashboard");
+        window.postMessage(
+          { type: "token", data: data.access_token } as PostMessageData,
+          "*"
+        );
       }
     } catch (error) {
       console.error("Login failed:", error);
-      throw error;  
+      throw error;
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     setUser(null);
-    navigate('/'); // Redirect to login page on logout
+    navigate("/"); // Redirect to login page on logout
   };
 
   useEffect(() => {
     const initAuth = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (token) {
         try {
           const userProfile = await fetchProfile(token);
@@ -62,7 +67,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === null) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

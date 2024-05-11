@@ -17,27 +17,13 @@ import {
 } from "@heroicons/react/20/solid";
 import { PageButton } from "./PageButton";
 import { updateAppStatus } from "../services/appService";
-
-interface Application {
-  _id: string;
-  jid: {
-    title: string;
-    company: string;
-    link: string;
-    image: string;
-    address: string;
-    salary: string;
-  };
-  accepted: boolean;
-  status: "applied" | "rejected";
-  appliedDate: string;
-}
+import { Application } from "../types/application";
 
 interface DataTableProps<T> {
   columns: ColumnDef<T>[];
   data: T[];
   token: string;
-  setApps: React.Dispatch<React.SetStateAction<T[]>>; 
+  setApps: React.Dispatch<React.SetStateAction<T[]>>;
 }
 
 export const AppTable = <T extends Application>({
@@ -65,7 +51,7 @@ export const AppTable = <T extends Application>({
     state: { pagination },
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    manualPagination: true, 
+    manualPagination: true,
     pageCount: Math.ceil(filteredData.length / pagination.pageSize),
     onPaginationChange: setPagination,
   });
@@ -73,7 +59,6 @@ export const AppTable = <T extends Application>({
   const handleStatusToggle = async (app: T) => {
     const newStatus = app.status === "applied" ? "rejected" : "applied";
     try {
-      console.log(app._id);
       await updateAppStatus(token, app._id, newStatus);
       const updatedApps = data.map((a) =>
         a._id === app._id ? { ...a, status: newStatus } : a
@@ -83,7 +68,6 @@ export const AppTable = <T extends Application>({
       console.error("Error updating application status:", error);
     }
   };
-
 
   return (
     <div className="my-4">
@@ -176,8 +160,6 @@ export const AppTable = <T extends Application>({
                             </div>
                           </>
                         )}
-                        {i === 1 &&
-                          new Date(original.appliedDate).toLocaleDateString()}
                         {i === 3 ? (
                           <button
                             className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"

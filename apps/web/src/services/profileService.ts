@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -9,7 +9,7 @@ export const fetchProfile = async (token: string) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Failed to fetch profile:', error);
+    console.error("Failed to fetch profile:", error);
     throw error;
   }
 };
@@ -20,11 +20,12 @@ export const updateProfile = async (profileData: FormData, token: string) => {
     const response = await axios.put(`${API_URL}/profile`, profileData, {
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
       },
     });
     return response.data;
   } catch (error) {
-    console.error('Failed to update profile:', error);
+    console.error("Failed to update profile:", error);
     throw error;
   }
 };
@@ -37,7 +38,7 @@ export const fetchSideBarData = async (token: string) => {
     const { first_name, last_name, email } = response.data;
     return { first_name, last_name, email };
   } catch (error) {
-    console.error('Failed to fetch profile:', error);
+    console.error("Failed to fetch profile:", error);
     throw error;
   }
 };
