@@ -1,5 +1,9 @@
 # Unjobless: A simple way to apply
 
+## Team members/Contributors
+
+Will be listed in the contribution.md file
+
 ## Introduction
 
 We are team 8 of COMPSCI 520, and we present Unjobless, an application that aims to streamline the application process for students and job seekers alike. The ultimate purpose of this project is to help ease some of the most frustrating aspects of employment seeking, which all of us have to go through in our lives. 
@@ -91,3 +95,4 @@ pnpm dev:ext
 ## Environment variables
 
 We already provided a .env file with the necessary link for the back-end hosted on Vercel, so you just have to run the application for grading.
+
