@@ -20,6 +20,16 @@ export const login = async (email: string, password: string): Promise<LoginRespo
   }
 };
 
+// This takes in a FormData object and sends it to the backend
+export const signup = async (formData: FormData) => {
+  try {
+    const response = await axios.post(`${API_URL}/sign-up`, formData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const fetchProfile = async (token: string) => {
   try {
     const response = await axios.get(`${API_URL}/profile`, {
