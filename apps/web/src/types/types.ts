@@ -44,9 +44,35 @@ interface SignupData {
   coverLetterFile?: File;
 }
 
+interface User {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  linkedin?: string;
+  website?: string;
+  github?: string;
+  street_address: string;
+  city: string;
+  state: string;
+  zip_code: string;
+  resumeUrl: string;
+  resumeFileName: string;
+  coverLetterUrl: string;
+  coverLetterFileName: string;
+  education: EducationEntry[];
+  experience: ExperienceEntry[];
+  sponsorship?: string;
+  legally_authorized?: string;
+  gender?: string;
+  race?: string;
+  veteran?: string;
+  disability?: string;
+}
+
 interface Option {
   name: string;
   logo: string;
 }
 
-export type { EducationEntry, ExperienceEntry, SignupData, Option };
+export type { EducationEntry, ExperienceEntry, SignupData, Option, User };

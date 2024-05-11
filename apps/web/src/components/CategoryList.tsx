@@ -5,7 +5,7 @@ import {
   ExclamationCircleIcon,
 } from "@heroicons/react/20/solid";
 import { fetchApps } from "../services/appService";
-import axios from "axios";
+import { fetchJobs } from "../services/jobService";
 
 type CategorySelectHandler = (category: number) => void;
 
@@ -55,18 +55,30 @@ function CategoryList({ onSelect, token }: CategoryListProps) {
 
   // Fetching total jobs
   useEffect(() => {
-    const fetchJobs = async () => {
+    const fetchTotalJobs = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/jobs`
+        let jobs = await fetchJobs();
+        // Fetch all applied applications
+        const fetchedApps = await fetchApps(token, "applied");
+        // Fetch all rejected applications
+        const fetchedRejectedApps = await fetchApps(token, "rejected");
+        // Filter out jobs that have been applied to or rejected
+        jobs = jobs.filter(
+          (job: { title: string }) =>
+            !fetchedApps.some(
+              (app: { jid: { title: string } }) => app.jid.title === job.title
+            ) &&
+            !fetchedRejectedApps.some(
+              (app: { jid: { title: string } }) => app.jid.title === job.title
+            )
         );
-        setTotalJobs(response.data.length);
+        setTotalJobs(jobs.length);
       } catch (error) {
-        console.error("Failed to fetch jobs:", error);
+        console.error("Failed to fetch total jobs:", error);
       }
     };
-    fetchJobs();
-  }, [refreshKey]); // Also refresh when the key changes
+    fetchTotalJobs();
+  }, [refreshKey, token]); // Also refresh when the key changes
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mx-auto gap-5 py-5">

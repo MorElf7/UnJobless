@@ -6,7 +6,7 @@ import "./styles/globals.css";
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider> 
+      <AuthProvider>
         <Router />
       </AuthProvider>
     </BrowserRouter>
