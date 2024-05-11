@@ -19,7 +19,7 @@ const FileUploadForm: React.FC<Props> = ({
   const resumeInputRef = useRef<HTMLInputElement>(null);
   const coverLetterInputRef = useRef<HTMLInputElement>(null);
 
-  const dataTransfer = new DataTransfer();
+  const dataTransfer = useMemo(() => new DataTransfer(), []);
 
   useEffect(() => {
     if (resumeInputRef.current && resumeFile) {

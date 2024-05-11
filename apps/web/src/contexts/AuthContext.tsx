@@ -2,9 +2,10 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { login as loginService, fetchProfile } from "../services/authService";
 import { PostMessageData } from "../types/message";
+import { User } from "../types/types";
 
 interface AuthContextType {
-  user: any;
+  user: User | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }

@@ -31,9 +31,13 @@ const JobList: React.FC<JobListProps> = ({ limit }) => {
       const fetchedRejectedApps = await fetchApps(token as string, "rejected");
       // Filter out jobs that have been applied to or rejected
       fetchedJobs = fetchedJobs.filter(
-        (job: { title: any; }) =>
-          !fetchedApps.some((app: { jid: { title: any; }; }) => app.jid.title === job.title) &&
-          !fetchedRejectedApps.some((app: { jid: { title: any; }; }) => app.jid.title === job.title)
+        (job: { title: string }) =>
+          !fetchedApps.some(
+            (app: { jid: { title: string } }) => app.jid.title === job.title
+          ) &&
+          !fetchedRejectedApps.some(
+            (app: { jid: { title: string } }) => app.jid.title === job.title
+          )
       );
 
       const slicedJobs =
@@ -42,7 +46,7 @@ const JobList: React.FC<JobListProps> = ({ limit }) => {
     };
 
     fetchData();
-  }, []);
+  }, [limit]);
 
   const columns = [
     {

@@ -137,10 +137,10 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ initialData }) => {
     });
 
     if (signupData.resumeFile) {
-      formDataToSubmit.append('resume', signupData.resumeFile);
+      formDataToSubmit.append("resume", signupData.resumeFile);
     }
     if (signupData.coverLetterFile) {
-      formDataToSubmit.append('coverLetter', signupData.coverLetterFile);
+      formDataToSubmit.append("coverLetter", signupData.coverLetterFile);
     }
 
     formDataToSubmit.append("education", JSON.stringify(signupData.education));
@@ -149,11 +149,11 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ initialData }) => {
       JSON.stringify(signupData.experience)
     );
 
-    const formDataArray = Array.from(formDataToSubmit.entries());
+    // const formDataArray = Array.from(formDataToSubmit.entries());
 
-      for (let pair of formDataArray) {
-        console.log(pair[0], pair[1]);
-      }
+    //   for (let pair of formDataArray) {
+    //     console.log(pair[0], pair[1]);
+    //   }
 
     try {
       const response = await signup(formDataToSubmit);

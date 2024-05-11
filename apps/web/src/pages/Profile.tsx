@@ -3,6 +3,7 @@ import { fetchProfile } from "../services/profileService";
 import { fetchSchools, fetchCompanies } from "../services/locationService";
 import { EducationEntry, ExperienceEntry, Option } from "../types/types";
 import { updateProfile } from "../services/profileService";
+import { User } from "../types/types";
 
 interface DropdownOptions {
   [key: number]: Option[];
@@ -10,32 +11,6 @@ interface DropdownOptions {
 
 type EducationKeys = keyof EducationEntry;
 type ExperienceKeys = keyof ExperienceEntry;
-
-interface User {
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone: string;
-  linkedin?: string;
-  website?: string;
-  github?: string;
-  street_address: string;
-  city: string;
-  state: string;
-  zip_code: string;
-  resumeUrl: string;
-  resumeFileName: string;
-  coverLetterUrl: string;
-  coverLetterFileName: string;
-  education: EducationEntry[];
-  experience: ExperienceEntry[];
-  sponsorship?: string;
-  legally_authorized?: string;
-  gender?: string;
-  race?: string;
-  veteran?: string;
-  disability?: string;
-}
 
 export const Profile = () => {
   const token = localStorage.getItem("token");
@@ -171,7 +146,7 @@ export const Profile = () => {
   useEffect(() => {
     const fetchData = async () => {
       const profileData = await fetchProfile(token as string);
-      console.log("Received profile data:", profileData);
+      // console.log("Received profile data:", profileData);
       setProfile(profileData);
     };
     fetchData();
@@ -326,7 +301,7 @@ export const Profile = () => {
       // }
       const updatedProfileData = await updateProfile(formData, token as string);
       // Remove the password field from updated profile data
-      // delete updatedProfileData.password;
+      delete updatedProfileData.password;
       // console.log("Updated profile data:", updatedProfileData)
       setProfile(updatedProfileData);
       setEditMode(false);
