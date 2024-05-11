@@ -12,7 +12,10 @@ function Router() {
 
   return (
     <Routes>
-      <Route path="/" element={!user ? <Login /> : <Navigate to="/dashboard" />} />
+      <Route
+        path="/"
+        element={!user ? <Login /> : <Navigate to="/dashboard" />}
+      />
       {user ? (
         <Route element={<MainLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />

@@ -1,29 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { AppTable } from "./AppTable";
 import { fetchApps } from "../services/appService";
-interface Application {
-  _id: string;
-  jid: {
-    title: string;
-    company: string;
-    link: string;
-    image: string;
-    address: string;
-    salary: string;
-  };
-  accepted: boolean;
-  status: "applied" | "rejected";
-  appliedDate: string;
-}
-
-interface AppListProps {
-  limit?: number | null;
-  appStatus: string;
-}
+import { Application, AppListProps } from "../types/application";
 
 const AppList: React.FC<AppListProps> = ({ limit, appStatus }) => {
   const [apps, setApps] = useState<Application[]>([]);
   const token = localStorage.getItem("token");
+
+  const formatStatus = (status: string) => {
+    if (status === "applied") {
+      return "Applied";
+    } else if (status === "rejected") {
+      return "Rejected";
+    }
+    return status; // Return the original status if it doesn't match expected values.
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,8 +38,19 @@ const AppList: React.FC<AppListProps> = ({ limit, appStatus }) => {
         </>
       ),
     },
-    { accessorKey: "appliedDate", header: "Date Applied" },
-    { accessorKey: "status", header: "Status" },
+    {
+      accessorKey: "appliedDate",
+      header: "Date Applied",
+      cell: (info: any) => new Date(info.getValue()).toLocaleDateString(),
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: (info: any) => {
+        const status = info.getValue();
+        return formatStatus(status);
+      },
+    },
     { accessorKey: null, header: "Action" },
   ];
 
