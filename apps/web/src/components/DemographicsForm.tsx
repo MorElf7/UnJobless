@@ -1,20 +1,20 @@
 import React from 'react';
-import { FormData } from '../types/types';
+import { SignupData } from '../types/types';
 
 interface Props {
   nextStep: () => void;
   prevStep: () => void;
-  handleChange: (input: keyof Pick<FormData, 'gender' | 'race' | 'veteran' | 'disability'>) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-  formData: FormData;
+  handleChange: (input: keyof Pick<SignupData, 'gender' | 'race' | 'veteran' | 'disability'>) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  signupData: SignupData;
 }
 
-const DemographicsForm: React.FC<Props> = ({ nextStep, prevStep, handleChange, formData }) => {
+const DemographicsForm: React.FC<Props> = ({ nextStep, prevStep, handleChange, signupData }) => {
   return (
     <div className="max-w-md mx-auto space-y-4">
       <h2>Demographic Information</h2>
       <label>
         Gender:
-        <select value={formData.gender} onChange={handleChange('gender')} className="w-full px-4 py-2 border border-gray-300 rounded-md">
+        <select value={signupData.gender} onChange={handleChange('gender')} className="w-full px-4 py-2 border border-gray-300 rounded-md">
           <option value="">Select Gender</option>
           <option value="Male">Male</option>
           <option value="Female">Female</option>
@@ -23,7 +23,7 @@ const DemographicsForm: React.FC<Props> = ({ nextStep, prevStep, handleChange, f
       </label>
       <label>
         Race:
-        <select value={formData.race} onChange={handleChange('race')} className="w-full px-4 py-2 border border-gray-300 rounded-md">
+        <select value={signupData.race} onChange={handleChange('race')} className="w-full px-4 py-2 border border-gray-300 rounded-md">
           <option value="">Select Race</option>
           <option value="White">White</option>
           <option value="Black or African American">Black or African American</option>
@@ -33,7 +33,7 @@ const DemographicsForm: React.FC<Props> = ({ nextStep, prevStep, handleChange, f
       </label>
       <label>
         Veteran Status:
-        <select value={formData.veteran} onChange={handleChange('veteran')} className="w-full px-4 py-2 border border-gray-300 rounded-md">
+        <select value={signupData.veteran} onChange={handleChange('veteran')} className="w-full px-4 py-2 border border-gray-300 rounded-md">
           <option value="">Select Veteran Status</option>
           <option value="Yes">Yes</option>
           <option value="No">No</option>
@@ -41,7 +41,7 @@ const DemographicsForm: React.FC<Props> = ({ nextStep, prevStep, handleChange, f
       </label>
       <label>
         Disability Status:
-        <select value={formData.disability} onChange={handleChange('disability')} className="w-full px-4 py-2 border border-gray-300 rounded-md">
+        <select value={signupData.disability} onChange={handleChange('disability')} className="w-full px-4 py-2 border border-gray-300 rounded-md">
           <option value="">Select Disability Status</option>
           <option value="Yes">Yes</option>
           <option value="No">No</option>

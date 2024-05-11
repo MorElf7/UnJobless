@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ArrowLeftToLine, ArrowRightToLine, Home, BriefcaseBusiness, Send, User, LogOut } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
-import { fetchSideBarData } from "../services/profileService"; // Ensure this is correctly imported
+import { fetchSideBarData } from "../services/profileService";
 
 interface SidebarContextType {
   expanded: boolean;
@@ -41,7 +41,7 @@ const Sidebar: React.FC = () => {
     if (token) {
       fetchSideBarData(token)
         .then(profile => {
-          setUser({ username: profile.first_name + profile.last_name, email: profile.email });
+          setUser({ username: profile.first_name + " " + profile.last_name, email: profile.email });
         })
         .catch(error => console.error("Error fetching profile:", error));
     }

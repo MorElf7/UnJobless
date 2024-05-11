@@ -2,24 +2,24 @@ interface EducationEntry {
     school: string;
     major: string;
     degree: string;
-    gpa: number;
+    gpa?: number;
     startDate: string;
-    endDate: string;
-    logo: string;
+    endDate?: string;
+    logo?: string;
   }
   
   interface ExperienceEntry {
     position: string;
     company: string;
-    location: string;
+    location?: string;
     current: boolean;
-    description: string;
+    description?: string;
     startDate: string;
-    endDate: string;
-    logo: string;
+    endDate?: string;
+    logo?: string;
   }
 
-interface FormData {
+interface SignupData {
     email: string;
     password: string;
     first_name: string;
@@ -44,4 +44,4 @@ interface FormData {
     coverLetterFile?: File;
 }
 
-export type { EducationEntry, ExperienceEntry, FormData };
+export type { EducationEntry, ExperienceEntry, SignupData };

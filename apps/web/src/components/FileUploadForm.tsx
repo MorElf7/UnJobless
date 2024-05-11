@@ -1,20 +1,20 @@
-import React, { useEffect, useRef } from 'react';
-import { FormData } from '../types/types';
+import React, { useEffect, useRef, useMemo } from 'react';
+import { SignupData } from '../types/types';
 
 interface Props {
     nextStep: () => void;
     prevStep: () => void;
     setFileData: (fileType: 'resumeFile' | 'coverLetterFile', file: File) => void;
-    formData: FormData;
+    signupData: SignupData;
 }
 
-const FileUploadForm: React.FC<Props> = ({ nextStep, prevStep, setFileData, formData }) => {
-    const { resumeFile, coverLetterFile } = formData;
+const FileUploadForm: React.FC<Props> = ({ nextStep, prevStep, setFileData, signupData }) => {
+    const { resumeFile, coverLetterFile } = signupData;
 
     const resumeInputRef = useRef<HTMLInputElement>(null);
     const coverLetterInputRef = useRef<HTMLInputElement>(null);
 
-    const dataTransfer = new DataTransfer();
+    const dataTransfer = useMemo(() => new DataTransfer(), []);
     
     useEffect(() => {
         if (resumeInputRef.current && resumeFile) {

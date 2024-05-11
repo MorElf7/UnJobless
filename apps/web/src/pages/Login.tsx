@@ -17,7 +17,13 @@ const Login = () => {
         e.preventDefault();
         setLoading(true);
         setError('');
-    
+
+        if (!email || !password) {
+            setError('Please enter both email and password.');
+            setLoading(false);
+            return;  // Prevent moving forward without credentials
+        }
+
         if (isNewUser && !showFullRegistration) {
             setShowFullRegistration(true);
             setLoading(false);
@@ -55,11 +61,11 @@ const Login = () => {
                     >
                         <div>
                             {showFullRegistration ? (
-                                <MultiStepForm />
+                                <MultiStepForm initialData={{ email, password }} />
                             ) : (
                                 <form onSubmit={handleSubmit} className="space-y-6">
-                                    <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-2 border rounded-md" />
-                                    <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-2 border rounded-md" />
+                                    <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"/>
+                                    <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
                                     <button type="submit" disabled={loading} className="w-full py-2 px-4 bg-green-500 text-white rounded-md hover:bg-green-600">
                                         {loading ? 'Loading...' : 'Submit'}
                                     </button>

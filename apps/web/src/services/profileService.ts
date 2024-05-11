@@ -14,6 +14,21 @@ export const fetchProfile = async (token: string) => {
   }
 };
 
+// Update profile with potential file uploads
+export const updateProfile = async (profileData: FormData, token: string) => {
+  try {
+    const response = await axios.put(`${API_URL}/profile`, profileData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Failed to update profile:', error);
+    throw error;
+  }
+};
+
 export const fetchSideBarData = async (token: string) => {
   try {
     const response = await axios.get(`${API_URL}/profile`, {
