@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Patch,
   Post,
   Put,
   Request,
@@ -205,7 +206,6 @@ export class AuthController {
         last_name: { type: 'string' },
         email: { type: 'string' },
         phone: { type: 'string' },
-        password: { type: 'string' },
         linkedin: { type: 'string' },
         website: { type: 'string' },
         github: { type: 'string' },
@@ -267,14 +267,10 @@ export class AuthController {
     if (updateUserDto.education) {
       //@ts-expect-error expect errors
       updateUserDto.education = JSON.parse(updateUserDto.education);
-    } else {
-      updateUserDto.education = [];
     }
     if (updateUserDto.experience) {
       //@ts-expect-error expect errors
       updateUserDto.experience = JSON.parse(updateUserDto.experience);
-    } else {
-      updateUserDto.education = [];
     }
     if (files.resume) {
       const resumeUrl = await this.s3Service.uploadFile(files.resume[0]);
