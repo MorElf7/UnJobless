@@ -12,6 +12,7 @@ import {
 import { defaultProfile } from '@root/src/shared/typing/constant';
 import { jwtDecode } from 'jwt-decode';
 import { API_URL } from '@root/utils/reload/constant';
+import { convertTime } from '@root/utils/utils';
 
 reloadOnUpdate('pages/background');
 
@@ -23,17 +24,19 @@ reloadOnUpdate('pages/content/style.scss');
 
 const testEducation: Education[] = [
   {
+    logo: 'https://via.placeholder.com/150',
     school: 'University of Example',
-    start_date: '2018-08',
-    end_date: '2022-05',
+    startDate: '2018-08',
+    endDate: '2022-05',
     major: 'Computer Science',
     degree: 'Bachelor of Science',
     gpa: 3.8,
   },
   {
+    logo: 'https://via.placeholder.com/150',
     school: 'Example Community College',
-    start_date: '2016-09',
-    end_date: '2018-06',
+    startDate: '2016-09',
+    endDate: '2018-06',
     major: 'General Studies',
     degree: 'Associate of Arts',
     gpa: 3.5,
@@ -42,19 +45,21 @@ const testEducation: Education[] = [
 
 const testExperience: Experience[] = [
   {
+    logo: 'https://via.placeholder.com/150',
     company: 'Example Tech Inc.',
     location: 'Example City',
-    start_date: '2022-06',
-    end_date: 'Present',
+    startDate: '2022-06',
+    endDate: 'Present',
     position: 'Software Developer',
     current: true,
     description: 'Developed and maintained web applications using React and Node.js.',
   },
   {
+    logo: 'https://via.placeholder.com/150',
     company: 'Example Startup LLP',
     location: 'Example City',
-    start_date: '2020-06',
-    end_date: '2022-05',
+    startDate: '2020-06',
+    endDate: '2022-05',
     position: 'Junior Developer',
     current: false,
     description: 'Assisted in the development of mobile applications and performed software testing.',
@@ -156,12 +161,20 @@ const getProfile = (): Promise<Response> => {
             Authorization: `Bearer ${token}`,
           },
         });
-
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
         const data = await response.json();
+        data.education.forEach((education: Education) => {
+          education.startDate = convertTime(education.startDate);
+          education.endDate = convertTime(education.endDate);
+        });
+
+        data.experience.forEach((experience: Experience) => {
+          experience.startDate = convertTime(experience.startDate);
+          experience.endDate = convertTime(experience.endDate);
+        });
         await saveProfile(data);
         resolve(data);
       }
@@ -169,12 +182,13 @@ const getProfile = (): Promise<Response> => {
   });
 };
 
-const assignTestProfile = async () => {
-  console.log('assignTestProfile');
-  await saveProfile(testProfile);
-};
+// const assignTestProfile = async () => {
+//   console.log('assignTestProfile');
+//   await saveProfile(testProfile);
+// };
 
-const clearTestProfile = async () => {
+const clearProfile = async () => {
+  console.log('clearProfile');
   return new Promise((resolve, reject) => {
     chrome.storage.sync.remove('profile', () => {
       if (chrome.runtime.lastError) {
@@ -251,38 +265,6 @@ const genAi = async (text: string): Promise<Response> => {
   };
 };
 
-// const saveAddition = async (addition: AdditionType) => {
-//     const jsonAddition = JSON.stringify(addition);
-//     return new Promise((resolve, reject) => {
-//         chrome.storage.sync.set({ addition: jsonAddition }, () => {
-//             if (chrome.runtime.lastError) {
-//                 reject(chrome.runtime.lastError.message);
-//             } else {
-//                 resolve(true);
-//             }
-//         });
-//     });
-// }
-
-// const getAddition = async () => {
-//     return new Promise((resolve, reject) => {
-//         chrome.storage.sync.get('addition', (result) => {
-//             if (chrome.runtime.lastError) {
-//                 console.error(chrome.runtime.lastError.message);
-//                 reject(chrome.runtime.lastError.message);
-//                 return;
-//             }
-
-//             if (result.addition) {
-//                 resolve(JSON.parse(result.addition));
-//             } else {
-//                 resolve({});
-//             }
-//         });
-//     });
-
-// }
-
 function handleRequest(
   promise: Promise<any>,
   sendResponse: (response: Response) => void,
@@ -294,21 +276,6 @@ function handleRequest(
   });
 }
 
-// chrome.runtime.onMessageExternal.addListener(
-//   (request: Request, sender: chrome.runtime.MessageSender, sendResponse: (response: Response) => void): void => {
-//     console.log(request.data);
-//     if (sender.url === 'http://localhost:3000') {
-//       if (request.data) {
-//         try {
-//           const decoded = jwtDecode(request.data);
-//           chrome.storage.sync.set({ token: request.data }).then(() => {});
-//         } catch (e) {
-//           chrome.storage.sync.set({ jid: request.data }).then(() => {});
-//         }
-//       }
-//     }
-//   },
-// );
 
 chrome.runtime.onMessage.addListener(
   (request: Request, sender: chrome.runtime.MessageSender, sendResponse: (response: Response) => void): boolean => {
@@ -326,13 +293,13 @@ chrome.runtime.onMessage.addListener(
           });
           break;
 
-        case 'assignTestProfile':
-          handleRequest(assignTestProfile(), sendResponse, () => {
-            console.log('Profile assigned'); // Adjust logging appropriately
-          });
-          break;
-        case 'clearTestProfile':
-          handleRequest(clearTestProfile(), sendResponse, () => {
+        // case 'assignTestProfile':
+        //   handleRequest(assignTestProfile(), sendResponse, () => {
+        //     console.log('Profile assigned'); // Adjust logging appropriately
+        //   });
+        //   break;
+        case 'clearProfile':
+          handleRequest(clearProfile(), sendResponse, () => {
             console.log('Profile cleared'); // Adjust logging appropriately
           });
           break;
@@ -351,17 +318,6 @@ chrome.runtime.onMessage.addListener(
             sendResponse({ success: true });
           });
           break;
-        // case 'saveAddition':
-        //     handleRequest(saveAddition(request.addition), sendResponse, () => {
-        //         sendResponse({ success: true });
-        //     });
-        //     break;
-
-        // case 'getAddition':
-        //     handleRequest(getAddition(), sendResponse, (addition) => {
-        //         sendResponse({ addition });
-        //     });
-        //     break;
 
         default:
           sendResponse({ error: 'Unsupported request method.' });

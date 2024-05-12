@@ -17,10 +17,6 @@ const manifest = {
   version: packageJson.version,
   description: '__MSG_extensionDescription__',
   permissions: ['storage', 'tabs', 'activeTab', 'background'],
-  // side_panel: {
-  //   default_path: 'src/pages/sidepanel/index.html',
-  // },
-  // options_page: 'src/pages/options/index.html',
   background: {
     service_worker: 'src/pages/background/index.js',
     type: 'module',
@@ -29,9 +25,6 @@ const manifest = {
     default_popup: 'src/pages/popup/index.html',
     default_icon: 'icon-34.png',
   },
-  // chrome_url_overrides: {
-  //   newtab: 'src/pages/newtab/index.html',
-  // },
   icons: {
     128: 'icon-128.png',
   },
@@ -54,10 +47,6 @@ const manifest = {
       matches: ['*://*/*'],
     },
   ],
-  // externally_connectable: {
-  //   // id: 'fenloblpljnlongiclhfcpjboniablen',
-  //   matches: ['*localhost:3000*'],
-  // },
 };
 
 export default manifest;

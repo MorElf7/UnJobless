@@ -2,9 +2,10 @@ import { Education, Experience, Profile } from "./types";
 
 export const defaultEducation: Education[] = [
     {
+        logo: "https://via.placeholder.com/150",
         school: "Default University",
-        start_date: "0000-00",
-        end_date: "0000-00",
+        startDate: "0000-00",
+        endDate: "0000-00",
         major: "N/A",
         degree: "N/A",
         gpa: 0.0
@@ -13,10 +14,11 @@ export const defaultEducation: Education[] = [
 
 export const defaultExperience: Experience[] = [
     {
+        logo: "https://via.placeholder.com/150",
         company: "Default Company",
         location: "Default City",
-        start_date: "0000-00",
-        end_date: "0000-00",
+        startDate: "0000-00",
+        endDate: "0000-00",
         position: "Default Position",
         description: "Default job description.",
         current: false,
