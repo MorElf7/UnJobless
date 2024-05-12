@@ -103,7 +103,9 @@ const Popup = ({ type } : PopupProps) => {
             return () => {
                 observer.disconnect();
             }
-        } 
+        } else {
+            saveApplication(type, profile);
+        }
 
     }, []);
 

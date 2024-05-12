@@ -114,7 +114,7 @@ const saveApplication = async (Profile: Profile, company: string): Promise<Respo
     const { token, jid } = await chrome.storage.sync.get(['token', 'jid']);
 
     // change to saveApplication
-    const response = await fetch(`${API_URL}/application`, {
+    const response = await fetch(`${API_URL}/applications`, {
       method: 'POST',
       mode: 'cors',
       headers: {
@@ -146,38 +146,38 @@ const getProfile = (): Promise<Response> => {
         return;
       }
 
-      if (result.profile) {
-        console.log('profile', result.profile);
-        resolve(JSON.parse(result.profile));
-      } else {
-        // change to getProfile
-        // https://cs520-backend-iz0mg9q8e-kientos-projects.vercel.app
-        const { token } = await chrome.storage.sync.get(['token']);
-        const response = await fetch(`${API_URL}/profile`, {
-          method: 'GET',
-          mode: 'cors',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        data.education.forEach((education: Education) => {
-          education.startDate = convertTime(education.startDate);
-          education.endDate = convertTime(education.endDate);
-        });
-
-        data.experience.forEach((experience: Experience) => {
-          experience.startDate = convertTime(experience.startDate);
-          experience.endDate = convertTime(experience.endDate);
-        });
-        await saveProfile(data);
-        resolve(data);
+      // if (result.profile) {
+      //   console.log('profile', result.profile);
+      //   resolve(JSON.parse(result.profile));
+      // } else {
+      // change to getProfile
+      // https://cs520-backend-iz0mg9q8e-kientos-projects.vercel.app
+      const { token } = await chrome.storage.sync.get(['token']);
+      const response = await fetch(`${API_URL}/profile`, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
+
+      const data = await response.json();
+      data.education.forEach((education: Education) => {
+        education.startDate = convertTime(education.startDate);
+        education.endDate = convertTime(education.endDate);
+      });
+
+      data.experience.forEach((experience: Experience) => {
+        experience.startDate = convertTime(experience.startDate);
+        experience.endDate = convertTime(experience.endDate);
+      });
+      await saveProfile(data);
+      resolve(data);
+      // }
     });
   });
 };
@@ -242,7 +242,7 @@ const getFile = async (fileURL: string, name: string): Promise<FileResponse> => 
 
 const genAi = async (text: string): Promise<Response> => {
   const { token } = await chrome.storage.sync.get(['token']);
-  const response = await fetch(`${API_URL}/application/autofill`, {
+  const response = await fetch(`${API_URL}/applications/autofill`, {
     method: 'POST',
     mode: 'cors',
     headers: {
@@ -275,7 +275,6 @@ function handleRequest(
     sendResponse({ error: error.toString() });
   });
 }
-
 
 chrome.runtime.onMessage.addListener(
   (request: Request, sender: chrome.runtime.MessageSender, sendResponse: (response: Response) => void): boolean => {
