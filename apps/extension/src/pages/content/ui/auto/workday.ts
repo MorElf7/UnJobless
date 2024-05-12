@@ -46,7 +46,7 @@ const fillDate = (frame: Node, input_value: string, type: string): void => {
 };
 
 const fillWorkExperienceTime = (frame:Node, experience: Experience): void => {
-  fillDate(frame, experience.start_date, "startDate");
+  fillDate(frame, experience.startDate, "startDate");
   if (experience.current === true) {
     const checkbox = document.evaluate('//input[@data-automation-id="currentlyWorkHere"]', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0) as HTMLInputElement;
     if (checkbox && !checkbox.checked) {
@@ -57,14 +57,14 @@ const fillWorkExperienceTime = (frame:Node, experience: Experience): void => {
       checkbox.dispatchEvent(new FocusEvent('blur'));
     }
   } else {
-    fillDate(frame, experience.end_date, "endDate");
+    fillDate(frame, experience.endDate, "endDate");
   }
 };
 
 const fillEducationTime = (frame: Node, education: Education) => {
   if (frame) {
-    fillDate(frame, education.start_date, "startDate");
-    fillDate(frame, education.end_date, "endDate");
+    fillDate(frame, education.startDate, "startDate");
+    fillDate(frame, education.endDate, "endDate");
   }
 };
 
@@ -102,7 +102,7 @@ const clickButton = async (xpath: string): Promise<void> => {
   const button = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue as HTMLButtonElement;
   if (button) {
     button.click();
-    await delay(300);
+    await delay(500);
   }
 };
 

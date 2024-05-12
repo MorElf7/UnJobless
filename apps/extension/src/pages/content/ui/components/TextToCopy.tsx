@@ -16,7 +16,6 @@ const TextToCopy = ({ text, defaultValue }: { text: string, defaultValue: string
             }}
             _active={{
                 bg: '#EAEAF0',  // Slightly darker gray background on active
-                p: '1px',  // Increased padding
             }}
         >
             <Text borderRadius="1px" _hover={{ color: '#0F893D' }} >

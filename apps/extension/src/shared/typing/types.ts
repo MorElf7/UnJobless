@@ -34,8 +34,9 @@ export type PopupProps = {
 }
 
 export type Achievement = {
-    start_date: string;
-    end_date: string;
+    startDate: string;
+    endDate: string;
+    logo: string;
 }
 
 export type Education = Achievement & {
