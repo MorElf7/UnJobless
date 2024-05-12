@@ -69,35 +69,13 @@ const Popup = ({ type } : PopupProps) => {
 
                     const profileFromMessage: Profile = await requestProfile() as Profile;
                     setProfile(profileFromMessage);
+                    location.reload();
+
                 }
             } catch (error) {
                 console.error('Failed to fetch profile:', error);
             }
         };
-        // const fetchAdditionalFields = async () => {
-        //     try{
-        //         const getAddition = () => new Promise((resolve, reject) => {
-        //             chrome.runtime.sendMessage({ method: "getAddition" }, (response) => {
-        //                 if (chrome.runtime.lastError) {
-        //                     reject(new Error(chrome.runtime.lastError.message));
-        //                 } else if (response) {
-        //                     resolve(response.addition);
-        //                 } else {
-        //                     reject(new Error("Failed to fetch additional fields."));
-        //                 }
-        //             });
-        //         });
-
-        //         const additionalFields: AdditionType = await getAddition() as AdditionType;
-        //         if (additionalFields){
-        //             setAdditionalFields(additionalFields);
-        //         }else{
-        //             throw new Error("Failed to fetch additional fields.");
-        //         }
-        //     }catch (error) {
-        //         console.error('Failed to fetch additional fields:', error);
-        //     }
-        // }
         const fetchAdditionalFields = async () => {
             await findAdditionalFields(type).then((addition) => {
                 setAdditionalFields(addition);
@@ -146,8 +124,17 @@ const Popup = ({ type } : PopupProps) => {
         autoFillManager.fillIdentityFields(profile);
     }
 
+    const handleEducationFields = () => {
+        autoFillManager.fillEducation(profile);
+    }
+
+    const handleExperienceFields = () => {
+        autoFillManager.fillExperience(profile);
+    }
+
     const editProfile = () => {
-        const path = 'https://www.google.com/'
+        chrome.runtime.sendMessage({ method: "clearProfile" });
+        const path = 'http://localhost:3000/dashboard'
         window.open(path, '_blank');
     }
 
@@ -204,6 +191,7 @@ const Popup = ({ type } : PopupProps) => {
                 boxShadow="xl"
                 p="5"
                 mt="4"
+                zIndex="6"
                 onClick={() => setClose(false)}
                 transition="right 0.3s ease-in-out"
                 _hover={{
@@ -325,11 +313,12 @@ const Popup = ({ type } : PopupProps) => {
                                                 <TextToCopy text={profile.last_name} defaultValue={defaultProfile.last_name}/>
                                                 </Flex>
                                                 <Box display="flex" flexDirection="column">
-                                                <Box display="flex" justifyContent="space-between">
+                                                <Box display="flex" justifyContent="space-between" width="100%">
                                                     <Box display="flex" alignItems="center">
                                                     <Image 
                                                         boxSize="50px"
                                                         borderRadius='full'
+                                                        src = {`https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=${profile.first_name}+${profile.last_name}`}
                                                         fallbackSrc='https://via.placeholder.com/50'
                                                     />
                                                     <VStack align="flex-start" paddingLeft="15px" spacing="1px" fontSize="12px" fontWeight="400">
@@ -349,10 +338,12 @@ const Popup = ({ type } : PopupProps) => {
                                                 </Box>
                                             </Box>
                                             <Divider paddingTop="7px" borderColor="#C2D1D9"/>
+                                            {profile.education &&
+                                            <>
                                             <Box paddingTop="7px">
                                                 <Text paddingBottom="7px" fontWeight="700" fontSize="12px">Education</Text>
                                                 <Box display="flex" flexDirection="column">
-                                                <Box display="flex" justifyContent="space-between">
+                                                <Box display="flex" justifyContent="space-between" width="100%">
                                                     <VStack spacing="5px" align="stretch" w="full">
                                                     {
                                                         profile.education && profile.education.map((edu, index) => (
@@ -361,6 +352,7 @@ const Popup = ({ type } : PopupProps) => {
                                                                 <Image 
                                                                     boxSize="50px"
                                                                     borderRadius='full'
+                                                                    src = {edu.logo}
                                                                     fallbackSrc='https://via.placeholder.com/50'
                                                                 />
                                                                 <VStack align="flex-start" paddingLeft="15px" spacing="1px">
@@ -373,9 +365,9 @@ const Popup = ({ type } : PopupProps) => {
                                                                         <TextToCopy text={edu.major} defaultValue={defaultEducation[0].major}/>
                                                                     </Flex>
                                                                     <Flex fontSize="10px" fontWeight="400">
-                                                                        <TextToCopy text={edu.start_date} defaultValue={defaultEducation[0].start_date}/>
+                                                                        <TextToCopy text={edu.startDate} defaultValue={defaultEducation[0].startDate}/>
                                                                         <Text paddingRight="3px" paddingLeft="3px"> - </Text>
-                                                                        <TextToCopy text={edu.end_date} defaultValue={defaultEducation[0].end_date}/>
+                                                                        <TextToCopy text={edu.endDate} defaultValue={defaultEducation[0].endDate}/>
                                                                     </Flex>
                                                                 </VStack>
                                                                 </Box>
@@ -383,15 +375,18 @@ const Popup = ({ type } : PopupProps) => {
                                                         ))
                                                     }
                                                     </VStack>
-                                                    <ProfileActionButtons handler={handleIdentityFields} editProfile={editProfile} loading = {loading} />
+                                                    <ProfileActionButtons handler={handleEducationFields} editProfile={editProfile} loading = {loading} />
                                                 </Box>
                                                 </Box>
                                             </Box>
                                             <Divider paddingTop="7px" borderColor="#C2D1D9"/>
+                                            </>}
+                                            {profile.experience &&
+                                            <>
                                             <Box paddingTop="7px">
                                                 <Text paddingBottom="7px" fontWeight="700" fontSize="12px">Experience</Text>
                                                 <Box display="flex" flexDirection="column">
-                                                <Box display="flex" justifyContent="space-between">
+                                                <Box display="flex" justifyContent="space-between" width="100%">
                                                     <VStack spacing="5px" align="stretch" w="full">
                                                     {
                                                         profile.experience && profile.experience.map((exp, index) => (
@@ -400,6 +395,7 @@ const Popup = ({ type } : PopupProps) => {
                                                                 <Image 
                                                                     boxSize="50px"
                                                                     borderRadius='full'
+                                                                    src = {exp.logo}
                                                                     fallbackSrc='https://via.placeholder.com/50'
                                                                 />
                                                                 <VStack align="flex-start" paddingLeft="15px" spacing="1px">
@@ -412,9 +408,9 @@ const Popup = ({ type } : PopupProps) => {
                                                                         <TextToCopy text={exp.location} defaultValue={defaultExperience[0].location}/>
                                                                     </Flex>
                                                                     <Flex fontSize="10px" fontWeight="400">
-                                                                        <TextToCopy text={exp.start_date} defaultValue={defaultExperience[0].start_date}/>
+                                                                        <TextToCopy text={exp.startDate} defaultValue={defaultExperience[0].startDate}/>
                                                                         <Text paddingRight="3px" paddingLeft="3px"> - </Text>
-                                                                        <TextToCopy text={exp.end_date} defaultValue={defaultExperience[0].end_date}/>
+                                                                        <TextToCopy text={exp.endDate} defaultValue={defaultExperience[0].endDate}/>
                                                                     </Flex>
                                                                 </VStack>
                                                                 </Box>
@@ -425,15 +421,17 @@ const Popup = ({ type } : PopupProps) => {
                                                         ))
                                                     }
                                                     </VStack>
-                                                    <ProfileActionButtons handler={handleIdentityFields} editProfile={editProfile} loading = {loading} />
+                                                    <ProfileActionButtons handler={handleExperienceFields} editProfile={editProfile} loading = {loading} />
                                                 </Box>
                                                 </Box>
                                             </Box>
                                             <Divider paddingTop="7px" borderColor="#C2D1D9"/>
+                                            </>}
+                                            {(profile.resumeUrl || profile.coverLetterUrl) &&
                                             <Box paddingTop="7px">
                                                 <Text paddingBottom="7px" fontWeight="700" fontSize="12px">Documents</Text>
                                                 <Box display="flex" flexDirection="column">
-                                                <Box display="flex" justifyContent="space-between">
+                                                <Box display="flex" justifyContent="space-between" width="100%">
                                                     <VStack spacing="5px" align="stretch" w="full">
                                                     {
                                                         profile.resumeUrl && (
@@ -478,6 +476,7 @@ const Popup = ({ type } : PopupProps) => {
                                                 </Box>
                                                 </Box>
                                             </Box>
+                                            }
                                         </Box>
                                         </Scrollbar>
                                         </Box>
@@ -549,12 +548,12 @@ const Popup = ({ type } : PopupProps) => {
                 
             </Box>
             }
-            {/* <Button onClick={() => {
+            <Button onClick={() => {
                 chrome.runtime.sendMessage({ method: "assignTestProfile" })
                 }}>Save Profile</Button>
             <Button onClick={() => {
-                chrome.runtime.sendMessage({ method: "clearTestProfile" })
-                }}>Delete Profile</Button> */}
+                chrome.runtime.sendMessage({ method: "clearProfile" })
+                }}>Delete Profile</Button>
 
         </ChakraProvider>
   );

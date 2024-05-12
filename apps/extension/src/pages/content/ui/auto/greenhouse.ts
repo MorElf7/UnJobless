@@ -6,11 +6,41 @@ emptyFilter, hispanicFilter, ethnicFilter, selectCheckBoxByPartialText,
 genderFilter, selectCheckBoxByValue,
 attachFileToInput,
 getTrimLabel,
-vetFilter
+vetFilter,
+delay,
+setValue
 } from "@root/utils/utils";
 import { authorizedPattern, eighteenPattern, githubPattern, linkedInPattern, sponsorshipPattern, websitePattern } from "@root/src/shared/typing/constant";
 
 const delaySpeed : number = 100;
+const getInput = () => {
+    return document.evaluate('//div[@id="select2-drop" and not(contains(@style, "display: none"))]//div[contains(@class, "select2-search") and not(contains(@class, "select2-search-hidden"))]//input'
+    , document
+    , null
+    , XPathResult.FIRST_ORDERED_NODE_TYPE
+    , null).singleNodeValue as HTMLInputElement | null;
+}
+
+const tryEducationInput = (input: HTMLInputElement | null, value: string) => {
+    return new Promise<void>((resolve) => {
+        setTimeout(async () => {
+            if (input) {
+                input.scrollIntoView();
+                await setValue(input, value);
+                await delay(500);
+                input.dispatchEvent(new KeyboardEvent('keydown', {
+                    bubbles: true,    // Ensure the event bubbles
+                    cancelable: true, // Ensure the event is cancelable
+                    key: 'Enter',     // Set the 'key' property to 'Enter'
+                    keyCode: 13,      // Set the 'keyCode' property to 13 (Deprecated but still used in some places)
+                    which: 13         // Set the 'which' property to 13 (Deprecated but still used in some places)
+                  }));
+            }
+            
+            resolve();
+        }, 500);
+    });
+}
 
 export class GreenHouseAutoFillManager extends AutoFillManager {
     constructor(eventEmitter: EventEmitter) {
@@ -131,49 +161,97 @@ export class GreenHouseAutoFillManager extends AutoFillManager {
     }
 
     private async handleEducation(education: Education[]): Promise<void> {
-        const wrapper = document.querySelector("div[id='education_section]") as HTMLDivElement | null;
+        const wrapper = document.getElementById('education_section') as HTMLDivElement | null;
+        const educations: Education[] = education;
         let delayIndex = 0;
+        if (educations.length == 0) {
+            return;
+        }
+
         if (wrapper) {
-            const addEducationButton = wrapper.querySelector("button[id='add_education']") as HTMLButtonElement | null;
-            if (addEducationButton) {
-                for(let i = 1; i < education.length - 1; i++) {
-                    addEducationButton.click();
+            educations.forEach(async (education, i) => {
+                if (!existQuery(`label[for="education_school_name_${i}"]`)) {
+                    console.log("click add education");
+                   (document.querySelector("a[id='add_education']") as HTMLAnchorElement | null)?.click();
                 }
-            }
+            });
 
-            const educations = wrapper.querySelectorAll("div[id='education']") as NodeListOf<HTMLDivElement>;
-            educations.forEach(async (edu, index) => {
-                // This is wrong, follow the logic of workday, i'm too lazy to fix it
-                await new Promise(resolve => setTimeout(resolve, delaySpeed * delayIndex++));
-                const schoolInput = edu.querySelector("input[id='school']") as HTMLInputElement | null;
-                const startDateInput = edu.querySelector("input[id='start_date']") as HTMLInputElement | null;
-                const endDateInput = edu.querySelector("input[id='end_date']") as HTMLInputElement | null;
-                const majorInput = edu.querySelector("input[id='major']") as HTMLInputElement | null;
-                const degreeInput = edu.querySelector("input[id='degree']") as HTMLInputElement | null;
-                const gpaInput = edu.querySelector("input[id='gpa']") as HTMLInputElement | null;
+            const educationWrappers = document.querySelectorAll("div[class='education']") as NodeListOf<HTMLDivElement>;
 
-                if (schoolInput) {
-                    schoolInput.value = education[index].school;
-                }
+            educations.forEach(async (education, i) => {
+                const educationWrapper = educationWrappers[i];
+                if (educationWrapper) {
+                    const fields = educationWrapper.querySelectorAll('fieldset > .field') as NodeListOf<HTMLDivElement>;
+                    fields.forEach(async (field) => {
+                        const label = field.querySelector("label")?.textContent;
+                        const trimLabel = label?.trim().replace(/[^a-zA-Z ]/g, '').replace(/\s+/g, ' ').toLowerCase();
+                        if (/school/i.test(trimLabel || "")) {
+                            const button = (field.querySelector(`div[id='s2id_education_school_name_${i}'] a[class="select2-choice select2-default"]`) as HTMLAnchorElement | null);
+                            const mousedownEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
+                            const mouseupEvent = new MouseEvent('mouseup', { bubbles: true, cancelable: true });
+                            const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
 
-                if (startDateInput) {
-                    startDateInput.value = education[index].start_date;
-                }
+                            button?.dispatchEvent(mousedownEvent);
+                            button?.dispatchEvent(mouseupEvent);
+                            button?.dispatchEvent(clickEvent);
+                            await tryEducationInput(getInput(), education.school);
+                        } else if (/degree/i.test(trimLabel || "")) {
+                            const button = (field.querySelector(`div[id='s2id_education_degree_${i}'] a[class="select2-choice select2-default"]`) as HTMLAnchorElement | null);
+                            const mousedownEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
+                            const mouseupEvent = new MouseEvent('mouseup', { bubbles: true, cancelable: true });
+                            const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
 
-                if (endDateInput) {
-                    endDateInput.value = education[index].end_date;
-                }
+                            button?.dispatchEvent(mousedownEvent);
+                            button?.dispatchEvent(mouseupEvent);
+                            button?.dispatchEvent(clickEvent);
+                            await tryEducationInput(getInput(), education.degree);
+                        } else if (/discipline/i.test(trimLabel || "")) {
+                            const button = (field.querySelector(`div[id='s2id_education_major_${i}'] a[class="select2-choice select2-default"]`) as HTMLAnchorElement | null);
+                            const mousedownEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
+                            const mouseupEvent = new MouseEvent('mouseup', { bubbles: true, cancelable: true });
+                            const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
 
-                if (majorInput) {
-                    majorInput.value = education[index].major;
-                }
+                            button?.dispatchEvent(mousedownEvent);
+                            button?.dispatchEvent(mouseupEvent);
+                            button?.dispatchEvent(clickEvent);
+                            await tryEducationInput(getInput(), education.major);
+                        } else if (/start/i.test(trimLabel || "")) {
+                            const dateParts = education.startDate.split('-');
+                            const year = dateParts[0];
+                            const month = dateParts[1];
 
-                if (degreeInput) {
-                    degreeInput.value = education[index].degree;
-                }
+                            const inputMonth = field.querySelector(`input[placeholder="MM"]`) as HTMLInputElement | null;
+                            const inputYear = field.querySelector(`input[placeholder="YYYY"]`) as HTMLInputElement | null;
 
-                if (gpaInput) {
-                    gpaInput.value = education[index].gpa.toString();
+                            if (inputMonth) {
+                                inputMonth.scrollIntoView();
+                                inputMonth.value = month;
+                            }
+
+                            if (inputYear) {
+                                inputYear.scrollIntoView();
+                                inputYear.value = year;
+                            }
+                            
+                        } else if (/end/i.test(trimLabel || "")) {
+                            const dateParts = education.endDate.split('-');
+                            const year = dateParts[0];
+                            const month = dateParts[1];
+
+                            const inputMonth = field.querySelector(`input[placeholder="MM"]`) as HTMLInputElement | null;
+                            const inputYear = field.querySelector(`input[placeholder="YYYY"]`) as HTMLInputElement | null;
+
+                            if (inputMonth) {
+                                inputMonth.scrollIntoView();
+                                inputMonth.value = month;
+                            }
+
+                            if (inputYear) {
+                                inputYear.scrollIntoView();
+                                inputYear.value = year;
+                            }
+                        }
+                    });
                 }
             });
             
@@ -232,9 +310,9 @@ export class GreenHouseAutoFillManager extends AutoFillManager {
       }
 
     async fillEducation(profile: Profile): Promise<void> {
-    this.eventEmitter.publish('loading', true);
-    await this.handleEducation(profile.education);
-    this.eventEmitter.publish('loading', false);
+        this.eventEmitter.publish('loading', true);
+        await this.handleEducation(profile.education);
+        this.eventEmitter.publish('loading', false);
     }
 
 

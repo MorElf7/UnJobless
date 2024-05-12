@@ -424,3 +424,19 @@ export const vetFilter = (value: string): string => {
       return value;
   }
 };
+
+export const convertTime = (time: string): string => {
+  const isoString = time;
+  const date = new Date(isoString);
+
+  // Extract year, month, and day
+  const year = date.getUTCFullYear();  // Using getUTCFullYear to avoid timezone issues
+  const month = date.getUTCMonth() + 1; // getUTCMonth returns 0-indexed month (0-11)
+  const day = date.getUTCDate();
+
+  // Format month and day to ensure they are always two digits
+  const formattedMonth = month.toString().padStart(2, '0');
+  const formattedDay = day.toString().padStart(2, '0');
+
+  return `${year}-${formattedMonth}-${formattedDay}`;
+}
