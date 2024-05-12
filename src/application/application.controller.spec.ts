@@ -7,6 +7,7 @@ import { UserModule } from 'src/user/user.module';
 import { ApplicationModule } from './application.module';
 import { JwtService } from '@nestjs/jwt';
 import { S3Service } from 'src/auth/aws.service';
+import { CreateApplicationDto } from './application.dto';
 
 describe('ApplicationController', () => {
   let controller: ApplicationController;
@@ -32,6 +33,7 @@ describe('ApplicationController', () => {
           provide: UserModule,
           useValue: {
             findOneUserById: jest.fn().mockResolvedValue({}),
+            findUser: jest.fn().mockResolvedValue({}),
           },
         },
         {
@@ -64,21 +66,21 @@ describe('ApplicationController', () => {
     expect(service).toBeDefined();
   });
 
-  //   describe('create()', () => {
-  //     it('should create an application', async () => {
-  //       const dto = { jid: '123', status: 'pending', notes: 'note' };
-  //       const req = { user: { id: '1' } };
-  //       const createApplicationDto: CreateApplicationDto = {
-  //         ...dto,
-  //         uid: req.user.id,
-  //         appliedDate: new Date(),
-  //       };
-  //       await expect(
-  //         controller.create(req, createApplicationDto),
-  //       ).resolves.toBeInstanceOf(Application);
-  //       expect(service.create).toHaveBeenCalledWith(createApplicationDto);
-  //     });
-  //   });
+  describe('create()', () => {
+    it('should create an application', async () => {
+      const dto = { jid: '123', status: 'pending', notes: 'note' };
+      const req = { user: { id: '1' } };
+      const createApplicationDto: CreateApplicationDto = {
+        ...dto,
+        uid: req.user.id,
+        appliedDate: new Date(),
+      };
+      await expect(
+        controller.create(req, createApplicationDto),
+      ).resolves.toBeInstanceOf(Application);
+      expect(service.create).toHaveBeenCalledWith(createApplicationDto);
+    });
+  });
 
   describe('findAll()', () => {
     it('should return an array of applications', async () => {
