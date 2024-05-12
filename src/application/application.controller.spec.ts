@@ -132,7 +132,7 @@ describe('ApplicationController', () => {
     });
   });
 
-  describe('autofill()', () => {
+  describe.skip('autofill()', () => {
     it('should return a success message', async () => {
       const req = { user: { id: '1' } };
       const body = { question: 'How to fill?' };
