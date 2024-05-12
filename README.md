@@ -34,16 +34,23 @@ The main functionality of this is to let the user perform instant application au
 
 This backend bridges the gaps between the Front-end views and the MongoDB cloud database as well as other third-party APIs (Open AI). It allows for robust authentication and data processing/serving. 
 
+The backend is built on another repository [repository](https://github.com/kien-to/cs520-backend). This is for easiser hosting.
+
 ## How to run?
 
-This Turborepo includes the following packages/apps:
+### Prerequesites
+
+- Node.js and npm.
+
+- pnpm package manager version 8. Install with 
+```
+npm install -g pnpm@8
+```
 
 ### Apps and Packages
 
 - `web`: Main web Next.js app
 - `extension`: Chrome extension
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 
 ### Build
 
