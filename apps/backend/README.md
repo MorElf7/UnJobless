@@ -4,7 +4,14 @@
 $ npm install
 ```
 
-## Running the app
+## Add OPENAI API key
+1. Go to OpenAI website, create and obtain a new secret API key.
+2. Add this API key into the .env file in the following format:
+```
+OPENAI_API_KEY={the secret key}
+```
+
+## Running the app 
 
 ```bash
 # development
