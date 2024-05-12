@@ -50,13 +50,14 @@ The backend is mostly built on another repository [repository](https://github.co
 ```
 npm install -g pnpm@8
 ```
+NOTE: On Windows, running with Powershell might encounter execution permisison errors if not Administrator. Use cmd instead 
 
-NOTE: The backend is hosted on Vercel already so there is no need to run it locally.
 
 ### Apps and Packages
 
-- `web`: Main web Next.js app
+- `web`: Main web React.js app
 - `extension`: Chrome extension
+- 'backend': The backend is hosted on Vercel already so there is no need to run it locally.
 
 ### Develop
 
@@ -82,6 +83,14 @@ pnpm dev:ext
 
 1. Enable developer mode for Chrome
 2. Load unpacked the `apps/extension/dist` directory
+
+### Test
+
+To test the backend, run
+
+```
+pnpm test:api
+```
 
 ## Environment variables
 

@@ -10,7 +10,8 @@
     "build:web": "turbo run build --filter web",
     "dev:web": "turbo run dev --filter web",
     "build:api": "turbo run build --filter backend",
-    "dev:api": "turbo run dev --filter backend"
+    "dev:api": "turbo run dev --filter backend",
+    "test:api": "turbo run test --filter backend"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
