@@ -34,7 +34,7 @@ The main functionality of this is to let the user perform instant application au
 
 This backend bridges the gaps between the Front-end views and the MongoDB cloud database as well as other third-party APIs (Open AI). It allows for robust authentication and data processing/serving. 
 
-The backend is built on another repository [repository](https://github.com/kien-to/cs520-backend). This is for easiser hosting.
+The backend is also built on another repository [repository](https://github.com/kien-to/cs520-backend). This is for easiser hosting.
 
 ## How to run?
 
@@ -47,36 +47,16 @@ The backend is built on another repository [repository](https://github.com/kien-
 npm install -g pnpm@8
 ```
 
+NOTE: The backend is hosted on Vercel already so there is no need to run it locally.
+
 ### Apps and Packages
 
 - `web`: Main web Next.js app
 - `extension`: Chrome extension
 
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-pnpm build
-```
-
-Build individual apps:
-
-- web:
-
-```
-pnpm build:web
-```
-
-- extension:
-
-```
-pnpm build:ext
-```
-
 ### Develop
 
-To develop all apps and packages, run the following command:
+To run all apps and packages, run the following command:
 
 ```
 pnpm dev
