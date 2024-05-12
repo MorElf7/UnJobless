@@ -4,6 +4,10 @@
 
 Will be listed in the contribution.md file
 
+## Video Demo
+
+https://drive.google.com/file/d/1tfxB95U-C_oJd7weMOCm8Q9ShjUh6wcQ/view?usp=sharing
+
 ## Introduction
 
 We are team 8 of COMPSCI 520, and we present Unjobless, an application that aims to streamline the application process for students and job seekers alike. The ultimate purpose of this project is to help ease some of the most frustrating aspects of employment seeking, which all of us have to go through in our lives. 
@@ -32,9 +36,9 @@ The main functionality of this is to let the user perform instant application au
 
 ### 3. NestJS Back-end
 
-This backend bridges the gaps between the Front-end views and the MongoDB cloud database as well as other third-party APIs (Open AI). It allows for robust authentication and data processing/serving. 
+This backend bridges the gaps between the Front-end views and the MongoDB cloud database as well as other third-party APIs (Open AI, Job-Scraping API, etc.). It also allows for robust authentication and data processing/serving. 
 
-The backend is built on another repository [repository](https://github.com/kien-to/cs520-backend). This is for easiser hosting.
+The backend is mostly built on another repository [repository](https://github.com/kien-to/cs520-backend) for easier hosting. However, we will provide the source code here for ease of grading and running the test code.
 
 ## How to run?
 
